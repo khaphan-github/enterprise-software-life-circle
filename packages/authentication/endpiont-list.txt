@@ -1,0 +1,3 @@
+v23/auth/register
+v23/auth/login
+v23/role/create

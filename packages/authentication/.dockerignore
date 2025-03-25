@@ -1,0 +1,32 @@
+# Ignore node modules except in production stage
+node_modules
+dist
+.pnpm-store
+.pnp
+.pnp.cjs
+.pnp.loader.mjs
+
+# Ignore build artifacts
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Ignore environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Ignore local configuration
+.DS_Store
+.git
+.gitignore
+.vscode
+.idea
+
+# Ignore Docker-related files
+docker-compose.yml
+Dockerfile
