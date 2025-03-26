@@ -1,0 +1,21 @@
+{
+  "name": "postgrest-migration",
+  "version": "1.1.0",
+  "description": "Migrattion postgresql using raw query instead of orm",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.13.13",
+    "@types/pg": "^8.11.11",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "pg": "^8.14.1"
+  }
+}

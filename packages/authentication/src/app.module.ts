@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, DynamicModule } from '@nestjs/common';
 import { PortgresqlConfigModule } from './configurations/databases/postgresql/config.module';
 import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
@@ -13,32 +13,42 @@ import { PostgresModule } from './libs/postgresql/postgres.module';
 import { Controllers } from './interfaces';
 import { JwtModule } from '@nestjs/jwt';
 
-@Module({
-  imports: [
-    // Configurations
-    ConfigModule.forRoot({
-      envFilePath: [`${process.env.NODE_ENV || ''}.env`],
-      load: [POSTGRE_SQL_DB_CONFIG_MAIN],
-      isGlobal: true,
-      validationSchema: Joi?.object([]),
-      validationOptions: {
-        abortEarly: true, // if true, stops validation on the first error
-      },
-    }),
+@Module({})
+export class CQRSAuthenticationRBAC {
+  static register(config: {
+    envFilePath: string;
+    secretKey: string;
+    expiresIn: string;
+  }): DynamicModule {
+    return {
+      module: CQRSAuthenticationRBAC,
+      imports: [
+        // Configurations
+        ConfigModule.forRoot({
+          envFilePath: [config.envFilePath],
+          load: [POSTGRE_SQL_DB_CONFIG_MAIN],
+          isGlobal: true,
+          validationSchema: Joi?.object([]),
+          validationOptions: {
+            abortEarly: true, // if true, stops validation on the first error
+          },
+        }),
 
-    PortgresqlConfigModule,
-    PostgresModule.forFeature(CONNECTION_STRING_DEFAULT),
-    // Core
-    CqrsModule,
-    JwtModule.register({
-      secret: process.env.AUTHENTICATION_ACCESS_TOKEN_SECRET_KEY || '', // Store in .env
-      signOptions: {
-        expiresIn: process.env.AUTHENTICATION_ACCESS_TOKEN_EXPIRES_IN,
-      }, // Token expires in 1 hour
-    }),
-    // Features
-  ],
-  controllers: Controllers,
-  providers: [...Handlers, ...Repositories],
-})
-export class AppModule {}
+        PortgresqlConfigModule,
+        PostgresModule.forFeature(CONNECTION_STRING_DEFAULT),
+        // Core
+        CqrsModule,
+        JwtModule.register({
+          secret: config.secretKey, // Use the secret key from the config
+          signOptions: {
+            expiresIn: config.expiresIn,
+          }, // Token expires in the provided time
+        }),
+        // Features
+      ],
+      controllers: Controllers,
+      providers: [...Handlers, ...Repositories],
+      exports: [...Handlers, ...Repositories],
+    };
+  }
+}

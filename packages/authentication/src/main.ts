@@ -1,14 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 
-import { AppModule } from './app.module';
+import { CQRSAuthenticationRBAC } from './app.module';
 import { setupApiDocs } from './configurations/swagger/configuration';
 
 async function bootstrap() {
   // Tạo một logger mới
   const logger = new Logger('STARTUP');
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(CQRSAuthenticationRBAC.register());
 
   app.setGlobalPrefix('api/v23');
 

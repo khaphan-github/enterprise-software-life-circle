@@ -111,3 +111,4 @@ This way,  your team will work more effeciently and write better code and becaus
 # Bernchmark:
 # Logging:
 # Documentation:
+- npm publish --access public
