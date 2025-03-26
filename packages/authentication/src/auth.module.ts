@@ -5,12 +5,12 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { Repositories } from './infrastructure';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PostgresModule } from 'nest-postgresql-multi-connect';
-import { Connection } from 'nest-postgresql-multi-connect/dist/postgresql.interface';
 import { PgMigration } from 'postgrest-migration';
 import { CONNECTION_STRING_DEFAULT } from './configurations/connection-string-default';
+import { PoolConfig } from 'pg';
 
 export interface AuthRBACConfig {
-  dbConf: Connection;
+  dbConf: PoolConfig;
   jwtOptions: JwtModuleOptions;
   rbacConf: {
     authSecretKey: string;
@@ -56,7 +56,7 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
     const migrateExecution = new PgMigration(
       CQRSAuthenticationRBAC.config.dbConf,
       {
-        modulePrefix: 'src/infrastructure/migrations/',
+        modulePrefix: __dirname + '/infrastructure/migrations/',
       },
     );
     await migrateExecution.executeMigrations();
