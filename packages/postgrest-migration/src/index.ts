@@ -1,1 +1,1 @@
-export * from './pgmigrations';
+export { PgMigration } from './pgmigrations';

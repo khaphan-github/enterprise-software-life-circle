@@ -18,7 +18,7 @@ export class PgMigration {
 
   constructor(
     public dbConf: PoolConfig,
-    public tableConf: {
+    public tableConf?: {
       modulePrefix?: string;
       migrationTableName?: string;
       versionFileRegex?: RegExp;
@@ -27,7 +27,9 @@ export class PgMigration {
     }
   ) {
     this.client = new PgSQLConnectionPool(dbConf);
-
+    if (!tableConf) {
+      return;
+    }
     if (tableConf.modulePrefix) {
       this.MODULE_PREFIX = tableConf.modulePrefix;
     }

@@ -1,6 +1,6 @@
 {
   "name": "postgrest-migration",
-  "version": "1.1.0",
+  "version": "1.1.6",
   "description": "Migrattion postgresql using raw query instead of orm",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

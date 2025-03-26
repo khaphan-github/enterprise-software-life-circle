@@ -56,6 +56,9 @@ importers:
       nanoid:
         specifier: ^5.1.5
         version: 5.1.5
+      nest-postgresql-multi-connect:
+        specifier: 1.0.0
+        version: 1.0.0(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       passport:
         specifier: ^0.7.0
         version: 0.7.0
@@ -68,6 +71,12 @@ importers:
       pg:
         specifier: ^8.14.1
         version: 8.14.1
+      pg-format:
+        specifier: ^1.0.4
+        version: 1.0.4
+      postgrest-migration:
+        specifier: ^1.1.6
+        version: 1.1.6
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -114,6 +123,9 @@ importers:
       '@types/pg':
         specifier: ^8.11.11
         version: 8.11.11
+      '@types/pg-format':
+        specifier: ^1.0.5
+        version: 1.0.5
       '@types/supertest':
         specifier: ^6.0.2
         version: 6.0.2
@@ -1128,6 +1140,9 @@ packages:
 
   '@types/node@22.13.13':
     resolution: {integrity: sha512-ClsL5nMwKaBRwPcCvH8E7+nU4GxHVx1axNvMZTFHMEfNI7oahimt26P5zjVCRrjiIWj6YFXfE1v3dEp94wLcGQ==}
+
+  '@types/pg-format@1.0.5':
+    resolution: {integrity: sha512-i+oEEJEC+1I3XAhgqtVp45Faj8MBbV0Aoq4rHsHD7avgLjyDkaWKObd514g0Q/DOUkdxU0P4CQ0iq2KR4SoJcw==}
 
   '@types/pg@8.11.11':
     resolution: {integrity: sha512-kGT1qKM8wJQ5qlawUrEkXgvMSXoV213KfMGXcwfDwUIfUHXqXYXOfS1nE1LINRJVVVx5wCm70XnFlMHaIcQAfw==}
@@ -2853,6 +2868,9 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
+  nest-postgresql-multi-connect@1.0.0:
+    resolution: {integrity: sha512-bPbcb/RsaDuCJvXk3MQX4ud/cc8uVonkQdZDb70JH1I+d3XfB/OXh5nnSa+DkFnhXBnjyScHfV+JPfeZajwW/Q==}
+
   node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
 
@@ -3037,6 +3055,10 @@ packages:
   pg-connection-string@2.7.0:
     resolution: {integrity: sha512-PI2W9mv53rXJQEOb8xNR8lH7Hr+EKa6oJa38zsK0S/ky2er16ios1wLKhZyxzD7jUReiWokc9WK5nxSnC7W1TA==}
 
+  pg-format@1.0.4:
+    resolution: {integrity: sha512-YyKEF78pEA6wwTAqOUaHIN/rWpfzzIuMh9KdAhc3rSLQ/7zkRFcCgYBAEGatDstLyZw4g0s9SNICmaTGnBVeyw==}
+    engines: {node: '>=4.0'}
+
   pg-int8@1.0.1:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
     engines: {node: '>=4.0.0'}
@@ -3133,6 +3155,9 @@ packages:
 
   postgres-range@1.1.4:
     resolution: {integrity: sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w==}
+
+  postgrest-migration@1.1.6:
+    resolution: {integrity: sha512-rwZBe8vJedD2c8Fd4FVGFWJ1fCl5kQUdyfY/yTEh5bgIJ9q8opFLXo3QLsWECLc21yzj54BOTY1ax0i93ubonQ==}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -3617,6 +3642,10 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
+
+  tsc@2.0.4:
+    resolution: {integrity: sha512-fzoSieZI5KKJVBYGvwbVZs/J5za84f2lSTLPYf6AGiIf43tZ3GNrI1QzTLcjtyDDP4aLxd46RTZq1nQxe7+k5Q==}
+    hasBin: true
 
   tsconfig-paths-webpack-plugin@4.2.0:
     resolution: {integrity: sha512-zbem3rfRS8BgeNK50Zz5SIQgXzLafiHjOwUAvk/38/o1jHn/V5QAgVUcz884or7WYcPaH3N2CIfUc2u0ul7UcA==}
@@ -4942,6 +4971,8 @@ snapshots:
   '@types/node@22.13.13':
     dependencies:
       undici-types: 6.20.0
+
+  '@types/pg-format@1.0.5': {}
 
   '@types/pg@8.11.11':
     dependencies:
@@ -6942,6 +6973,19 @@ snapshots:
 
   neo-async@2.6.2: {}
 
+  nest-postgresql-multi-connect@1.0.0(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2):
+    dependencies:
+      '@nestjs/common': 11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      pg: 8.14.1
+      tsc: 2.0.4
+      typescript: 5.8.2
+    transitivePeerDependencies:
+      - class-transformer
+      - class-validator
+      - pg-native
+      - reflect-metadata
+      - rxjs
+
   node-abort-controller@3.1.1: {}
 
   node-addon-api@5.1.0: {}
@@ -7102,6 +7146,8 @@ snapshots:
 
   pg-connection-string@2.7.0: {}
 
+  pg-format@1.0.4: {}
+
   pg-int8@1.0.1: {}
 
   pg-numeric@1.0.2: {}
@@ -7183,6 +7229,12 @@ snapshots:
   postgres-interval@3.0.0: {}
 
   postgres-range@1.1.4: {}
+
+  postgrest-migration@1.1.6:
+    dependencies:
+      pg: 8.14.1
+    transitivePeerDependencies:
+      - pg-native
 
   prelude-ls@1.2.1: {}
 
@@ -7686,6 +7738,8 @@ snapshots:
       yn: 3.1.1
     optionalDependencies:
       '@swc/core': 1.11.13
+
+  tsc@2.0.4: {}
 
   tsconfig-paths-webpack-plugin@4.2.0:
     dependencies:
