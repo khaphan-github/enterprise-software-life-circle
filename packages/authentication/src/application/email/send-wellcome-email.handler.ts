@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SendWellcomeEmailCommand } from 'src/domain/email/command/send-wellcome-email.command';
-import { NotifyProxy } from 'src/infrastructure/proxy/notifi.proxy';
+import { SendWellcomeEmailCommand } from '../../domain/email/command/send-wellcome-email.command';
+import { NotifyProxy } from '../../infrastructure/proxy/notifi.proxy';
 
 @CommandHandler(SendWellcomeEmailCommand)
 export class SendWellcomeEmailHandler

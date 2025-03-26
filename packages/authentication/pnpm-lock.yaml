@@ -54,8 +54,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       nanoid:
-        specifier: ^5.1.5
-        version: 5.1.5
+        specifier: ^3.3.11
+        version: 3.3.11
       nest-postgresql-multi-connect:
         specifier: 1.0.0
         version: 1.0.0(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -154,7 +154,7 @@ importers:
         specifier: ^7.0.0
         version: 7.1.0
       ts-jest:
-        specifier: ^29.2.5
+        specifier: ^29.3.0
         version: 29.3.0(@babel/core@7.26.10)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.10))(jest@29.7.0(@types/node@22.13.13)(ts-node@10.9.2(@swc/core@1.11.13)(@types/node@22.13.13)(typescript@5.8.2)))(typescript@5.8.2)
       ts-loader:
         specifier: ^9.5.2
@@ -2853,9 +2853,9 @@ packages:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  nanoid@5.1.5:
-    resolution: {integrity: sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw==}
-    engines: {node: ^18 || >=20}
+  nanoid@3.3.11:
+    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
   natural-compare@1.4.0:
@@ -6965,7 +6965,7 @@ snapshots:
 
   mute-stream@2.0.0: {}
 
-  nanoid@5.1.5: {}
+  nanoid@3.3.11: {}
 
   natural-compare@1.4.0: {}
 

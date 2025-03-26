@@ -1,14 +1,14 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { CreateUserCommand } from 'src/domain/user/command/create-user.command';
-import { UserCreatedEvent } from 'src/domain/user/events/user-created.event';
-import { UserRepository } from 'src/infrastructure/repository/user.repository';
-import { UserAlreadyExistError } from 'src/domain/user/errors/user-already-exist.error';
-import { PASSWORD_HASH_OPTIONS } from 'src/domain/user/const';
-import { UserStatus } from 'src/domain/user/user-status';
-import { UserEmailAlreadyExistError } from 'src/domain/user/errors/user-email-already-exist.error';
+import { CreateUserCommand } from '../../../domain/user/command/create-user.command';
+import { UserCreatedEvent } from '../../../domain/user/events/user-created.event';
+import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserAlreadyExistError } from '../../../domain/user/errors/user-already-exist.error';
+import { PASSWORD_HASH_OPTIONS } from '../../../domain/user/const';
+import { UserStatus } from '../../../domain/user/user-status';
+import { UserEmailAlreadyExistError } from '../../../domain/user/errors/user-email-already-exist.error';
 import { nanoid } from 'nanoid';
 import * as argon2 from 'argon2';
-import { UserEntity } from 'src/domain/user/user-entity';
+import { UserEntity } from '../../../domain/user/user-entity';
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {

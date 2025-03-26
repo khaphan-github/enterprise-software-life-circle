@@ -3,10 +3,10 @@ import {
   PgSQLConnectionPool,
 } from 'nest-postgresql-multi-connect';
 import * as format from 'pg-format';
-import { CONNECTION_STRING_DEFAULT } from 'src/configurations/connection-string-default';
-import { RoleEntity, RoleType } from 'src/domain/role/role-entity';
-import { RoleTransformer } from 'src/domain/role/transformer';
-import { UserRoleEntity } from 'src/domain/role/user-role.entity';
+import { CONNECTION_STRING_DEFAULT } from '../../configurations/connection-string-default';
+import { RoleEntity, RoleType } from '../../domain/role/role-entity';
+import { RoleTransformer } from '../../domain/role/transformer';
+import { UserRoleEntity } from '../../domain/role/user-role.entity';
 
 export class RoleRepository {
   constructor(

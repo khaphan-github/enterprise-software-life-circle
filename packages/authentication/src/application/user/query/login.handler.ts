@@ -1,8 +1,8 @@
 import { EventBus, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { LoginQuery } from '../../../domain/user/query/login.query';
-import { UserRepository } from 'src/infrastructure/repository/user.repository';
-import { UserNotFoundError } from 'src/domain/user/errors/user-not-found-error';
-import { PasswordNotMatchError } from 'src/domain/user/errors/password-not-match.error';
+import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
+import { PasswordNotMatchError } from '../../../domain/user/errors/password-not-match.error';
 import * as argon2 from 'argon2';
 import {
   ACCESS_TOKEN_EXPIRES_IN,
@@ -10,14 +10,14 @@ import {
   PASSWORD_HASH_OPTIONS,
   REFRESH_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_SECRET_KEY,
-} from 'src/domain/user/const';
-import { UserStatus } from 'src/domain/user/user-status';
-import { UserDeletedError } from 'src/domain/user/errors/user-deleted.error';
-import { UserInactivatedError } from 'src/domain/user/errors/user-inactivated.error';
-import { UserLogedinEvent } from 'src/domain/user/events/user-logedin.event';
-import { UserLoginFailEvent } from 'src/domain/user/events/user-login-fail.event';
+} from '../../../domain/user/const';
+import { UserStatus } from '../../../domain/user/user-status';
+import { UserDeletedError } from '../../../domain/user/errors/user-deleted.error';
+import { UserInactivatedError } from '../../../domain/user/errors/user-inactivated.error';
+import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event';
+import { UserLoginFailEvent } from '../../../domain/user/events/user-login-fail.event';
 import { JwtService } from '@nestjs/jwt';
-import { RoleRepository } from 'src/infrastructure/repository/role.repository';
+import { RoleRepository } from '../../../infrastructure/repository/role.repository';
 
 @QueryHandler(LoginQuery)
 export class LoginHandler implements IQueryHandler<LoginQuery> {

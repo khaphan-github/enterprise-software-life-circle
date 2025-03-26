@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ofType, Saga } from '@nestjs/cqrs';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SendLogedInEmailCommand } from 'src/domain/email/command/send-logedin-email.command';
-import { SendWellcomeEmailCommand } from 'src/domain/email/command/send-wellcome-email.command';
-import { AssignDefaultRoleToUserCommand } from 'src/domain/role/command/assign-default-role-to-user.command';
-import { UserCreatedEvent } from 'src/domain/user/events/user-created.event';
-import { UserLogedinEvent } from 'src/domain/user/events/user-logedin.event';
+import { SendLogedInEmailCommand } from '../../domain/email/command/send-logedin-email.command';
+import { SendWellcomeEmailCommand } from '../../domain/email/command/send-wellcome-email.command';
+import { AssignDefaultRoleToUserCommand } from '../../domain/role/command/assign-default-role-to-user.command';
+import { UserCreatedEvent } from '../../domain/user/events/user-created.event';
+import { UserLogedinEvent } from '../../domain/user/events/user-logedin.event';
 
 @Injectable()
 export class AuthenticationSaga {

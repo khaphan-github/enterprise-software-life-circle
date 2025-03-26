@@ -1,8 +1,8 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { RoleRepository } from 'src/infrastructure/repository/role.repository';
-import { CreateRoleCommand } from 'src/domain/role/command/create-role.command';
-import { RoleEntityCreatedEvent } from 'src/domain/role/event/role-created.event';
-import { RoleEntity } from 'src/domain/role/role-entity';
+import { RoleRepository } from '../../../infrastructure/repository/role.repository';
+import { CreateRoleCommand } from '../../../domain/role/command/create-role.command';
+import { RoleEntityCreatedEvent } from '../../../domain/role/event/role-created.event';
+import { RoleEntity } from '../../../domain/role/role-entity';
 import { nanoid } from 'nanoid';
 
 @CommandHandler(CreateRoleCommand)

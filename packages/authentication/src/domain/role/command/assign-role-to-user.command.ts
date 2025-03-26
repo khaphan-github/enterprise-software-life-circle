@@ -1,5 +1,5 @@
 import { ICommand } from '@nestjs/cqrs';
-import { UserEntity } from 'src/domain/user/user-entity';
+import { UserEntity } from '../../..//domain/user/user-entity';
 import { RoleEntity } from '../role-entity';
 
 export class AssignRoleToUserCommand implements ICommand {

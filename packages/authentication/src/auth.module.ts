@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { Handlers } from './application';
 import { CqrsModule } from '@nestjs/cqrs';
 import { Repositories } from './infrastructure';
-import { Controllers } from './interfaces';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PostgresModule } from 'nest-postgresql-multi-connect';
 import { Connection } from 'nest-postgresql-multi-connect/dist/postgresql.interface';
@@ -48,7 +47,6 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
         PostgresModule.forFeature(CONNECTION_STRING_DEFAULT),
         JwtModule.register(conf.jwtOptions),
       ],
-      controllers: Controllers,
       providers: [...Handlers, ...Repositories],
       exports: [...Handlers, ...Repositories],
     };

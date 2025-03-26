@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SendLogedInEmailCommand } from 'src/domain/email/command/send-logedin-email.command';
-import { NotifyProxy } from 'src/infrastructure/proxy/notifi.proxy';
+import { SendLogedInEmailCommand } from '../../domain/email/command/send-logedin-email.command';
+import { NotifyProxy } from '../../infrastructure/proxy/notifi.proxy';
 
 @CommandHandler(SendLogedInEmailCommand)
 export class SendLogedInEmailHanlder

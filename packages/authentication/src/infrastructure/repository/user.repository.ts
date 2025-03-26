@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UserTransformer } from 'src/domain/user/transformer';
-import { UserEntity } from 'src/domain/user/user-entity';
+import { UserTransformer } from '../../domain/user/transformer';
+import { UserEntity } from '../../domain/user/user-entity';
 import {
   PgSQLConnection,
   PgSQLConnectionPool,
 } from 'nest-postgresql-multi-connect';
-import { CONNECTION_STRING_DEFAULT } from 'src/configurations/connection-string-default';
+import { CONNECTION_STRING_DEFAULT } from '../../configurations/connection-string-default';
 
 @Injectable()
 export class UserRepository {

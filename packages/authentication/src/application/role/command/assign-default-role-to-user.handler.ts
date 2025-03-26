@@ -1,12 +1,12 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { RoleRepository } from 'src/infrastructure/repository/role.repository';
+import { RoleRepository } from '../../..//infrastructure/repository/role.repository';
 import {
   UserRoleEntity,
   UserRoleStatus,
-} from 'src/domain/role/user-role.entity';
-import { UserRoleEntityCreatedEvent } from 'src/domain/role/event/user-entity-created.event';
-import { AssignDefaultRoleToUserCommand } from 'src/domain/role/command/assign-default-role-to-user.command';
-import { RoleType } from 'src/domain/role/role-entity';
+} from '../../..//domain/role/user-role.entity';
+import { UserRoleEntityCreatedEvent } from '../../../domain/role/event/user-entity-created.event';
+import { AssignDefaultRoleToUserCommand } from '../../../domain/role/command/assign-default-role-to-user.command';
+import { RoleType } from '../../../domain/role/role-entity';
 
 @CommandHandler(AssignDefaultRoleToUserCommand)
 export class AssignDefaultRoleToUserHandler
