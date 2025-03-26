@@ -9,7 +9,9 @@
 		"vscode": {
 			"extensions": [
 				"cweijan.vscode-database-client2",
-				"firsttris.vscode-jest-runner"
+				"firsttris.vscode-jest-runner",
+				"p1c2u.docker-compose",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	}
