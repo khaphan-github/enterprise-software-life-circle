@@ -50,7 +50,7 @@ class PgMigration {
     constructor(dbConf, tableConf) {
         this.dbConf = dbConf;
         this.tableConf = tableConf;
-        this.VERSION_FILE_REGEX = /^Version-+([1-9].[0-9].[0-9])+.ts$/;
+        this.VERSION_FILE_REGEX = /^Version-+([1-9].[0-9].[0-9])+.(ts|js)$/;
         this.VERSSION_FILE_REGEX_FROM_PATH = /Version-(\d+\.\d+\.\d+)/;
         this.MODULE_PREFIX = 'migrations';
         this.DEFAULT_VERSION = '0.0.0';
@@ -172,6 +172,9 @@ class PgMigration {
             }
         });
         this.client = new connection_pool_1.PgSQLConnectionPool(dbConf);
+        if (!tableConf) {
+            return;
+        }
         if (tableConf.modulePrefix) {
             this.MODULE_PREFIX = tableConf.modulePrefix;
         }

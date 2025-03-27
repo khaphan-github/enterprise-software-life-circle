@@ -8,6 +8,7 @@ import { PostgresModule } from 'nest-postgresql-multi-connect';
 import { PgMigration } from 'postgrest-migration';
 import { CONNECTION_STRING_DEFAULT } from './configurations/connection-string-default';
 import { PoolConfig } from 'pg';
+import { AuthController } from './infrastructure/interface/auth.controller';
 
 export interface AuthRBACConfig {
   dbConf: PoolConfig;
@@ -21,8 +22,13 @@ export interface AuthRBACConfig {
     authAccessTokenExpiresIn: string;
     authRefreshTokenExpiresIn: string;
   };
+  migrations?: {
+    migrationTableName?: string;
+  };
+  constroller?: {
+    enable?: boolean;
+  };
 }
-
 @Module({})
 export class CQRSAuthenticationRBAC implements OnModuleInit {
   private static config: AuthRBACConfig;
@@ -49,14 +55,19 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
       ],
       providers: [...Handlers, ...Repositories],
       exports: [...Handlers, ...Repositories],
+      controllers: conf.constroller?.enable ? [AuthController] : [],
     };
   }
 
   async onModuleInit() {
+    // TODO: How exec right migration file directory
     const migrateExecution = new PgMigration(
       CQRSAuthenticationRBAC.config.dbConf,
       {
         modulePrefix: __dirname + '/infrastructure/migrations/',
+        migrationTableName:
+          CQRSAuthenticationRBAC.config.migrations?.migrationTableName ??
+          '_mig_auth_rbac',
       },
     );
     await migrateExecution.executeMigrations();

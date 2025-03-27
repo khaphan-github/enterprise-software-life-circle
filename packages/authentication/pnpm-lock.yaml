@@ -75,8 +75,8 @@ importers:
         specifier: ^1.0.4
         version: 1.0.4
       postgrest-migration:
-        specifier: ^1.1.6
-        version: 1.1.6
+        specifier: ^1.1.8
+        version: 1.1.8
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -3156,8 +3156,8 @@ packages:
   postgres-range@1.1.4:
     resolution: {integrity: sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w==}
 
-  postgrest-migration@1.1.6:
-    resolution: {integrity: sha512-rwZBe8vJedD2c8Fd4FVGFWJ1fCl5kQUdyfY/yTEh5bgIJ9q8opFLXo3QLsWECLc21yzj54BOTY1ax0i93ubonQ==}
+  postgrest-migration@1.1.8:
+    resolution: {integrity: sha512-uVG4PJQjuKVyqk0DMXoydW6SJytxKXNz+2SDbTJXkCkPm2wqBVWpSE559M+UjGDerbmKkDo7l7hDtEpbmVuNPA==}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -7230,7 +7230,7 @@ snapshots:
 
   postgres-range@1.1.4: {}
 
-  postgrest-migration@1.1.6:
+  postgrest-migration@1.1.8:
     dependencies:
       pg: 8.14.1
     transitivePeerDependencies:

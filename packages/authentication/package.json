@@ -1,6 +1,6 @@
 {
   "name": "cqrs-authentication-rbac",
-  "version": "1.5.4",
+  "version": "1.5.13",
   "description": "authentication service base on cqrs and rbac authorization",
   "author": "khaphannpm",
   "private": false,
@@ -45,7 +45,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.14.1",
     "pg-format": "^1.0.4",
-    "postgrest-migration": "^1.1.6",
+    "postgrest-migration": "^1.1.8",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

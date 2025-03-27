@@ -6,7 +6,7 @@ import { PgSQLConnectionPool } from './connection-pool';
 
 export class PgMigration {
   private VERSION_FILE_REGEX: RegExp =
-    /^Version-+([1-9].[0-9].[0-9])+.ts$/;
+    /^Version-+([1-9].[0-9].[0-9])+.(ts|js)$/;
   private VERSSION_FILE_REGEX_FROM_PATH: RegExp =
     /Version-(\d+\.\d+\.\d+)/;
   private MODULE_PREFIX = 'migrations';
