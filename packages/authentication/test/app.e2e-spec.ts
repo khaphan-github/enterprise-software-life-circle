@@ -39,6 +39,7 @@ describe('AppController (e2e)', () => {
           },
           migrations: {
             enable: false,
+            migrationTableName: '_migration_authentication',
           },
         }),
       ],

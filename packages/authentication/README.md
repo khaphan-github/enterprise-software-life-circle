@@ -30,11 +30,10 @@ This module provides Role-Based Access Control (RBAC) authentication using CQRS 
 Ensure you have NestJS installed in your project. Then, install the required dependencies:
 
 ```sh
-npm install @nestjs/jwt @nestjs/config pg
+npm i cqrs-authentication-rbac
 ```
 
 ## Configuration
-
 To use this module, provide the necessary environment variables:
 
 ```sh
@@ -56,14 +55,12 @@ AUTH_REFRESH_TOKEN_EXPIRES_IN=86400s
 ```
 
 ## Usage
-
 ### Register the Module
-
 Import and configure the module in your NestJS application:
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { CQRSAuthenticationRBAC } from 'your-auth-module';
+import { CQRSAuthenticationRBAC } from 'cqrs-authentication-rbac';
 
 @Module({
   imports: [
@@ -92,68 +89,54 @@ import { CQRSAuthenticationRBAC } from 'your-auth-module';
         authRefreshTokenExpiresIn:
           process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
       },
+      migrations: {
+        enable: false,
+        migrationTableName: '_migration_authentication',
+      },
     }),
   ],
 })
 export class AppModule {}
 ```
+### Available Bussiness logic
+- Let's me write doc after finish verion 3.0.0
+#### Login with username password
+#### Register
+#### Refresh token
+#### Me
+#### AccessTokenGuard
+#### Events
 
-### Available APIs
+### Events
 
-#### Register a User
+#### User Events
+- **UserCreatedEvent**: Triggered when a new user is created.
+- **UserLogedinEvent**: Triggered when a user successfully logs in.
+- **UserLoginFailEvent**: Triggered when a user login attempt fails.
+- **UserUpdatedEvent**: Triggered when a user's details are updated.
+- **UserDeletedEvent**: Triggered when a user is deleted.
 
-```http
-POST /auth/register
-```
-**Body:**
-```json
-{
-  "username": "testuser",
-  "password": "securepassword",
-  "role": "admin"
-}
-```
+#### Role Events
+- **UserRoleEntityCreatedEvent**: Triggered when a new user role entity is created.
+- **UserRoleUpdatedEvent**: Triggered when a user role is updated.
+- **UserRoleDeletedEvent**: Triggered when a user role is deleted.
+- **EndpointsAddedToRolesEvent**: Triggered when endpoints are added to specific roles.
+- **PermissionsUpdatedForRoleEvent**: Triggered when permissions are updated for a role.
 
-#### Login
-```http
-POST /auth/login
-```
-**Body:**
-```json
-{
-  "username": "testuser",
-  "password": "securepassword"
-}
-```
+#### Endpoint Events
+- **EndpointEntityCreatedEvent**: Triggered when a new endpoint entity is created.
+- **EndpointEntityUpdatedEvent**: Triggered when an endpoint entity is updated.
+- **EndpointEntityDeletedEvent**: Triggered when an endpoint entity is deleted.
+- **EndpointAccessedEvent**: Triggered when an endpoint is accessed.
+- **EndpointPermissionUpdatedEvent**: Triggered when permissions for an endpoint are updated.
 
-#### Get User Info
-```http
-GET /auth/me
-```
-**Headers:**
-```http
-Authorization: Bearer <access_token>
-```
+#### Action Events
+- **ActionTriggeredEvent**: Triggered when a specific action is performed by a user.
+- **ActionFailedEvent**: Triggered when an action fails to execute.
+- **ActionCompletedEvent**: Triggered when an action is successfully completed.
 
 ### Role-Based Authorization
-
-You can protect routes using role-based guards.
-
-```typescript
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { RolesGuard } from 'your-auth-module';
-import { Roles } from 'your-auth-module';
-
-@Controller('protected')
-@UseGuards(RolesGuard)
-export class ProtectedController {
-  @Get()
-  @Roles('admin')
-  getProtectedResource() {
-    return { message: 'Access granted!' };
-  }
-}
-```
+- Let's me write doc after finish verion 3.0.0
 
 ## License
 MIT
