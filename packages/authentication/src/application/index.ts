@@ -2,6 +2,8 @@ import { SendLogedInEmailHanlder } from './email/send-logedin-email.handler';
 import { SendWellcomeEmailHandler } from './email/send-wellcome-email.handler';
 import { CreateEndpointCommandHandler } from './endpoint/command/create-endpoints.handler';
 import { DeleteEndpointsCommandHandler } from './endpoint/command/delete-endpoints.handler';
+import { GetEndpointQueryHandler } from './endpoint/query/get-endpoint.handler';
+import { GetEndpointsWithCursorQueryHandler } from './endpoint/query/get-endpoints-with-cursor.handler';
 import { AddEndpointsToRolesCommandHandler } from './role/command/add-endpoints-to-roles.handler';
 import { AssignDefaultRoleToUserHandler } from './role/command/assign-default-role-to-user.handler';
 import { AssignRoleToUserHandler } from './role/command/assign-role-to-user.handler';
@@ -34,6 +36,9 @@ export const Handlers = [
   CreateEndpointCommandHandler,
   DeleteEndpointsCommandHandler,
   AddEndpointsToRolesCommandHandler,
+
+  GetEndpointsWithCursorQueryHandler,
+  GetEndpointQueryHandler,
   // Saga
   AuthenticationSaga,
 ];

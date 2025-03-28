@@ -90,6 +90,30 @@ export class EndpointRepository {
     return res.rows.map((row) => EndpointTransformer.fromDbToEntity(row));
   }
 
+  async getEndpoint(path: string, method: string) {
+    const query = `
+      SELECT * FROM auth_endpoints
+      WHERE path = $1 AND method = $2
+    `;
+    const values = [path, method];
+    const res = await this.pg.execute(query, values);
+    return res.rows.length
+      ? EndpointTransformer.fromDbToEntity(res.rows[0])
+      : null;
+  }
+
+  async getEndpointsWithCursor(limit: number, cursor?: string) {
+    const query = `
+      SELECT * FROM auth_endpoints
+      WHERE ($1::text IS NULL OR id > $1)
+      ORDER BY id ASC
+      LIMIT $2
+    `;
+    const values = [cursor || null, limit];
+    const res = await this.pg.execute(query, values);
+    return res.rows.map((row) => EndpointTransformer.fromDbToEntity(row));
+  }
+
   async updateEndpoints(endpoints: EndpointEntity[]) {
     const query = `
       UPDATE auth_endpoints
