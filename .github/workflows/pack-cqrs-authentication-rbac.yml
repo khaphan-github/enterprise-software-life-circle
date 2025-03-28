@@ -37,7 +37,7 @@ jobs:
       - name: E2e test
         run: |
           cd packages/authentication
-          npm run test
+          npm run test:e2e
 
       - name: Build package
         run: |

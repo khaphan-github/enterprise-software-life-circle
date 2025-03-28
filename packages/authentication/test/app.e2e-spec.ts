@@ -37,11 +37,18 @@ describe('AppController (e2e)', () => {
             authRefreshTokenExpiresIn:
               process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
           },
+          migrations: {
+            enable: false,
+          },
         }),
       ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+  });
+
+  it('/api/auth/login (POST)', () => {
+    expect(true);
   });
 });

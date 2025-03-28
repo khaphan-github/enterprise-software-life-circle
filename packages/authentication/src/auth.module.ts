@@ -23,6 +23,7 @@ export interface AuthRBACConfig {
     authRefreshTokenExpiresIn: string;
   };
   migrations?: {
+    enable?: boolean;
     migrationTableName?: string;
   };
   constroller?: {
@@ -61,15 +62,17 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
 
   async onModuleInit() {
     // TODO: How exec right migration file directory
-    const migrateExecution = new PgMigration(
-      CQRSAuthenticationRBAC.config.dbConf,
-      {
-        modulePrefix: __dirname + '/infrastructure/migrations/',
-        migrationTableName:
-          CQRSAuthenticationRBAC.config.migrations?.migrationTableName ??
-          '_mig_auth_rbac',
-      },
-    );
-    await migrateExecution.executeMigrations();
+    if (CQRSAuthenticationRBAC.config.migrations?.enable) {
+      const migrateExecution = new PgMigration(
+        CQRSAuthenticationRBAC.config.dbConf,
+        {
+          modulePrefix: __dirname + '/infrastructure/migrations/',
+          migrationTableName:
+            CQRSAuthenticationRBAC.config.migrations?.migrationTableName ??
+            '_mig_auth_rbac',
+        },
+      );
+      await migrateExecution.executeMigrations();
+    }
   }
 }
