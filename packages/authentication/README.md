@@ -3,10 +3,27 @@
 This module provides Role-Based Access Control (RBAC) authentication using CQRS in a NestJS application. It integrates with PostgreSQL and uses JWT for authentication.
 
 ## Features
-- CQRS-based authentication
-- Role-Based Access Control (RBAC)
-- JWT-based authentication
-- Configurable via environment variables
+1. Authentication Features
+✅ User Registration – Allow users to sign up (email/password, social login, etc.)
+✅ User Login – Authenticate users with secure methods (JWT, OAuth, session-based)
+✅ Token Management – Use access & refresh tokens (JWT-based or session)
+✅ Multi-Factor Authentication (MFA) – Optional for added security
+✅ Password Reset & Recovery – Enable users to recover their accounts
+✅ Session Management – Handle multiple active sessions & logout
+
+2. Role-Based Access Control (RBAC) Features
+✅ Role Management – Create, update, and delete roles (e.g., Admin, User, Editor)
+✅ Permission Management – Assign permissions to roles (e.g., read, write, delete)
+✅ User-Role Assignment – Map users to one or multiple roles
+✅ Fine-Grained Access Control – Restrict access based on permissions
+✅ Middleware/Guards – Enforce role-based access in API endpoints or UI components
+
+3. Security & Compliance
+✅ Secure Password Hashing – Use bcrypt, Argon2, or PBKDF2
+✅ Rate Limiting & Brute Force Protection – Prevent login abuse
+✅ Audit Logging – Track authentication & authorization actions
+✅ RBAC Configuration Storage – Store roles/permissions in DB, cache, or config
+✅ Granular Access Policies – Allow resource-level access control
 
 ## Installation
 

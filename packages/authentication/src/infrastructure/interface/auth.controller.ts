@@ -4,6 +4,8 @@ import { CreateUserDTO } from '../../domain/user/dto/create-user.dto';
 import { LoginDTO } from '../../domain/user/dto/login.dto';
 import { LoginQuery } from '../../domain/user/query/login.query';
 import { CreateUserCommand } from '../../domain/user/command/create-user.command';
+import { RefreshTokenCommand } from 'src/domain/user/command/refresh-token.command';
+import { RefreshTokenDTO } from 'src/domain/user/dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,5 +29,10 @@ export class AuthController {
         dto.metadata,
       ),
     );
+  }
+
+  @Post('refresh-token')
+  refreshToken(@Body() dto: RefreshTokenDTO) {
+    return this.queryBus.execute(new RefreshTokenCommand(dto.refreshToken));
   }
 }

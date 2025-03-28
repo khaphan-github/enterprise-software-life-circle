@@ -82,6 +82,30 @@ export class UserRepository {
     return UserTransformer.fromDbToEntity(row);
   }
 
+  async findUserById(id: string): Promise<UserEntity | null> {
+    const query = `
+      SELECT * FROM auth_users
+      WHERE id = $1
+    `;
+    const values = [id];
+    const result = await this.pg.execute(query, values);
+    const row = result.rows[0];
+    return UserTransformer.fromDbToEntity(row);
+  }
+
+  async isExistUserById(id: string): Promise<boolean> {
+    const query = `
+      SELECT EXISTS (
+        SELECT 1 FROM auth_users
+        WHERE id = $1
+      )
+    `;
+    const values = [id];
+    const result = await this.pg.execute(query, values);
+    const exists = result.rows[0].exists;
+    return exists;
+  }
+
   async findUserByEmail(email: string): Promise<UserEntity | null> {
     const query = `
       SELECT * FROM auth_users
