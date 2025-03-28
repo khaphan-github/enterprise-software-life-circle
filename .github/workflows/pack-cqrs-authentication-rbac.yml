@@ -31,12 +31,12 @@ jobs:
 
       - name: Unit test
         run: |
-          cd packages/nest-postgresql-multi-connect
+          cd packages/authentication
           npm run test
 
       - name: E2e test
         run: |
-          cd packages/nest-postgresql-multi-connect
+          cd packages/authentication
           npm run test
 
       - name: Build package
