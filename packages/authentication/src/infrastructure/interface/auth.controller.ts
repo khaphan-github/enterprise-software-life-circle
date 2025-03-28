@@ -6,8 +6,8 @@ import { LoginQuery } from '../../domain/user/query/login.query';
 import { CreateUserCommand } from '../../domain/user/command/create-user.command';
 import { RefreshTokenCommand } from '../../domain/user/command/refresh-token.command';
 import { RefreshTokenDTO } from '../../domain/user/dto/refresh-token.dto';
-import { MeQuery } from 'src/domain/user/query/me.query';
-import { extractTokenFromHeader } from 'src/shared/utils/token.util';
+import { MeQuery } from '../../domain/user/query/me.query';
+import { extractTokenFromHeader } from '../../shared/utils/token.util';
 
 @Controller('auth')
 export class AuthController {
