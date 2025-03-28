@@ -7,9 +7,9 @@ This module provides Role-Based Access Control (RBAC) authentication using CQRS 
 - ✅ **User Registration** – Allow users to sign up (email/password, social login, etc.).
 - ✅ **User Login** – Authenticate users with secure methods (JWT, OAuth, session-based).
 - ✅ **Token Management** – Use access & refresh tokens (JWT-based or session).
-- ✅ **Multi-Factor Authentication (MFA)** – Optional for added security.
-- ✅ **Password Reset & Recovery** – Enable users to recover their accounts.
-- ✅ **Session Management** – Handle multiple active sessions & logout.
+- X **Multi-Factor Authentication (MFA)** – Optional for added security.
+- X **Password Reset & Recovery** – Enable users to recover their accounts.
+- X **Session Management** – Handle multiple active sessions & logout.
 
 ### Role-Based Access Control (RBAC) Features
 - ✅ **Role Management** – Create, update, and delete roles (e.g., Admin, User, Editor).
@@ -20,10 +20,10 @@ This module provides Role-Based Access Control (RBAC) authentication using CQRS 
 
 ### Security & Compliance
 - ✅ **Secure Password Hashing** – Use bcrypt, Argon2, or PBKDF2.
-- ✅ **Rate Limiting & Brute Force Protection** – Prevent login abuse.
-- ✅ **Audit Logging** – Track authentication & authorization actions.
-- ✅ **RBAC Configuration Storage** – Store roles/permissions in DB, cache, or config.
-- ✅ **Granular Access Policies** – Allow resource-level access control.
+- X **Rate Limiting & Brute Force Protection** – Prevent login abuse.
+- X **Audit Logging** – Track authentication & authorization actions.
+- X **RBAC Configuration Storage** – Store roles/permissions in DB, cache, or config.
+- X **Granular Access Policies** – Allow resource-level access control.
 
 ## Installation
 
