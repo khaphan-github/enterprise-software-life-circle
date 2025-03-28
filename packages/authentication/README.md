@@ -1,5 +1,5 @@
 # CQRS Authentication RBAC Module for NestJS
-
+# Hi! We are developing at full speed! Come back when we reach version ≥ 3.0.0.
 This module provides Role-Based Access Control (RBAC) authentication using CQRS in a NestJS application. It integrates with PostgreSQL and uses JWT for authentication.
 ## Features
 
