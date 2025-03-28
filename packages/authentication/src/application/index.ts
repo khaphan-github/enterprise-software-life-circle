@@ -23,6 +23,7 @@ import { GetActionsByCursorHandler } from './action/query/get-actions-by-cursor.
 import { CanExecRouteQueryHandler } from './role/query/can-exec-route.query.handler';
 import { GetUserRolesQueryHandler } from './role/query/get-user-roles.query.handler';
 import { GetRolesByRouteQueryHandler } from './role/query/get-roles-by-route.query.handler';
+import { IsPublicRoutesHandler } from './endpoint/query/is-public-routes.handler';
 
 export const Handlers = [
   // User
@@ -51,6 +52,7 @@ export const Handlers = [
 
   GetEndpointsWithCursorQueryHandler,
   GetEndpointQueryHandler,
+  IsPublicRoutesHandler,
 
   // Action
   CreateActionsHandler,

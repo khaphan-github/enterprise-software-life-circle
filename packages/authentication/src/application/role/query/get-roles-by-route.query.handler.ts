@@ -9,6 +9,6 @@ export class GetRolesByRouteQueryHandler
   constructor(private readonly repository: RoleRepository) {}
 
   async execute(query: GetRolesByRouteQuery) {
-    return this.repository.getRolesByRoute(query.route);
+    return this.repository.getRolesByRoute(query.route, query.method);
   }
 }

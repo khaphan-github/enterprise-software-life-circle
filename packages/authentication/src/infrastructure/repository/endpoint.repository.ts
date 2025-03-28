@@ -160,4 +160,16 @@ export class EndpointRepository {
     const formattedQuery = format(query, values);
     await this.pg.execute(formattedQuery);
   }
+
+  async isRouteAndMethodExist(path: string, method: string): Promise<boolean> {
+    const query = `
+      SELECT EXISTS (
+        SELECT 1 FROM auth_endpoints
+        WHERE path = $1 AND method = $2
+      ) AS exists;
+    `;
+    const values = [path, method];
+    const res = await this.pg.execute(query, values);
+    return res.rows[0]?.exists || false;
+  }
 }

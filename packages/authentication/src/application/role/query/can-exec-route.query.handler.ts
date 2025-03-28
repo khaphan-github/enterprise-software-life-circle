@@ -16,7 +16,7 @@ export class CanExecRouteQueryHandler
   async execute(query: CanExecRouteQuery): Promise<boolean> {
     // Fetch roles associated with the route
     const roles = await this.queryBus.execute(
-      new GetRolesByRouteQuery(query.route),
+      new GetRolesByRouteQuery(query.route, query.method),
     );
     // Filter roles that match
     const matchingRoles = query.userRoles.filter((userRole) =>

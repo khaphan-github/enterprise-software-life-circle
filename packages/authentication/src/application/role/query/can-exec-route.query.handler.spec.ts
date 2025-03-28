@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { CanExecRouteQueryHandler } from './can-exec-route.query.handler';
@@ -38,12 +37,17 @@ describe('CanExecRouteQueryHandler', () => {
       return Promise.resolve([]);
     });
 
-    const query = new CanExecRouteQuery('user1', '/test-route', userRoles);
+    const query = new CanExecRouteQuery(
+      'user1',
+      '/test-route',
+      'GET',
+      userRoles,
+    );
     const result = await handler.execute(query);
 
     expect(result).toBe(true);
     expect(queryBus.execute).toHaveBeenCalledWith(
-      new GetRolesByRouteQuery('/test-route'),
+      new GetRolesByRouteQuery('/test-route', 'GET'),
     );
   });
 
@@ -58,12 +62,40 @@ describe('CanExecRouteQueryHandler', () => {
       return Promise.resolve([]);
     });
 
-    const query = new CanExecRouteQuery('user1', '/test-route', userRoles);
+    const query = new CanExecRouteQuery(
+      'user1',
+      '/test-route',
+      'GET',
+      userRoles,
+    );
     const result = await handler.execute(query);
 
     expect(result).toBe(false);
     expect(queryBus.execute).toHaveBeenCalledWith(
-      new GetRolesByRouteQuery('/test-route'),
+      new GetRolesByRouteQuery('/test-route', 'GET'),
+    );
+  });
+
+  it('should return false if no roles are returned for the route', async () => {
+    jest.spyOn(queryBus, 'execute').mockImplementation((query) => {
+      if (query instanceof GetRolesByRouteQuery) {
+        return Promise.resolve([]);
+      }
+      return Promise.resolve([]);
+    });
+
+    const userRoles = ['role1', 'role2'];
+    const query = new CanExecRouteQuery(
+      'user1',
+      '/test-route',
+      'GET',
+      userRoles,
+    );
+    const result = await handler.execute(query);
+
+    expect(result).toBe(false);
+    expect(queryBus.execute).toHaveBeenCalledWith(
+      new GetRolesByRouteQuery('/test-route', 'GET'),
     );
   });
 });

@@ -33,10 +33,13 @@ describe('GetRolesByRouteQueryHandler', () => {
     const roles: any = [{ id: 'role1' }, { id: 'role2' }];
     jest.spyOn(repository, 'getRolesByRoute').mockResolvedValue(roles);
 
-    const query = new GetRolesByRouteQuery('/test-route');
+    const query = new GetRolesByRouteQuery('/test-route', 'GET');
     const result = await handler.execute(query);
 
     expect(result).toEqual(roles);
-    expect(repository.getRolesByRoute).toHaveBeenCalledWith('/test-route');
+    expect(repository.getRolesByRoute).toHaveBeenCalledWith(
+      '/test-route',
+      'GET',
+    );
   });
 });

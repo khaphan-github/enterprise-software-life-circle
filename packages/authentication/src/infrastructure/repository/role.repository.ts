@@ -128,15 +128,15 @@ export class RoleRepository {
     return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
   }
 
-  async getRolesByRoute(route: string) {
+  async getRolesByRoute(route: string, method: string) {
     const query = `
       SELECT * FROM auth_roles
       WHERE id IN (
         SELECT role_id FROM auth_route_roles
-        WHERE route = $1
+        WHERE route = $1 and method = $2
       )
     `;
-    const values = [route];
+    const values = [route, method];
     const res = await this.pg.execute(query, values);
     return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
   }
