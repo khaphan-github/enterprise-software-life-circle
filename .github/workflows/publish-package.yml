@@ -3,7 +3,7 @@ name: Build and Publish Package
 on:
   push:
     branches:
-      - pack-cqrs-authentication-rba
+      - pack-cqrs-authentication-rbac
 
 jobs:
   build-and-publish:
