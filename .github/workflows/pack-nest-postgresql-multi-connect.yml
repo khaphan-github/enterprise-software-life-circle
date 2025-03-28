@@ -1,0 +1,43 @@
+name: Build and Publish Package
+
+on:
+  push:
+    branches:
+      - pack-nest-postgresql-multi-connect
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    environment: NPM_PACK
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org/'
+          always-auth: true  # Ensure authentication
+
+      - name: Authenticate with npm
+        run: npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          cd packages/nest-postgresql-multi-connect
+          npm install
+
+      - name: Build package
+        run: |
+          cd packages/nest-postgresql-multi-connect
+          npm run build
+
+      # Publish the package to npm
+      - name: Publish to npm
+        run: |
+          cd packages/nest-postgresql-multi-connect
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
