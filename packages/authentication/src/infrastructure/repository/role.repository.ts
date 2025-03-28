@@ -127,4 +127,30 @@ export class RoleRepository {
     const res = await this.pg.execute(query, values);
     return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
   }
+
+  async getRolesByRoute(route: string) {
+    const query = `
+      SELECT * FROM auth_roles
+      WHERE id IN (
+        SELECT role_id FROM auth_route_roles
+        WHERE route = $1
+      )
+    `;
+    const values = [route];
+    const res = await this.pg.execute(query, values);
+    return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
+  }
+
+  async getUserRoles(userId: string) {
+    const query = `
+      SELECT * FROM auth_roles
+      WHERE id IN (
+        SELECT role_id FROM auth_user_roles
+        WHERE user_id = $1
+      )
+    `;
+    const values = [userId];
+    const res = await this.pg.execute(query, values);
+    return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
+  }
 }
