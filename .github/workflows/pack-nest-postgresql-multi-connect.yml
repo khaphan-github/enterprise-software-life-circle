@@ -29,6 +29,16 @@ jobs:
           cd packages/nest-postgresql-multi-connect
           npm install
 
+      - name: Unit test
+        run: |
+          cd packages/nest-postgresql-multi-connect
+          npm run test
+
+      - name: E2e test
+        run: |
+          cd packages/nest-postgresql-multi-connect
+          npm run test
+
       - name: Build package
         run: |
           cd packages/nest-postgresql-multi-connect
