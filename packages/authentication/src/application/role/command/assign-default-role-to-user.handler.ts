@@ -30,8 +30,8 @@ export class AssignDefaultRoleToUserHandler
       .flatMap((role) =>
         command.userDomain.map((user) => {
           const entity = new UserRoleEntity();
-          entity.roleId = role.id;
-          entity.userId = user.id;
+          entity.roleId = role.getId();
+          entity.userId = user.getId();
           entity.createdAt = new Date();
           entity.updatedAt = new Date();
           entity.status = UserRoleStatus.ACTIVE;

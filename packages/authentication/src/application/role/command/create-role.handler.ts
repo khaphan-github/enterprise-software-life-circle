@@ -21,8 +21,7 @@ export class CreateRoleCommandHandler
     entity.name = command.name;
     entity.description = command.description;
     entity.status = command.status;
-    entity.createdAt = new Date();
-    entity.updatedAt = new Date();
+    entity.setCreateTime();
 
     await this.repository.createRole(entity);
 

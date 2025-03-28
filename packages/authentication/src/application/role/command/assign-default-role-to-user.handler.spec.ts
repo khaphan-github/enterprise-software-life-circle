@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
@@ -49,6 +50,7 @@ describe('AssignDefaultRoleToUserHandler', () => {
         email: 'user1@example.com',
         passwordHash: 'hash1',
         status: UserStatus.ACTIVE,
+        getId: jest.fn().mockReturnValue('user1'),
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -57,11 +59,12 @@ describe('AssignDefaultRoleToUserHandler', () => {
         username: 'user2',
         email: 'user2@example.com',
         passwordHash: 'hash2',
+        getId: jest.fn().mockReturnValue('user2'),
         status: UserStatus.ACTIVE,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-    ]);
+    ] as any);
     const defaultRole = [
       {
         id: 'role1',
@@ -71,9 +74,15 @@ describe('AssignDefaultRoleToUserHandler', () => {
         metadata: {},
         createdAt: new Date(),
         updatedAt: new Date(),
+        initId: jest.fn(),
+        getId: jest.fn().mockReturnValue('role1'),
+        setCreateTime: jest.fn(),
+        setUpdateTime: jest.fn(),
       },
     ];
-    jest.spyOn(repository, 'getRoleByType').mockResolvedValue(defaultRole);
+    jest
+      .spyOn(repository, 'getRoleByType')
+      .mockResolvedValue(defaultRole as any);
 
     const result = await handler.execute(command);
 
@@ -105,7 +114,7 @@ describe('AssignDefaultRoleToUserHandler', () => {
         status: UserStatus.ACTIVE,
         createdAt: new Date(),
         updatedAt: new Date(),
-      },
+      } as any,
     ]);
     jest.spyOn(repository, 'getRoleByType').mockResolvedValue([]);
 

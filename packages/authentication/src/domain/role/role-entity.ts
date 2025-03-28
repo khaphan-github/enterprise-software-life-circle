@@ -1,12 +1,14 @@
+import { BaseEntity } from '../entity/base-entity';
+
 export enum RoleType {
   DEFAULT = 'DEFAULT',
 }
-export class RoleEntity {
-  id: string;
+export class RoleEntity extends BaseEntity {
   name: string;
   description: string;
   status: string;
   metadata: object;
-  createdAt: Date;
-  updatedAt: Date;
+  constructor() {
+    super();
+  }
 }

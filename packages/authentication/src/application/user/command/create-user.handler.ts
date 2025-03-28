@@ -6,7 +6,6 @@ import { UserAlreadyExistError } from '../../../domain/user/errors/user-already-
 import { PASSWORD_HASH_OPTIONS } from '../../../domain/user/const';
 import { UserStatus } from '../../../domain/user/user-status';
 import { UserEmailAlreadyExistError } from '../../../domain/user/errors/user-email-already-exist.error';
-import { nanoid } from 'nanoid';
 import * as argon2 from 'argon2';
 import { UserEntity } from '../../../domain/user/user-entity';
 
@@ -28,7 +27,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     }
 
     const entity = new UserEntity();
-    entity.id = nanoid(32);
+    entity.initId();
     entity.metadata = command.metadata;
     entity.username = command.username;
     entity.email = command.email;
@@ -37,9 +36,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       PASSWORD_HASH_OPTIONS,
     );
     entity.status = UserStatus.ACTIVE;
-    entity.createdAt = new Date();
-    entity.updatedAt = new Date();
-
+    entity.setCreateTime();
     await this.repository.createUser(entity);
     this.eventBus.publish(new UserCreatedEvent(entity));
     return Promise.resolve(entity);
