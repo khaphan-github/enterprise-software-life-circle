@@ -43,6 +43,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   notify-on-failure:
+    environment: NPM_PACK
     needs: build-and-publish
     if: failure() 
     runs-on: ubuntu-latest
