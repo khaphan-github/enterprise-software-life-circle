@@ -1,0 +1,38 @@
+name: Build and Publish Package
+
+on:
+  push:
+    branches:
+      - pack-cqrs-authentication-rba
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: |
+          cd package/cqrs-authentication-rbac
+          npm install
+
+      - name: Build package
+        run: |
+          cd package/cqrs-authentication-rbac
+          npm run build
+
+      # Publish the package to npm
+      - name: Publish to npm
+        run: |
+          cd package/cqrs-authentication-rbac
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
