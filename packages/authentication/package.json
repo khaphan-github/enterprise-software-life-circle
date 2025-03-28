@@ -1,15 +1,12 @@
 {
   "name": "cqrs-authentication-rbac",
-  "version": "1.5.16",
+  "version": "1.5.17",
   "description": "authentication service base on cqrs and rbac authorization",
   "author": "khaphannpm",
   "private": false,
   "license": "UNLICENSED",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "build": "nest build",
     "migrate": "nest start --entryFile \"pg-migrate.repl\"",
