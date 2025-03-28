@@ -41,3 +41,21 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  notify-on-failure:
+    needs: build-and-publish
+    if: failure() 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send failure notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "🚨 GitHub Actions Workflow Failed!"
+          body: "The workflow for `pack-cqrs-authentication-rbac` branch has failed. Check the logs for more details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          to: "phanhoangkha02@gmail.com"
+          from: "GitHub Actions"
