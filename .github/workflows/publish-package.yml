@@ -21,18 +21,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd package/cqrs-authentication-rbac
+          cd packages/authentication
           npm install
 
       - name: Build package
         run: |
-          cd package/cqrs-authentication-rbac
+          cd packages/authentication
           npm run build
 
       # Publish the package to npm
       - name: Publish to npm
         run: |
-          cd package/cqrs-authentication-rbac
+          cd packages/authentication
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
