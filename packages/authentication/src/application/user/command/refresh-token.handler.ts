@@ -3,16 +3,18 @@ import { UserEntity } from '../../../domain/user/user-entity';
 import { RefreshTokenCommand } from '../../../domain/user/command/refresh-token.command';
 import { UserRepository } from '../../../infrastructure/repository/user.repository';
 import { JwtService } from '@nestjs/jwt';
-import { REFRESH_TOKEN_SECRET_KEY } from '../../../domain/user/const';
 import { InvalidRefreshTOkenError } from '../../../domain/user/errors/invalid-refresh-token.error';
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
+import { AuthConf } from '../../../configurations/auth-config';
 
 @CommandHandler(RefreshTokenCommand)
 export class RefreshTokenHandler
   implements ICommandHandler<RefreshTokenCommand>
 {
+  @Inject() authenticationConfig: AuthConf;
+
   constructor(
     private readonly repository: UserRepository,
     private readonly jwtService: JwtService,
@@ -27,7 +29,8 @@ export class RefreshTokenHandler
     let userId: string = '';
     try {
       const { uid } = await this.jwtService.verifyAsync(refreshToken, {
-        secret: REFRESH_TOKEN_SECRET_KEY,
+        secret:
+          this.authenticationConfig.getRbacConf().authRefreshTokenSecretKey,
       });
       userId = uid;
     } catch (error) {

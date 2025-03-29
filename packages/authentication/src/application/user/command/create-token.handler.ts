@@ -1,17 +1,14 @@
+import { Inject } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
-import {
-  ACCESS_TOKEN_EXPIRES_IN,
-  ACCESS_TOKEN_SECRET_KEY,
-  REFRESH_TOKEN_EXPIRES_IN,
-  REFRESH_TOKEN_SECRET_KEY,
-} from '../../../domain/user/const';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { RoleRepository } from '../../../infrastructure/repository/role.repository';
 import { TokenCreatedEvent } from '../../../domain/user/events/token-created.event';
+import { AuthConf } from '../../../configurations/auth-config';
 
 @CommandHandler(CreateTokenCommand)
 export class CreateTokenHandler implements ICommandHandler<CreateTokenCommand> {
+  @Inject() authenticationConfig: AuthConf;
   constructor(
     private readonly eventBus: EventBus,
     private readonly roleRepository: RoleRepository,
@@ -26,6 +23,12 @@ export class CreateTokenHandler implements ICommandHandler<CreateTokenCommand> {
 
     // Build jwt token here
     const metadata = {};
+    const {
+      authAccessTokenExpiresIn,
+      authRefreshTokenExpiresIn,
+      authAccessTokenSecretKey,
+      authRefreshTokenSecretKey,
+    } = this.authenticationConfig.getRbacConf();
     const accessToken = this.jwtService.sign(
       {
         uid: command.userId,
@@ -33,16 +36,16 @@ export class CreateTokenHandler implements ICommandHandler<CreateTokenCommand> {
       },
       {
         ...metadata,
-        secret: ACCESS_TOKEN_SECRET_KEY,
-        expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+        secret: authAccessTokenSecretKey,
+        expiresIn: authAccessTokenExpiresIn,
       },
     );
     const refreshToken = this.jwtService.sign(
       { uid: command.userId },
       {
         ...metadata,
-        secret: REFRESH_TOKEN_SECRET_KEY,
-        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+        secret: authRefreshTokenSecretKey,
+        expiresIn: authRefreshTokenExpiresIn,
       },
     );
 

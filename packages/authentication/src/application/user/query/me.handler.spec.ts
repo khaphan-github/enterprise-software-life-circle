@@ -6,6 +6,7 @@ import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { MeQuery } from '../../../domain/user/query/me.query';
 import { InvalidAccessTokenError } from '../../../domain/user/errors/invalid-access-token.error';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
+import { AuthConf } from '../../../configurations/auth-config';
 
 describe('MeHandler', () => {
   let handler: MeHandler;
@@ -38,6 +39,14 @@ describe('MeHandler', () => {
           provide: EventBus,
           useValue: {
             publish: jest.fn(),
+          },
+        },
+        {
+          provide: AuthConf,
+          useValue: {
+            getRbacConf: jest.fn().mockReturnValue({
+              authAccessTokenSecretKey: 'secretKey',
+            }),
           },
         },
       ],

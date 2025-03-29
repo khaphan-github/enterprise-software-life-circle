@@ -14,9 +14,12 @@ import { ACCESS_TOKEN_SECRET_KEY } from '../../domain/user/const';
 import { QueryBus } from '@nestjs/cqrs';
 import { IsPublicRoutesQuery } from '../../domain/endpoint/query/is-public-route.query';
 import { CanExecRouteQuery } from '../../domain/role/query/can-exec-route.query';
+import { AuthConf } from '../../configurations/auth-config';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
+  @Inject() authenticationConfig: AuthConf;
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly queryBus: QueryBus,
@@ -49,7 +52,8 @@ export class AccessTokenGuard implements CanActivate {
     try {
       // Verify JWT token manually
       decoded = this.jwtService.verify(token, {
-        secret: ACCESS_TOKEN_SECRET_KEY,
+        secret:
+          this.authenticationConfig.getRbacConf().authAccessTokenSecretKey,
       });
       request['user'] = decoded;
     } catch (e) {

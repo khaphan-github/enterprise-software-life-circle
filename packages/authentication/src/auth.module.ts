@@ -9,19 +9,22 @@ import { PgMigration } from 'postgrest-migration';
 import { CONNECTION_STRING_DEFAULT } from './configurations/connection-string-default';
 import { PoolConfig } from 'pg';
 import { AuthController } from './infrastructure/interface/auth.controller';
+import { AuthConf } from './configurations/auth-config';
+
+export interface IRBACConf {
+  authSecretKey: string;
+  authSalt: string;
+  authJwtSecret: string;
+  authAccessTokenSecretKey: string;
+  authRefreshTokenSecretKey: string;
+  authAccessTokenExpiresIn: string;
+  authRefreshTokenExpiresIn: string;
+}
 
 export interface AuthRBACConfig {
   dbConf: PoolConfig;
   jwtOptions: JwtModuleOptions;
-  rbacConf: {
-    authSecretKey: string;
-    authSalt: string;
-    authJwtSecret: string;
-    authAccessTokenSecretKey: string;
-    authRefreshTokenSecretKey: string;
-    authAccessTokenExpiresIn: string;
-    authRefreshTokenExpiresIn: string;
-  };
+  rbacConf: IRBACConf;
   migrations?: {
     enable?: boolean;
     migrationTableName?: string;
@@ -54,8 +57,8 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
         PostgresModule.forFeature(CONNECTION_STRING_DEFAULT),
         JwtModule.register(conf.jwtOptions),
       ],
-      providers: [...Handlers, ...Repositories],
-      exports: [...Handlers, ...Repositories],
+      providers: [...Handlers, ...Repositories, AuthConf],
+      exports: [...Handlers, ...Repositories, AuthConf],
       controllers: conf.constroller?.enable ? [AuthController] : [],
     };
   }

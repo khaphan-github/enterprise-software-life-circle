@@ -6,12 +6,7 @@ import { CreateTokenHandler } from './create-token.handler';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { RoleRepository } from '../../../infrastructure/repository/role.repository';
 import { TokenCreatedEvent } from '../../../domain/user/events/token-created.event';
-import {
-  ACCESS_TOKEN_EXPIRES_IN,
-  ACCESS_TOKEN_SECRET_KEY,
-  REFRESH_TOKEN_EXPIRES_IN,
-  REFRESH_TOKEN_SECRET_KEY,
-} from '../../../domain/user/const';
+import { AuthConf } from '../../../configurations/auth-config';
 
 describe('CreateTokenHandler', () => {
   let handler: CreateTokenHandler;
@@ -41,6 +36,17 @@ describe('CreateTokenHandler', () => {
             publish: jest.fn(),
           },
         },
+        {
+          provide: AuthConf,
+          useValue: {
+            getRbacConf: jest.fn().mockReturnValue({
+              authAccessTokenExpiresIn: '1d',
+              authRefreshTokenExpiresIn: '7d',
+              authAccessTokenSecretKey: 'ACCESS_TOKEN_SECRET_KEY',
+              authRefreshTokenSecretKey: 'REFRESH_TOKEN_SECRET_KEY',
+            }),
+          },
+        },
       ],
     }).compile();
 
@@ -67,15 +73,15 @@ describe('CreateTokenHandler', () => {
     expect(jwtService.sign).toHaveBeenCalledWith(
       { uid: 'user-id-123', roles: ['role-1', 'role-2'] },
       {
-        secret: ACCESS_TOKEN_SECRET_KEY,
-        expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+        secret: 'ACCESS_TOKEN_SECRET_KEY',
+        expiresIn: '1d',
       },
     );
     expect(jwtService.sign).toHaveBeenCalledWith(
       { uid: 'user-id-123' },
       {
-        secret: REFRESH_TOKEN_SECRET_KEY,
-        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+        secret: 'REFRESH_TOKEN_SECRET_KEY',
+        expiresIn: '7d',
       },
     );
     expect(eventBus.publish).toHaveBeenCalledWith(

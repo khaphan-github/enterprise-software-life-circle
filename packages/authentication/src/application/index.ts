@@ -1,5 +1,3 @@
-import { SendLogedInEmailHanlder } from './email/send-logedin-email.handler';
-import { SendWellcomeEmailHandler } from './email/send-wellcome-email.handler';
 import { CreateEndpointCommandHandler } from './endpoint/command/create-endpoints.handler';
 import { DeleteEndpointsCommandHandler } from './endpoint/command/delete-endpoints.handler';
 import { GetEndpointQueryHandler } from './endpoint/query/get-endpoint.handler';
@@ -28,8 +26,6 @@ import { IsPublicRoutesHandler } from './endpoint/query/is-public-routes.handler
 export const Handlers = [
   // User
   CreateUserHandler,
-  SendWellcomeEmailHandler,
-  SendLogedInEmailHanlder,
   LoginHandler,
   MeHandler,
 
