@@ -10,7 +10,6 @@ import {
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { extractTokenFromHeader } from '../../shared/utils/token.util';
-import { ACCESS_TOKEN_SECRET_KEY } from '../../domain/user/const';
 import { QueryBus } from '@nestjs/cqrs';
 import { IsPublicRoutesQuery } from '../../domain/endpoint/query/is-public-route.query';
 import { CanExecRouteQuery } from '../../domain/role/query/can-exec-route.query';

@@ -14,11 +14,14 @@ import { UserInactivatedError } from '../../../domain/user/errors/user-inactivat
 import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event';
 import { UserLoginFailEvent } from '../../../domain/user/events/user-login-fail.event';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
-import { PASSWORD_HASH_OPTIONS } from '../../../domain/user/const';
+import { AuthConf } from '../../../configurations/auth-config';
 import * as argon2 from 'argon2';
+import { Inject } from '@nestjs/common';
 
 @QueryHandler(LoginQuery)
 export class LoginHandler implements IQueryHandler<LoginQuery> {
+  @Inject() authenticationConfig: AuthConf;
+
   constructor(
     private readonly repository: UserRepository,
     private readonly commandBus: CommandBus,
@@ -40,7 +43,7 @@ export class LoginHandler implements IQueryHandler<LoginQuery> {
     const isMatchPassword = await argon2.verify(
       user.passwordHash,
       query.password,
-      PASSWORD_HASH_OPTIONS,
+      this.authenticationConfig.getHashPasswordConf(),
     );
 
     if (!isMatchPassword) {
