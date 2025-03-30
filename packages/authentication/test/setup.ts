@@ -6,6 +6,7 @@ import { App } from 'supertest/types';
 let appSetup: INestApplication<App>;
 
 export default async function globalSetup() {
+  process.env.NODE_ENV = 'test';
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [
       CQRSAuthenticationRBAC.register({
@@ -34,6 +35,7 @@ export default async function globalSetup() {
             process.env.AUTH_ACCESS_TOKEN_EXPIRES_IN || '3600s',
           authRefreshTokenExpiresIn:
             process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
+          authTokenType: process.env.AUTH_TOKEN_TYPE ?? 'Bearer',
         },
         migrations: {
           enable: true,

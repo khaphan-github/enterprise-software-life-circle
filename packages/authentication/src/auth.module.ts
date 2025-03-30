@@ -26,6 +26,7 @@ export interface IRBACConf {
   authRefreshTokenSecretKey: string;
   authAccessTokenExpiresIn: string;
   authRefreshTokenExpiresIn: string;
+  authTokenType: string;
 }
 
 export interface AuthRBACConfig {

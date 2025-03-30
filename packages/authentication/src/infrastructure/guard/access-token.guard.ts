@@ -15,6 +15,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { IsPublicRoutesQuery } from '../../domain/endpoint/query/is-public-route.query';
 import { CanExecRouteQuery } from '../../domain/role/query/can-exec-route.query';
 import { AuthConf } from '../../configurations/auth-config';
+import { isTestMode } from '../../shared/utils/dev-mode.utils';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -27,6 +28,10 @@ export class AccessTokenGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (isTestMode()) {
+      this.logger.debug('Test mode, skipping access token validation');
+      return true;
+    }
     const request: Request = context.switchToHttp().getRequest();
     const currentPath = request.path;
     const currentMethod = request.method;
@@ -39,7 +44,10 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     // Check if the request has an authorization header
-    const token = extractTokenFromHeader(request.headers.authorization);
+    const token = extractTokenFromHeader(
+      request.headers.authorization,
+      this.authenticationConfig.getRbacConf().authTokenType,
+    );
     if (!token) {
       throw new UnauthorizedException('Access token is missing');
     }

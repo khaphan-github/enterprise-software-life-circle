@@ -19,6 +19,7 @@ describe('AccessTokenGuard', () => {
     authConfig = {
       getRbacConf: jest.fn().mockReturnValue({
         authAccessTokenSecretKey: 'test-secret',
+        authTokenType: 'Bearer',
       }),
     } as unknown as AuthConf;
 
@@ -72,7 +73,7 @@ describe('AccessTokenGuard', () => {
           path: '/protected-route',
           method: 'GET',
           headers: {
-            authorization: 'JWT invalid-token',
+            authorization: 'Bearer invalid-token',
           },
         }),
       }),
@@ -100,7 +101,7 @@ describe('AccessTokenGuard', () => {
           path: '/protected-route',
           method: 'GET',
           headers: {
-            authorization: 'JWT valid-token',
+            authorization: 'Bearer valid-token',
           },
         }),
       }),
@@ -128,7 +129,7 @@ describe('AccessTokenGuard', () => {
           path: '/protected-route',
           method: 'GET',
           headers: {
-            authorization: 'JWT valid-token',
+            authorization: 'Bearer valid-token',
           },
           user: {},
         }),

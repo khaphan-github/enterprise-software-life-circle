@@ -44,7 +44,7 @@ describe('AppController (e2e)', () => {
   it('should access a protected route with token', async () => {
     const response = await request(app.getHttpServer())
       .get('/auth/me') // Assuming a "Get My Profile" endpoint exists
-      .set('Authorization', `JWT ${userToken}`)
+      .set('Authorization', `Bearer ${userToken}`)
       .expect(200);
 
     expect(response.body).toHaveProperty('username', userPayload.username);

@@ -18,7 +18,7 @@ import { UpdateEndpointsCommand } from '../../domain/endpoint/command/update-end
 import { DeleteEndpointsCommand } from '../../domain/endpoint/command/delete-endpoints.command';
 import { CreateEndpointsCommand } from '../../domain/endpoint/command/create-endpoints.command';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AccessTokenGuard } from 'src/infrastructure/guard/access-token.guard';
+import { AccessTokenGuard } from '../../infrastructure/guard/access-token.guard';
 
 @Controller('endpoints')
 @UseGuards(AccessTokenGuard)

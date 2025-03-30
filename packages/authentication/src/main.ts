@@ -31,6 +31,7 @@ async function bootstrap() {
           process.env.AUTH_ACCESS_TOKEN_EXPIRES_IN || '3600s',
         authRefreshTokenExpiresIn:
           process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
+        authTokenType: process.env.AUTH_TOKEN_TYPE ?? 'Bearer',
       },
       constroller: { enable: true },
       migrations: {

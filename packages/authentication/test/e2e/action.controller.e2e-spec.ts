@@ -43,7 +43,7 @@ describe('ActionController (e2e)', () => {
     const updateDto = [
       {
         id: createdId,
-        name: 'Updated Action v1',
+        name: 'Updated Action + ' + Date.now(),
         description: 'Updated Description',
         status: 'active',
         metadata: {},
