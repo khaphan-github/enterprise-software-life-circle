@@ -9,6 +9,5 @@ export class BaseError extends HttpException {
       },
       422,
     );
-    console.log(mgs);
   }
 }

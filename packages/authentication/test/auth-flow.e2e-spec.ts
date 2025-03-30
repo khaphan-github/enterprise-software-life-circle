@@ -5,7 +5,7 @@ import { CreateTestModule } from './setting/create_module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await CreateTestModule();
   });
 
