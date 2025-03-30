@@ -6,8 +6,6 @@ import {
   Body,
   Inject,
   HttpCode,
-  Get,
-  Query,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateEndpointDTO } from '../../domain/endpoint/dto/create-endpoint.dto';
@@ -16,7 +14,6 @@ import { DeleteEndpointDTO } from '../../domain/endpoint/dto/delete-endpoint.dto
 import { UpdateEndpointsCommand } from '../../domain/endpoint/command/update-endpoints.command';
 import { DeleteEndpointsCommand } from '../../domain/endpoint/command/delete-endpoints.command';
 import { CreateEndpointsCommand } from '../../domain/endpoint/command/create-endpoints.command';
-import { GetEndpointsQuery } from '../../domain/endpoint/query/get-endpoints.query';
 
 @Controller('endpoints')
 export class EndpointController {
@@ -39,11 +36,5 @@ export class EndpointController {
   @HttpCode(204)
   async delete(@Body() dto: DeleteEndpointDTO) {
     await this.commandBus.execute(new DeleteEndpointsCommand(dto.ids));
-  }
-
-  @Get()
-  @HttpCode(200)
-  async get(@Query('filter') filter?: string) {
-    return this.queryBus.execute(new GetEndpointsQuery(filter));
   }
 }

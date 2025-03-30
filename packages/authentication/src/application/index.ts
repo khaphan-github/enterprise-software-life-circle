@@ -22,6 +22,7 @@ import { CanExecRouteQueryHandler } from './role/query/can-exec-route.query.hand
 import { GetUserRolesQueryHandler } from './role/query/get-user-roles.query.handler';
 import { GetRolesByRouteQueryHandler } from './role/query/get-roles-by-route.query.handler';
 import { IsPublicRoutesHandler } from './endpoint/query/is-public-routes.handler';
+import { UpdateEndpointsCommandHandler } from './endpoint/command/update-endpoints.handler';
 
 export const Handlers = [
   // User
@@ -45,6 +46,7 @@ export const Handlers = [
   CreateEndpointCommandHandler,
   DeleteEndpointsCommandHandler,
   AddEndpointsToRolesCommandHandler,
+  UpdateEndpointsCommandHandler,
 
   GetEndpointsWithCursorQueryHandler,
   GetEndpointQueryHandler,

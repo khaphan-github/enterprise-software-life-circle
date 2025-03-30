@@ -1,9 +1,12 @@
+import { ICommand } from '@nestjs/cqrs';
+import { EndpointStatus } from '../endpoint-entity';
+
 export interface ICreateEndpointCommand {
   path: string;
   method: string;
   metadata?: Record<string, any>;
-  status: string;
+  status: EndpointStatus;
 }
-export class CreateEndpointsCommand {
+export class CreateEndpointsCommand implements ICommand {
   constructor(public readonly endpoints: ICreateEndpointCommand[]) {}
 }

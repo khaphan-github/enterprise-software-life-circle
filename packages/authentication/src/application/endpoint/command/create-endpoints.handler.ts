@@ -1,19 +1,19 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
 import { EndpointEntityCreatedEvent } from '../../../domain/endpoint/event/endpoint-created.event';
-import { CreateEndpointCommand } from '../../../domain/endpoint/command/create-endpoint.command';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
+import { CreateEndpointsCommand } from '../../../domain/endpoint/command/create-endpoints.command';
 
-@CommandHandler(CreateEndpointCommand)
+@CommandHandler(CreateEndpointsCommand)
 export class CreateEndpointCommandHandler
-  implements ICommandHandler<CreateEndpointCommand>
+  implements ICommandHandler<CreateEndpointsCommand>
 {
   constructor(
     private readonly eventBus: EventBus,
     private readonly repository: EndpointRepository,
   ) {}
 
-  async execute(commands: CreateEndpointCommand): Promise<EndpointEntity[]> {
+  async execute(commands: CreateEndpointsCommand): Promise<EndpointEntity[]> {
     const createdEntities: EndpointEntity[] = [];
 
     for (const command of commands.endpoints) {
@@ -22,6 +22,7 @@ export class CreateEndpointCommandHandler
       entity.path = command.path;
       entity.method = command.method;
       entity.metadata = command.metadata;
+      entity.status = command.status;
       entity.setCreateTime();
       createdEntities.push(entity);
     }

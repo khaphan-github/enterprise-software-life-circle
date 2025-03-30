@@ -1,9 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { CQRSAuthenticationRBAC } from '../src/auth.module';
 import { App } from 'supertest/types';
-import { CQRSAuthenticationRBAC } from '../../src/auth.module';
 
-export async function CreateTestModule() {
+let appSetup: INestApplication<App>;
+
+export default async function globalSetup() {
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [
       CQRSAuthenticationRBAC.register({
@@ -44,7 +46,9 @@ export async function CreateTestModule() {
     ],
   }).compile();
 
-  const app: INestApplication<App> = moduleFixture.createNestApplication();
-  await app.init();
-  return app;
+  appSetup = moduleFixture.createNestApplication();
+  await appSetup.init();
+
+  // Store the app instance globally
+  globalThis.__APP__ = appSetup;
 }

@@ -21,7 +21,7 @@ export class UpdateEndpointsCommandHandler
       entity.setId(command.id);
       entity.path = command.path;
       entity.method = command.method;
-      entity.metadata = command.metadata;
+      entity.metadata = command.metadata ?? {};
       entity.status = command.status;
       entity.setUpdateTime();
       updatedEntities.push(entity);

@@ -119,8 +119,8 @@ export class EndpointRepository {
       UPDATE auth_endpoints
       SET path = data.path,
           method = data.method,
-          metadata = data.metadata,
-          updated_at = data.updated_at
+          metadata = data.metadata::jsonb,
+          updated_at = data.updated_at::timestamp
       FROM (VALUES %L) AS data(id, path, method, metadata, updated_at)
       WHERE auth_endpoints.id = data.id
       RETURNING auth_endpoints.*;
@@ -140,7 +140,7 @@ export class EndpointRepository {
   async deleteEndpoints(endpointIds: string[]) {
     const query = `
       DELETE FROM auth_endpoints
-      WHERE id = ANY($1::uuid[])
+      WHERE id = ANY($1::text[])
       RETURNING *;
     `;
     const values = [endpointIds];

@@ -1,17 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
 import * as request from 'supertest';
-import { CreateTestModule } from './setting/create_module';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
-  beforeAll(async () => {
-    app = await CreateTestModule();
-  });
+  const app: INestApplication<App> = globalThis.__APP__;
 
-  afterAll(async () => {
-    await app.close();
-  });
   const userPayload = {
     username: `user_${Date.now()}`,
     email: `user_${Date.now()}@example.com`,
