@@ -8,3 +8,6 @@
 ## Version 2.2.1
 - Feature: Access token guard - check user can exec an specifc endpoint
 - Feature: Provide or disable migrations
+
+## Version 2.4.10
+- Featue: Assign role to user.

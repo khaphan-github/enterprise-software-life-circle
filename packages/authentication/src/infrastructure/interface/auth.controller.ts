@@ -16,9 +16,10 @@ import { RefreshTokenCommand } from '../../domain/user/command/refresh-token.com
 import { RefreshTokenDTO } from '../../domain/user/dto/refresh-token.dto';
 import { MeQuery } from '../../domain/user/query/me.query';
 import { extractTokenFromHeader } from '../../shared/utils/token.util';
+import { ICustomController } from '../../domain/controller/icustom-controller';
 
 @Controller('auth')
-export class AuthController {
+export class AuthController implements ICustomController {
   @Inject() private readonly commandBus: CommandBus;
   @Inject() private readonly queryBus: QueryBus;
 
@@ -45,7 +46,7 @@ export class AuthController {
   @Post('refresh-token')
   @HttpCode(201)
   refreshToken(@Body() dto: RefreshTokenDTO) {
-    return this.queryBus.execute(new RefreshTokenCommand(dto.refreshToken));
+    return this.commandBus.execute(new RefreshTokenCommand(dto.refreshToken));
   }
 
   @Get('me')

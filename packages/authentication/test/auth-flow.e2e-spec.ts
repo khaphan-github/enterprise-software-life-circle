@@ -23,6 +23,7 @@ describe('AppController (e2e)', () => {
   };
 
   let userToken = '';
+  let userRefreshToken = '';
   it('should register a new user', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/register')
@@ -44,6 +45,7 @@ describe('AppController (e2e)', () => {
 
     expect(response.body).toHaveProperty('accessToken');
     userToken = response.body.accessToken; // Store token for future authenticated requests
+    userRefreshToken = response.body.refreshToken; // Store refresh token for future requests
   });
 
   it('should access a protected route with token', async () => {
@@ -53,5 +55,16 @@ describe('AppController (e2e)', () => {
       .expect(200);
 
     expect(response.body).toHaveProperty('email', userPayload.email);
+  });
+
+  it('should refresh the access token', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/refresh-token')
+      .send({
+        refreshToken: userRefreshToken, // Assuming you use the same token for simplicity
+      })
+      .expect(201);
+
+    expect(response.body).toHaveProperty('accessToken');
   });
 });

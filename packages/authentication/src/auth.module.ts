@@ -10,6 +10,8 @@ import { CONNECTION_STRING_DEFAULT } from './configurations/connection-string-de
 import { PoolConfig } from 'pg';
 import { AuthController } from './infrastructure/interface/auth.controller';
 import { AuthConf } from './configurations/auth-config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ErrorInterceptor } from './infrastructure/interceptor/error.interceptor';
 
 export interface IRBACConf {
   authSecretKey: string;
@@ -57,7 +59,15 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
         PostgresModule.forFeature(CONNECTION_STRING_DEFAULT),
         JwtModule.register(conf.jwtOptions),
       ],
-      providers: [...Handlers, ...Repositories, AuthConf],
+      providers: [
+        ...Handlers,
+        ...Repositories,
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: ErrorInterceptor,
+        },
+        AuthConf,
+      ],
       exports: [...Handlers, ...Repositories, AuthConf],
       controllers: conf.constroller?.enable ? [AuthController] : [],
     };
