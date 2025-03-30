@@ -2,6 +2,7 @@
 import { NestFactory } from '@nestjs/core';
 import { CQRSAuthenticationRBAC } from './auth.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { UserStatus } from './domain/user/user-status';
 
 async function bootstrap() {
   const app = await NestFactory.create(
@@ -32,6 +33,7 @@ async function bootstrap() {
         authRefreshTokenExpiresIn:
           process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
         authTokenType: process.env.AUTH_TOKEN_TYPE ?? 'Bearer',
+        defaultUserStatus: UserStatus.ACTIVE,
       },
       constroller: { enable: true },
       migrations: {

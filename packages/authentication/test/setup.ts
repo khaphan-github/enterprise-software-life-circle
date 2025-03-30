@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { CQRSAuthenticationRBAC } from '../src/auth.module';
 import { App } from 'supertest/types';
+import { UserStatus } from '../src/domain/user/user-status';
 
 let appSetup: INestApplication<App>;
 
@@ -36,6 +37,7 @@ export default async function globalSetup() {
           authRefreshTokenExpiresIn:
             process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
           authTokenType: process.env.AUTH_TOKEN_TYPE ?? 'Bearer',
+          defaultUserStatus: UserStatus.ACTIVE,
         },
         migrations: {
           enable: true,

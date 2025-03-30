@@ -31,7 +31,13 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       command.password,
       this.authenticationConfig.getHashPasswordConf(),
     );
-    entity.status = UserStatus.ACTIVE;
+    const defaultStatus =
+      this.authenticationConfig.getRbacConf().defaultUserStatus;
+    if (defaultStatus) {
+      entity.status = defaultStatus;
+    } else {
+      entity.status = UserStatus.ACTIVE;
+    }
     entity.setCreateTime();
     await this.repository.createUser(entity);
     this.eventBus.publish(new UserCreatedEvent(entity));

@@ -17,6 +17,7 @@ import { AuthConf } from './configurations/auth-config';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ErrorInterceptor } from './infrastructure/interceptor/error.interceptor';
 import { LoggingInterceptor } from './infrastructure/interceptor/log.interceptor';
+import { UserStatus } from './domain/user/user-status';
 
 export interface IRBACConf {
   authSecretKey: string;
@@ -27,6 +28,7 @@ export interface IRBACConf {
   authAccessTokenExpiresIn: string;
   authRefreshTokenExpiresIn: string;
   authTokenType: string;
+  defaultUserStatus: UserStatus;
 }
 
 export interface AuthRBACConfig {

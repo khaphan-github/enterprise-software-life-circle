@@ -1,6 +1,6 @@
 {
   "name": "cqrs-authentication-rbac",
-  "version": "2.8.5",
+  "version": "3.0.0",
   "description": "authentication service base on cqrs and rbac authorization",
   "author": "khaphannpm",
   "private": false,
