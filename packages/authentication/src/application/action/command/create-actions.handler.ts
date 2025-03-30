@@ -3,6 +3,7 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CreateActionsCommand } from '../../../domain/action/commands/create-actions.command';
 import { ActionCreatedEvent } from '../../../domain/action/events/action-created.event';
 import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionEntity } from '../../../domain/action/action-entity';
 
 @CommandHandler(CreateActionsCommand)
 export class CreateActionsHandler
@@ -14,8 +15,18 @@ export class CreateActionsHandler
   ) {}
 
   async execute(command: CreateActionsCommand) {
-    const createdActions = await this.repository.createActions(command.actions);
-    this.eventBus.publish(new ActionCreatedEvent(createdActions));
-    return createdActions;
+    const actions = command.actions.map((action) => {
+      const newAction = new ActionEntity();
+      newAction.initId();
+      newAction.name = action.name;
+      newAction.description = action.description;
+      newAction.status = action.status;
+      newAction.metadata = action.metadata;
+      newAction.setCreateTime();
+      return newAction;
+    });
+    await this.repository.createActions(actions);
+    this.eventBus.publish(new ActionCreatedEvent(actions));
+    return actions;
   }
 }

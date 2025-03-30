@@ -15,8 +15,18 @@ export class UpdateActionsHandler
   ) {}
 
   async execute(command: UpdateActionsCommand): Promise<ActionEntity[]> {
-    const updatedActions = await this.repository.updateActions(command.actions);
-    this.eventBus.publish(new ActionUpdatedEvent(updatedActions));
-    return updatedActions;
+    const actions = command.actions.map((action) => {
+      const updatedAction = new ActionEntity();
+      updatedAction.setId(action.id);
+      updatedAction.name = action.name;
+      updatedAction.description = action.description;
+      updatedAction.status = action.status;
+      updatedAction.metadata = action.metadata ?? {};
+      updatedAction.setUpdateTime();
+      return updatedAction;
+    });
+    await this.repository.updateActions(actions);
+    this.eventBus.publish(new ActionUpdatedEvent(actions));
+    return actions;
   }
 }

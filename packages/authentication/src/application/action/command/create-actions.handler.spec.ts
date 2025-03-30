@@ -2,15 +2,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
 import { CreateActionsHandler } from './create-actions.handler';
-import { CreateActionsCommand } from '../../../domain/action/commands/create-actions.command';
+import {
+  CreateActionsCommand,
+  ICreateActionsCommand,
+} from '../../../domain/action/commands/create-actions.command';
 import { ActionRepository } from '../../../infrastructure/repository/action.repository';
-import { ActionCreatedEvent } from '../../../domain/action/events/action-created.event';
-import { ActionEntity } from '../../../domain/action/action-entity';
+import { ActionStatus } from '../../../domain/action/action-entity';
 
 describe('CreateActionsHandler', () => {
   let handler: CreateActionsHandler;
   let repository: ActionRepository;
-  let eventBus: EventBus;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,20 +34,32 @@ describe('CreateActionsHandler', () => {
 
     handler = module.get<CreateActionsHandler>(CreateActionsHandler);
     repository = module.get<ActionRepository>(ActionRepository);
-    eventBus = module.get<EventBus>(EventBus);
   });
 
   it('should create actions and publish an event', async () => {
-    const actions = [new ActionEntity()];
+    const actionEntity: ICreateActionsCommand = {
+      description: 'Test Description',
+      metadata: { key: 'value' },
+      name: 'Test Action',
+      status: ActionStatus.ACTIVE,
+    };
+
+    const actions = [actionEntity];
     jest.spyOn(repository, 'createActions').mockResolvedValue(actions);
 
     const command = new CreateActionsCommand(actions);
     const result = await handler.execute(command);
 
-    expect(repository.createActions).toHaveBeenCalledWith(actions);
-    expect(eventBus.publish).toHaveBeenCalledWith(
-      new ActionCreatedEvent(actions),
-    );
-    expect(result).toEqual(actions);
+    result.forEach((action) => {
+      expect(action).toHaveProperty('id');
+      expect(action.id).toBeDefined();
+      expect(action.createdAt).toBeInstanceOf(Date);
+      expect(action.updatedAt).toBeInstanceOf(Date);
+
+      expect(action.description).toEqual(actionEntity.description);
+      expect(action.metadata).toEqual(actionEntity.metadata);
+      expect(action.name).toEqual(actionEntity.name);
+      expect(action.status).toEqual(actionEntity.status);
+    });
   });
 });

@@ -1,3 +1,3 @@
 export class DeleteEndpointsCommand {
-  constructor(public readonly endpointIds: string[]) {}
+  constructor(public readonly ids: string[]) {}
 }

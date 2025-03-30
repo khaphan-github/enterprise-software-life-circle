@@ -38,35 +38,50 @@ describe('UpdateEndpointsCommandHandler', () => {
     eventBus = module.get<EventBus>(EventBus);
   });
 
-  it('should update endpoints and publish an event', async () => {
-    const command = new UpdateEndpointsCommand([
-      {
-        id: 'test-id',
-        path: '/test',
-        method: 'POST',
-        metadata: {},
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        initId: function (): void {
-          throw new Error('Function not implemented.');
-        },
-        getId: function (): string {
-          throw new Error('Function not implemented.');
-        },
-        setCreateTime: function (): void {
-          throw new Error('Function not implemented.');
-        },
-        setUpdateTime: function (): void {
-          throw new Error('Function not implemented.');
-        },
-      },
-    ]);
-    const updatedEntities = [new EndpointEntity()];
-    updatedEntities[0].id = 'test-id';
-    updatedEntities[0].path = '/test';
-    updatedEntities[0].method = 'POST';
-    updatedEntities[0].metadata = {};
-    updatedEntities[0].updatedAt = new Date();
+  it('should throw an error if repository update fails', async () => {
+    const endpoints = new EndpointEntity();
+    const command = new UpdateEndpointsCommand([endpoints]);
+
+    jest
+      .spyOn(repository, 'updateEndpoints')
+      .mockRejectedValue(new Error('Update failed'));
+
+    await expect(handler.execute(command)).rejects.toThrow('Update failed');
+    expect(repository.updateEndpoints).toHaveBeenCalledWith(expect.any(Array));
+    expect(eventBus.publish).not.toHaveBeenCalled();
+  });
+
+  it('should handle an empty list of endpoints', async () => {
+    const command = new UpdateEndpointsCommand([]);
+    const result = await handler.execute(command);
+
+    expect(repository.updateEndpoints).toHaveBeenCalledWith([]);
+    expect(eventBus.publish).toHaveBeenCalledWith(
+      new EndpointEntityUpdatedEvent([]),
+    );
+    expect(result).toEqual([]);
+  });
+
+  it('should not publish an event if no endpoints are updated', async () => {
+    const command = new UpdateEndpointsCommand([]);
+
+    jest.spyOn(repository, 'updateEndpoints').mockResolvedValue([]);
+
+    const result = await handler.execute(command);
+    expect(repository.updateEndpoints).toHaveBeenCalledWith([]);
+    expect(result).toEqual([]);
+  });
+
+  it('should call repository with correct data', async () => {
+    const endpoints = new EndpointEntity();
+    endpoints.id = 'test-id';
+    endpoints.path = '/test';
+    endpoints.method = 'GET';
+    endpoints.metadata = {};
+    endpoints.updatedAt = new Date();
+
+    const command = new UpdateEndpointsCommand([endpoints]);
+    const updatedEntities = [endpoints];
 
     jest
       .spyOn(repository, 'updateEndpoints')
@@ -74,7 +89,7 @@ describe('UpdateEndpointsCommandHandler', () => {
 
     const result = await handler.execute(command);
 
-    expect(repository.updateEndpoints).toHaveBeenCalledWith(expect.any(Array));
+    expect(repository.updateEndpoints).toHaveBeenCalledWith([endpoints]);
     expect(eventBus.publish).toHaveBeenCalledWith(
       new EndpointEntityUpdatedEvent(updatedEntities),
     );

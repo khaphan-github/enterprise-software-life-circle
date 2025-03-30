@@ -7,12 +7,16 @@ export class BaseEntity {
 
   constructor() {}
 
-  initId() {
-    this.id = nanoid(32);
+  initId(size: number = 16) {
+    this.id = nanoid(size);
   }
 
   getId() {
     return this.id;
+  }
+
+  setId(id: string) {
+    this.id = id;
   }
 
   setCreateTime() {

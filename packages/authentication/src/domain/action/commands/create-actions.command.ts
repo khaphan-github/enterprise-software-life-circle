@@ -1,5 +1,13 @@
-import { ActionEntity } from '../action-entity';
+import { ICommand } from '@nestjs/cqrs';
+import { ActionStatus } from '../action-entity';
 
-export class CreateActionsCommand {
-  constructor(public readonly actions: ActionEntity[]) {}
+export interface ICreateActionsCommand {
+  name: string;
+  description: string;
+  status: ActionStatus;
+  metadata: Record<string, any>;
+}
+
+export class CreateActionsCommand implements ICommand {
+  constructor(public readonly actions: ICreateActionsCommand[]) {}
 }

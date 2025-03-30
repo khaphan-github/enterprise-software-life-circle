@@ -22,8 +22,7 @@ export class CreateEndpointCommandHandler
       entity.path = command.path;
       entity.method = command.method;
       entity.metadata = command.metadata;
-      entity.createdAt = new Date();
-      entity.updatedAt = new Date();
+      entity.setCreateTime();
       createdEntities.push(entity);
     }
     const createdEntity =

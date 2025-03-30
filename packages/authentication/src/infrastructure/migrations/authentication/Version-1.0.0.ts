@@ -46,6 +46,7 @@ module.exports = async (client, schema) => {
       path VARCHAR(255) UNIQUE NOT NULL,
       method VARCHAR(10) NOT NULL,
       metadata JSONB DEFAULT '{}',
+      status VARCHAR(50),
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );

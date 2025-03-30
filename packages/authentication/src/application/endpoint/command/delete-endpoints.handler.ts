@@ -13,9 +13,7 @@ export class DeleteEndpointsCommandHandler
   ) {}
 
   async execute(command: DeleteEndpointsCommand): Promise<void> {
-    const deletedEntities = await this.repository.deleteEndpoints(
-      command.endpointIds,
-    );
+    const deletedEntities = await this.repository.deleteEndpoints(command.ids);
     this.eventBus.publish(new EndpointEntityDeletedEvent(deletedEntities));
   }
 }

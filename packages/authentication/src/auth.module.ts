@@ -2,13 +2,12 @@ import { Module, DynamicModule, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Handlers } from './application';
 import { CqrsModule } from '@nestjs/cqrs';
-import { Repositories } from './infrastructure';
+import { Controllers, Repositories } from './infrastructure';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PostgresModule } from 'nest-postgresql-multi-connect';
 import { PgMigration } from 'postgrest-migration';
 import { CONNECTION_STRING_DEFAULT } from './configurations/connection-string-default';
 import { PoolConfig } from 'pg';
-import { AuthController } from './infrastructure/interface/auth.controller';
 import { AuthConf } from './configurations/auth-config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorInterceptor } from './infrastructure/interceptor/error.interceptor';
@@ -69,7 +68,7 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
         AuthConf,
       ],
       exports: [...Handlers, ...Repositories, AuthConf],
-      controllers: conf.constroller?.enable ? [AuthController] : [],
+      controllers: conf.constroller?.enable ? Controllers : [],
     };
   }
 

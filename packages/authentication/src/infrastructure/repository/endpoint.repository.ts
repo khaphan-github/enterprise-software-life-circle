@@ -5,7 +5,7 @@ import {
 import { CONNECTION_STRING_DEFAULT } from '../../configurations/connection-string-default';
 import { EndpointEntity } from '../../domain/endpoint/endpoint-entity';
 import { EndpointTransformer } from '../../domain/endpoint/transformer';
-import format from 'pg-format';
+import * as format from 'pg-format';
 
 export class EndpointRepository {
   constructor(

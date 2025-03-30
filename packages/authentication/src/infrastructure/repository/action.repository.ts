@@ -6,7 +6,7 @@ import {
 import { CONNECTION_STRING_DEFAULT } from '../../configurations/connection-string-default';
 import { ActionEntity } from '../../domain/action/action-entity';
 import { ActionTransformer } from '../../domain/action/transformer';
-import format from 'pg-format';
+import * as format from 'pg-format';
 
 @Injectable()
 export class ActionRepository {
@@ -26,7 +26,7 @@ export class ActionRepository {
       action.name,
       action.description,
       action.status,
-      JSON.stringify(action.metadata),
+      action.metadata,
       action.createdAt,
       action.updatedAt,
     ]);
@@ -42,7 +42,7 @@ export class ActionRepository {
           description = data.description,
           status = data.status,
           metadata = data.metadata,
-          updated_at = data.updated_at
+          updated_at = data.updated_at::timestamp
       FROM (VALUES %L) AS data(id, name, description, status, metadata, updated_at)
       WHERE auth_actions.id = data.id
       RETURNING auth_actions.*;
@@ -52,7 +52,7 @@ export class ActionRepository {
       action.name,
       action.description,
       action.status,
-      JSON.stringify(action.metadata),
+      action.metadata,
       action.updatedAt,
     ]);
     const formattedQuery = format(query, values);
@@ -63,7 +63,7 @@ export class ActionRepository {
   async deleteActions(actionIds: string[]): Promise<void> {
     const query = `
       DELETE FROM auth_actions
-      WHERE id = ANY($1::uuid[]);
+      WHERE id = ANY($1::text[]);
     `;
     const values = [actionIds];
     await this.pg.execute(query, values);
