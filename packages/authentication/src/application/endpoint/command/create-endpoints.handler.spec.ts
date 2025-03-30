@@ -4,7 +4,10 @@ import { EventBus } from '@nestjs/cqrs';
 import { CreateEndpointCommandHandler } from './create-endpoints.handler';
 import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
 import { CreateEndpointCommand } from '../../../domain/endpoint/command/create-endpoint.command';
-import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
+import {
+  EndpointEntity,
+  EndpointStatus,
+} from '../../../domain/endpoint/endpoint-entity';
 import { EndpointEntityCreatedEvent } from '../../../domain/endpoint/event/endpoint-created.event';
 
 describe('CreateEndpointCommandHandler', () => {
@@ -40,7 +43,12 @@ describe('CreateEndpointCommandHandler', () => {
 
   it('should create endpoints and publish an event', async () => {
     const command = new CreateEndpointCommand([
-      { path: '/test', method: 'GET', metadata: {} },
+      {
+        path: '/test',
+        method: 'GET',
+        metadata: {},
+        status: EndpointStatus.ACTIVE,
+      },
     ]);
     const createdEntities = [new EndpointEntity()];
     createdEntities[0].id = 'test-id';
