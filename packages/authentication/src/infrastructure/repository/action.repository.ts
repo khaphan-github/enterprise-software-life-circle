@@ -92,4 +92,25 @@ export class ActionRepository {
     const result = await this.pg.execute(query, values);
     return result.rows.map((row) => ActionTransformer.fromDbToEntity(row));
   }
+
+  async assignActionsToRoles(
+    actionIds: string[],
+    roleIds: string[],
+  ): Promise<void> {
+    const values = roleIds.flatMap((roleId) =>
+      actionIds.map((actionId) => [actionId, roleId]),
+    );
+
+    const query = format(
+      `
+      INSERT INTO auth_role_action_permissions (action_id, role_id)
+      VALUES %L
+      ON CONFLICT (action_id, role_id)
+      DO NOTHING
+    `,
+      values,
+    );
+
+    await this.pg.execute(query);
+  }
 }

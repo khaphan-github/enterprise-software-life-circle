@@ -148,19 +148,6 @@ export class EndpointRepository {
     return res.rows.map((row) => EndpointTransformer.fromDbToEntity(row));
   }
 
-  async addEndpointsToRoles(endpointIds: string[], roleIds: string[]) {
-    const query = `
-      INSERT INTO role_endpoints (role_id, endpoint_id)
-      VALUES %L
-      ON CONFLICT DO NOTHING;
-    `;
-    const values = roleIds.flatMap((roleId) =>
-      endpointIds.map((endpointId) => [roleId, endpointId]),
-    );
-    const formattedQuery = format(query, values);
-    await this.pg.execute(formattedQuery);
-  }
-
   async isRouteAndMethodExist(path: string, method: string): Promise<boolean> {
     const query = `
       SELECT EXISTS (
@@ -171,5 +158,25 @@ export class EndpointRepository {
     const values = [path, method];
     const res = await this.pg.execute(query, values);
     return res.rows[0]?.exists || false;
+  }
+
+  async assignEndpointsToRoles(
+    endpointIds: string[],
+    roleIds: string[],
+  ): Promise<void> {
+    const values = roleIds.flatMap((roleId) =>
+      endpointIds.map((endpointId) => [endpointId, roleId]),
+    );
+    const query = format(
+      `
+      INSERT INTO auth_role_endpoint_permissions (endpoint_id, role_id)
+      VALUES %L
+      ON CONFLICT (endpoint_id, role_id)
+      DO NOTHING
+    `,
+      values,
+    );
+
+    await this.pg.execute(query);
   }
 }

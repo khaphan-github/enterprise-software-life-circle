@@ -128,17 +128,29 @@ export class RoleRepository {
     return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
   }
 
-  async getRolesByRoute(route: string, method: string) {
-    const query = `
+  async getRolesByRoute(path: string, method: string) {
+    const roleIdQuery = `
+      SELECT id FROM auth_endpoint
+      WHERE path = $1 AND method = $2
+    `;
+    const roleIdsResult = await this.pg.execute(roleIdQuery, [path, method]);
+
+    if (roleIdsResult.rows.length === 0) {
+      return []; // Return an empty array if no roles are found
+    }
+
+    const endpointIds = roleIdsResult.rows.map((row) => row.id);
+
+    const rolesQuery = `
       SELECT * FROM auth_roles
-      WHERE id IN (
-        SELECT role_id FROM auth_route_roles
-        WHERE route = $1 and method = $2
+      WHERE id = ANY(
+        SELECT role_id FROM auth_role_endpoint_permissions
+        WHERE endpoint_id = ANY($1)
       )
     `;
-    const values = [route, method];
-    const res = await this.pg.execute(query, values);
-    return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
+    const rolesResult = await this.pg.execute(rolesQuery, [endpointIds]);
+
+    return rolesResult.rows.map((row) => RoleTransformer.fromDbToEntity(row));
   }
 
   async getUserRoles(userId: string) {

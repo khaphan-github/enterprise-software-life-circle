@@ -50,15 +50,24 @@ module.exports = async (client, schema) => {
       updated_at TIMESTAMP DEFAULT NOW()
     );
 
-    CREATE TABLE IF NOT EXISTS ${schema}."auth_role_permissions" (
-      id VARCHAR(255) PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_role_action_permissions" (
       role_id VARCHAR(255) REFERENCES ${schema}."auth_roles"(id) ON DELETE CASCADE,
       action_id VARCHAR(255) REFERENCES ${schema}."auth_actions"(id) ON DELETE CASCADE,
+      status VARCHAR(50),
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (role_id, action_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_role_endpoint_permissions" (
+      role_id VARCHAR(255) REFERENCES ${schema}."auth_roles"(id) ON DELETE CASCADE,
       endpoint_id VARCHAR(255) REFERENCES ${schema}."auth_endpoints"(id) ON DELETE CASCADE,
       status VARCHAR(50),
       metadata JSONB DEFAULT '{}',
       created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (role_id, endpoint_id)
     );
   `);
 };

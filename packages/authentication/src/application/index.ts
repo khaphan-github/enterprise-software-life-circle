@@ -3,7 +3,6 @@ import { DeleteEndpointsCommandHandler } from './endpoint/command/delete-endpoin
 import { GetEndpointQueryHandler } from './endpoint/query/get-endpoint.handler';
 import { GetEndpointsWithCursorQueryHandler } from './endpoint/query/get-endpoints-with-cursor.handler';
 import { AccessTokenGuard } from './protector/access-token.guard';
-import { AddEndpointsToRolesCommandHandler } from './role/command/add-endpoints-to-roles.handler';
 import { AssignDefaultRoleToUserHandler } from './role/command/assign-default-role-to-user.handler';
 import { AssignRoleToUserHandler } from './role/command/assign-role-to-user.handler';
 import { CreateRoleCommandHandler } from './role/command/create-role.handler';
@@ -23,6 +22,8 @@ import { GetUserRolesQueryHandler } from './role/query/get-user-roles.query.hand
 import { GetRolesByRouteQueryHandler } from './role/query/get-roles-by-route.query.handler';
 import { IsPublicRoutesHandler } from './endpoint/query/is-public-routes.handler';
 import { UpdateEndpointsCommandHandler } from './endpoint/command/update-endpoints.handler';
+import { AssignActionToRoleHandler } from './role/command/assign-action-to-role.handler';
+import { AssignEndpointToRoleHandler } from './role/command/assign-endpoint-to-role.handler';
 
 export const Handlers = [
   // User
@@ -34,6 +35,8 @@ export const Handlers = [
   CreateRoleCommandHandler,
   AssignRoleToUserHandler,
   AssignDefaultRoleToUserHandler,
+  AssignActionToRoleHandler,
+  AssignEndpointToRoleHandler,
   CanExecRouteQueryHandler,
   GetUserRolesQueryHandler,
   GetRolesByRouteQueryHandler,
@@ -45,7 +48,6 @@ export const Handlers = [
   // Enpoint
   CreateEndpointCommandHandler,
   DeleteEndpointsCommandHandler,
-  AddEndpointsToRolesCommandHandler,
   UpdateEndpointsCommandHandler,
 
   GetEndpointsWithCursorQueryHandler,

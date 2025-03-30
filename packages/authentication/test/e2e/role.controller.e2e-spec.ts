@@ -6,6 +6,8 @@ describe('RoleController (e2e)', () => {
   const app: INestApplication<App> = globalThis.__APP__;
 
   let createdRoleId = '';
+  let createdActionId = '';
+  let createdEndpointId = '';
 
   it('/POST roles (create)', async () => {
     const createRoleDto = {
@@ -61,7 +63,7 @@ describe('RoleController (e2e)', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/roles/assign')
+      .post('/roles/assign-user')
       .send(assignRoleDto)
       .expect(200);
 
@@ -76,5 +78,97 @@ describe('RoleController (e2e)', () => {
         }),
       ]),
     );
+  });
+
+  it('/POST actions (create)', async () => {
+    const createActionDto = [
+      {
+        name: 'Test Action ' + Date.now(),
+        description: 'Test Action Description',
+        status: 'active',
+        metadata: {},
+      },
+    ];
+
+    const response = await request(app.getHttpServer())
+      .post('/actions')
+      .send(createActionDto)
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: createActionDto[0].name,
+          description: createActionDto[0].description,
+          status: createActionDto[0].status,
+          metadata: createActionDto[0].metadata,
+          id: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      ]),
+    );
+
+    createdActionId = response.body[0].id;
+  });
+
+  it('/POST endpoints (create)', async () => {
+    const createEndpointDto = [
+      {
+        path: 'Test Endpoint ' + Date.now(),
+        method: 'GET',
+        metadata: { key: 'value' },
+        status: 'active',
+      },
+    ];
+
+    const response = await request(app.getHttpServer())
+      .post('/endpoints')
+      .send(createEndpointDto)
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: createEndpointDto[0].path,
+          method: createEndpointDto[0].method,
+          metadata: createEndpointDto[0].metadata,
+          status: createEndpointDto[0].status,
+          id: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      ]),
+    );
+
+    createdEndpointId = response.body[0].id;
+  });
+
+  it('/POST roles/assign-actions (assign actions to role)', async () => {
+    const assignActionsDto = {
+      actionIds: [createdActionId],
+      roleIds: [createdRoleId],
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/roles/assign-actions')
+      .send(assignActionsDto)
+      .expect(201);
+
+    expect(response.body).toEqual({});
+  });
+
+  it('/POST roles/assign-endpoints (assign endpoints to role)', async () => {
+    const assignEndpointsDto = {
+      endpointIds: [createdEndpointId],
+      roleIds: [createdRoleId],
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/roles/assign-endpoints')
+      .send(assignEndpointsDto)
+      .expect(201);
+
+    expect(response.body).toEqual({});
   });
 });
