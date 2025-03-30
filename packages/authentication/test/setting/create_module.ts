@@ -34,7 +34,7 @@ export async function CreateTestModule() {
             process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
         },
         migrations: {
-          enable: false,
+          enable: true,
           migrationTableName: '_migration_authentication',
         },
         constroller: {
