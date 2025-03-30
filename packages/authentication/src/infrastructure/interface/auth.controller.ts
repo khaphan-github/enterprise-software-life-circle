@@ -6,6 +6,9 @@ import {
   Get,
   Headers,
   HttpCode,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserDTO } from '../../domain/user/dto/create-user.dto';
@@ -17,6 +20,8 @@ import { RefreshTokenDTO } from '../../domain/user/dto/refresh-token.dto';
 import { MeQuery } from '../../domain/user/query/me.query';
 import { extractTokenFromHeader } from '../../shared/utils/token.util';
 import { ICustomController } from '../../domain/controller/icustom-controller';
+import { AccessTokenGuard } from '../guard/access-token.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController implements ICustomController {
@@ -38,6 +43,9 @@ export class AuthController implements ICustomController {
     );
   }
 
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('access-token')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @Post('refresh-token')
   @HttpCode(201)
   refreshToken(@Body() dto: RefreshTokenDTO) {
@@ -45,6 +53,9 @@ export class AuthController implements ICustomController {
   }
 
   @Get('me')
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('access-token')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   me(@Headers('authorization') authorization: string) {
     const accessToken = extractTokenFromHeader(authorization);
     return this.queryBus.execute(new MeQuery(accessToken));

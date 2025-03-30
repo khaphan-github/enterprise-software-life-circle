@@ -5,7 +5,7 @@
  */
 export function extractTokenFromHeader(
   authorization?: string,
-  type: string = 'JWT',
+  type: string = 'Bearer',
 ): string {
   if (!authorization) return '';
 

@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Inject, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Inject,
+  HttpCode,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateRoleDto } from '../../domain/role/dto/create-role.dto';
 import { CreateRoleCommand } from '../../domain/role/command/create-role.command';
@@ -6,8 +15,16 @@ import { AssignRoleToUserCommand } from '../../domain/role/command/assign-role-t
 import { AssignRoleToUserDto } from '../../domain/role/dto/assign-role-to-user.dto';
 import { AssignActionToRoleCommand } from '../../domain/role/command/assign-action-to-role.command';
 import { AssignEndpointToRoleCommand } from '../../domain/role/command/assign-endpoint-to-role.command';
+import { AssignActionsToRoleDto } from '../../domain/role/dto/assign-actions-to-role.dto';
+import { AssignEndpointsToRoleDto } from '../../domain/role/dto/assign-endpoints-to-role.dto';
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { AccessTokenGuard } from '../guard/access-token.guard';
 
+@ApiTags('Roles')
 @Controller('roles')
+@UseGuards(AccessTokenGuard)
+@ApiBearerAuth('access-token')
+@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class RoleController {
   @Inject() private readonly commandBus: CommandBus;
   @Inject() private readonly queryBus: QueryBus;
@@ -34,20 +51,24 @@ export class RoleController {
   }
 
   @Post('assign-actions')
+  @ApiOperation({ summary: 'Assign actions to roles' })
+  @ApiBody({ type: AssignActionsToRoleDto })
   async assignActionsToRole(
-    @Body() body: { actionIds: string[]; roleIds: string[] },
+    @Body() dto: AssignActionsToRoleDto,
   ): Promise<void> {
-    const { actionIds, roleIds } = body;
+    const { actionIds, roleIds } = dto;
     await this.commandBus.execute(
       new AssignActionToRoleCommand(actionIds, roleIds),
     );
   }
 
   @Post('assign-endpoints')
+  @ApiOperation({ summary: 'Assign endpoints to roles' })
+  @ApiBody({ type: AssignEndpointsToRoleDto })
   async assignEndpointsToRole(
-    @Body() body: { endpointIds: string[]; roleIds: string[] },
+    @Body() dto: AssignEndpointsToRoleDto,
   ): Promise<void> {
-    const { endpointIds, roleIds } = body;
+    const { endpointIds, roleIds } = dto;
     await this.commandBus.execute(
       new AssignEndpointToRoleCommand(endpointIds, roleIds),
     );

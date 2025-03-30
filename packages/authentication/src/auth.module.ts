@@ -1,4 +1,9 @@
-import { Module, DynamicModule, OnModuleInit } from '@nestjs/common';
+import {
+  Module,
+  DynamicModule,
+  OnModuleInit,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Handlers } from './application';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -9,8 +14,9 @@ import { PgMigration } from 'postgrest-migration';
 import { CONNECTION_STRING_DEFAULT } from './configurations/connection-string-default';
 import { PoolConfig } from 'pg';
 import { AuthConf } from './configurations/auth-config';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ErrorInterceptor } from './infrastructure/interceptor/error.interceptor';
+import { LoggingInterceptor } from './infrastructure/interceptor/log.interceptor';
 
 export interface IRBACConf {
   authSecretKey: string;
@@ -64,6 +70,14 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
         {
           provide: APP_INTERCEPTOR,
           useClass: ErrorInterceptor,
+        },
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: LoggingInterceptor,
+        },
+        {
+          provide: APP_PIPE,
+          useClass: ValidationPipe,
         },
         AuthConf,
       ],

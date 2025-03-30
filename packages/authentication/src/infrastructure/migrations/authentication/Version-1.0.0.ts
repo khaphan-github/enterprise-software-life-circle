@@ -42,12 +42,13 @@ module.exports = async (client, schema) => {
 
     CREATE TABLE IF NOT EXISTS ${schema}."auth_endpoints" (
       id VARCHAR(255) PRIMARY KEY,
-      path VARCHAR(255) UNIQUE NOT NULL,
+      path VARCHAR(255) NOT NULL,
       method VARCHAR(10) NOT NULL,
       metadata JSONB DEFAULT '{}',
       status VARCHAR(50),
       created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
+      updated_at TIMESTAMP DEFAULT NOW(),
+      CONSTRAINT unique_path_method UNIQUE (path, method)
     );
 
     CREATE TABLE IF NOT EXISTS ${schema}."auth_role_action_permissions" (

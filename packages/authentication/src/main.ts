@@ -7,7 +7,11 @@ async function bootstrap() {
   const app = await NestFactory.create(
     CQRSAuthenticationRBAC.register({
       dbConf: {
-        connectionString: process.env.PG_MAIN_DB_CONNECTION_STRING,
+        host: process.env.PG_MAIN_DB_HOST || 'localhost',
+        port: parseInt(process.env.PG_MAIN_DB_PORT || '5432', 10),
+        user: process.env.PG_MAIN_DB_USER || 'postgres',
+        password: process.env.PG_MAIN_DB_PASSWORD || 'postgres',
+        database: process.env.PG_MAIN_DB_DATABASE || 'postgres',
       },
       jwtOptions: {
         secret: process.env.JWT_SECRET || 'defaultSecret',
@@ -29,6 +33,9 @@ async function bootstrap() {
           process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
       },
       constroller: { enable: true },
+      migrations: {
+        enable: true,
+      },
     }),
   );
 

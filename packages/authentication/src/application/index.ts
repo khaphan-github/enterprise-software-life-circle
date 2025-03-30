@@ -2,7 +2,7 @@ import { CreateEndpointCommandHandler } from './endpoint/command/create-endpoint
 import { DeleteEndpointsCommandHandler } from './endpoint/command/delete-endpoints.handler';
 import { GetEndpointQueryHandler } from './endpoint/query/get-endpoint.handler';
 import { GetEndpointsWithCursorQueryHandler } from './endpoint/query/get-endpoints-with-cursor.handler';
-import { AccessTokenGuard } from './protector/access-token.guard';
+import { AccessTokenGuard } from '../infrastructure/guard/access-token.guard';
 import { AssignDefaultRoleToUserHandler } from './role/command/assign-default-role-to-user.handler';
 import { AssignRoleToUserHandler } from './role/command/assign-role-to-user.handler';
 import { CreateRoleCommandHandler } from './role/command/create-role.handler';

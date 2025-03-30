@@ -6,6 +6,7 @@ import {
   Inject,
   UnauthorizedException,
   ForbiddenException,
+  Logger,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
@@ -19,6 +20,7 @@ import { AuthConf } from '../../configurations/auth-config';
 export class AccessTokenGuard implements CanActivate {
   @Inject() authenticationConfig: AuthConf;
 
+  private readonly logger = new Logger(AccessTokenGuard.name);
   constructor(
     private readonly jwtService: JwtService,
     private readonly queryBus: QueryBus,
@@ -28,7 +30,6 @@ export class AccessTokenGuard implements CanActivate {
     const request: Request = context.switchToHttp().getRequest();
     const currentPath = request.path;
     const currentMethod = request.method;
-
     /// Is public route
     const isPublicRoutes = await this.queryBus.execute(
       new IsPublicRoutesQuery(currentPath, currentMethod),

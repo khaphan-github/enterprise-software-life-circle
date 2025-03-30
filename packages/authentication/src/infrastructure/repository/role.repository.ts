@@ -130,7 +130,7 @@ export class RoleRepository {
 
   async getRolesByRoute(path: string, method: string) {
     const roleIdQuery = `
-      SELECT id FROM auth_endpoint
+      SELECT id FROM auth_endpoints
       WHERE path = $1 AND method = $2
     `;
     const roleIdsResult = await this.pg.execute(roleIdQuery, [path, method]);
