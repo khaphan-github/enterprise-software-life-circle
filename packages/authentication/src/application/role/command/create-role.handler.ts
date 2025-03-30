@@ -3,7 +3,6 @@ import { RoleRepository } from '../../../infrastructure/repository/role.reposito
 import { CreateRoleCommand } from '../../../domain/role/command/create-role.command';
 import { RoleEntityCreatedEvent } from '../../../domain/role/event/role-created.event';
 import { RoleEntity } from '../../../domain/role/role-entity';
-import { nanoid } from 'nanoid';
 
 @CommandHandler(CreateRoleCommand)
 export class CreateRoleCommandHandler
@@ -16,7 +15,7 @@ export class CreateRoleCommandHandler
 
   async execute(command: CreateRoleCommand): Promise<RoleEntity> {
     const entity = new RoleEntity();
-    entity.id = nanoid(32);
+    entity.initId();
     entity.metadata = command.metadata;
     entity.name = command.name;
     entity.description = command.description;

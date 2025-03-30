@@ -19,15 +19,14 @@ export class AssignRoleToUserHandler
   async execute(
     command: AssignRoleToUserCommand,
   ): Promise<Array<UserRoleEntity>> {
-    const userRoleEntities: UserRoleEntity[] = command.roleDomain.flatMap(
-      (role) =>
-        command.userDomain.map((user) => {
+    const userRoleEntities: UserRoleEntity[] = command.roleIds.flatMap(
+      (roleId) =>
+        command.userIds.map((userId) => {
           const entity = new UserRoleEntity();
-          entity.roleId = role.id;
-          entity.userId = user.id;
-          entity.createdAt = new Date();
-          entity.updatedAt = new Date();
+          entity.roleId = roleId;
+          entity.userId = userId;
           entity.status = UserRoleStatus.ACTIVE;
+          entity.setCreateTime();
           return entity;
         }),
     );
