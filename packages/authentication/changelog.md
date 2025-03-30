@@ -10,4 +10,5 @@
 - Feature: Provide or disable migrations
 
 ## Version 2.4.10
-- Featue: Assign role to user.
+- Feature: Assign role to user, Assign endpoint to role, Assign action to role.
+- Feature: Create Update Delete endoint, action,
