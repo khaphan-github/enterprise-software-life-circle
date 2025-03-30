@@ -10,6 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: NPM_PACK
 
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -29,6 +39,13 @@ jobs:
           cd packages/authentication
           npm install
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
       - name: Unit test
         run: |
           cd packages/authentication
@@ -38,6 +55,8 @@ jobs:
         run: |
           cd packages/authentication
           npm run test:e2e
+        env:
+          PG_MAIN_DB_CONNECTION_STRING: postgres://postgres:postgres@localhost:5432/testdb
 
       - name: Build package
         run: |

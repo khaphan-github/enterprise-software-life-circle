@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Inject, Get, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Inject,
+  Get,
+  Headers,
+  HttpCode,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserDTO } from '../../domain/user/dto/create-user.dto';
 import { LoginDTO } from '../../domain/user/dto/login.dto';
@@ -15,6 +23,7 @@ export class AuthController {
   @Inject() private readonly queryBus: QueryBus;
 
   @Post('login')
+  @HttpCode(200)
   login(@Body() loginDto: LoginDTO) {
     return this.queryBus.execute(
       new LoginQuery(loginDto.username, loginDto.password),
@@ -34,6 +43,7 @@ export class AuthController {
   }
 
   @Post('refresh-token')
+  @HttpCode(201)
   refreshToken(@Body() dto: RefreshTokenDTO) {
     return this.queryBus.execute(new RefreshTokenCommand(dto.refreshToken));
   }
