@@ -47,7 +47,7 @@ describe('AppController (e2e)', () => {
       .set('Authorization', `JWT ${userToken}`)
       .expect(200);
 
-    expect(response.body).toHaveProperty('email', userPayload.email);
+    expect(response.body).toHaveProperty('username', userPayload.username);
   });
 
   it('should refresh the access token', async () => {

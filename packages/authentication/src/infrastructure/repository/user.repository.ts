@@ -16,13 +16,12 @@ export class UserRepository {
 
   async createUser(userEntity: UserEntity): Promise<void> {
     const query = `
-      INSERT INTO auth_users (id, username, email, password_hash, status, metadata, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      INSERT INTO auth_users (id, username, password_hash, status, metadata, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
     const values = [
       userEntity.id,
       userEntity.username,
-      userEntity.email,
       userEntity.passwordHash,
       userEntity.status,
       JSON.stringify(userEntity.metadata),
@@ -47,12 +46,11 @@ export class UserRepository {
   async updateUser(userEntity: UserEntity): Promise<void> {
     const query = `
       UPDATE auth_users
-      SET username = $1, email = $2, password_hash = $3, status = $4, metadata = $5, updated_at = $6
-      WHERE id = $7
+      SET username = $1, password_hash = $2, status = $3, metadata = $4, updated_at = $5
+      WHERE id = $6
     `;
     const values = [
       userEntity.username,
-      userEntity.email,
       userEntity.passwordHash,
       userEntity.status,
       JSON.stringify(userEntity.metadata),

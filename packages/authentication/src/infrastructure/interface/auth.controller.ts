@@ -34,12 +34,7 @@ export class AuthController implements ICustomController {
   @Post('register')
   register(@Body() dto: CreateUserDTO) {
     return this.commandBus.execute(
-      new CreateUserCommand(
-        dto.username,
-        dto.email,
-        dto.password,
-        dto.metadata,
-      ),
+      new CreateUserCommand(dto.username, dto.password, dto.metadata),
     );
   }
 

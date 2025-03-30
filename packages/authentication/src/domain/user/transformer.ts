@@ -10,7 +10,6 @@ export class UserTransformer {
     const entity = new UserEntity();
     entity.id = db.id;
     entity.username = db.username;
-    entity.email = db.email;
     entity.passwordHash = db.password_hash;
     entity.status = db.status;
     entity.metadata = db.metadata;
@@ -22,7 +21,6 @@ export class UserTransformer {
   static toLoginDTO(userEntity: UserEntity): UserLoginSuccessDTO {
     const result = new UserLoginSuccessDTO();
     result.id = userEntity.id;
-    result.email = userEntity.email;
     result.status = userEntity.status;
     result.metadata = userEntity.metadata;
     result.createdAt = userEntity.createdAt;
@@ -34,7 +32,6 @@ export class UserTransformer {
     const result = new CreateUseruccessDTO();
     result.id = userEntity.id;
     result.username = userEntity.username;
-    result.email = userEntity.email;
     result.status = userEntity.status;
     result.metadata = userEntity.metadata;
     result.createdAt = userEntity.createdAt;

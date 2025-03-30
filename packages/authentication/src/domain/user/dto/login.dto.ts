@@ -17,7 +17,6 @@ export class LoginDTO {
 export class UserLoginSuccessDTO {
   id: string;
   username: string;
-  email: string;
   status: string;
   metadata?: object;
   createdAt: Date;

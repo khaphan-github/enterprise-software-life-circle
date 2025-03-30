@@ -4,7 +4,6 @@ import { UserCreatedEvent } from '../../../domain/user/events/user-created.event
 import { UserRepository } from '../../../infrastructure/repository/user.repository';
 import { UserAlreadyExistError } from '../../../domain/user/errors/user-already-exist.error';
 import { UserStatus } from '../../../domain/user/user-status';
-import { UserEmailAlreadyExistError } from '../../../domain/user/errors/user-email-already-exist.error';
 import * as argon2 from 'argon2';
 import { UserEntity } from '../../../domain/user/user-entity';
 import { AuthConf } from '../../../configurations/auth-config';
@@ -23,16 +22,11 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     if (user) {
       throw new UserAlreadyExistError();
     }
-    const userByEmail = await this.repository.findUserByEmail(command.email);
-    if (userByEmail) {
-      throw new UserEmailAlreadyExistError();
-    }
 
     const entity = new UserEntity();
     entity.initId();
     entity.metadata = command.metadata;
     entity.username = command.username;
-    entity.email = command.email;
     entity.passwordHash = await argon2.hash(
       command.password,
       this.authenticationConfig.getHashPasswordConf(),
