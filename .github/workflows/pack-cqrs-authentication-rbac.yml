@@ -39,17 +39,17 @@ jobs:
           cd packages/authentication
           npm install
 
+      - name: Unit test
+        run: |
+          cd packages/authentication
+          npm run test
+
       - name: Wait for PostgreSQL to be ready
         run: |
           until pg_isready -h localhost -p 5432; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
-
-      - name: Unit test
-        run: |
-          cd packages/authentication
-          npm run test
 
       - name: E2e test
         run: |
