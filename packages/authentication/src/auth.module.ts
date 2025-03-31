@@ -18,6 +18,7 @@ import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ErrorInterceptor } from './infrastructure/interceptor/error.interceptor';
 import { LoggingInterceptor } from './infrastructure/interceptor/log.interceptor';
 import { UserStatus } from './domain/user/user-status';
+import { INotifyProxy } from './domain/mfa/inotify.proxy';
 
 export interface IRBACConf {
   authSecretKey: string;
@@ -33,6 +34,14 @@ export interface IRBACConf {
   // Config google authentication
   authGoogleClientId?: string;
   authGoogleClientSecret?: string;
+
+  // Multi-Factor Authentication (MFA)
+  mfa: {
+    enable: boolean;
+    template: string;
+    otpLength: number;
+    notifyProxy: INotifyProxy;
+  };
 }
 
 export interface AuthRBACConfig {
