@@ -5,6 +5,7 @@ module.exports = async (client, schema) => {
       username VARCHAR(255) UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
       status VARCHAR(50),
+      type VARCHAR(50),
       metadata JSONB DEFAULT '{}',
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()

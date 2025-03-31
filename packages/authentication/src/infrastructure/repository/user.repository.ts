@@ -16,8 +16,8 @@ export class UserRepository {
 
   async createUser(userEntity: UserEntity): Promise<void> {
     const query = `
-      INSERT INTO auth_users (id, username, password_hash, status, metadata, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO auth_users (id, username, password_hash, status, metadata, created_at, updated_at, type)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     `;
     const values = [
       userEntity.id,
@@ -27,6 +27,7 @@ export class UserRepository {
       JSON.stringify(userEntity.metadata),
       userEntity.createdAt,
       userEntity.updatedAt,
+      userEntity.type,
     ];
     await this.pg.execute(query, values);
   }
@@ -46,8 +47,8 @@ export class UserRepository {
   async updateUser(userEntity: UserEntity): Promise<void> {
     const query = `
       UPDATE auth_users
-      SET username = $1, password_hash = $2, status = $3, metadata = $4, updated_at = $5
-      WHERE id = $6
+      SET username = $1, password_hash = $2, status = $3, metadata = $4, updated_at = $5, type = $6
+      WHERE id = $7
     `;
     const values = [
       userEntity.username,
@@ -56,6 +57,7 @@ export class UserRepository {
       JSON.stringify(userEntity.metadata),
       userEntity.updatedAt,
       userEntity.id,
+      userEntity.type,
     ];
     await this.pg.execute(query, values);
   }
@@ -104,14 +106,14 @@ export class UserRepository {
     return exists;
   }
 
-  async findUserByEmail(email: string): Promise<UserEntity | null> {
+  async getUserByUsername(username: string): Promise<UserEntity | null> {
     const query = `
       SELECT * FROM auth_users
-      WHERE email = $1
+      WHERE username = $1
     `;
-    const values = [email];
+    const values = [username];
     const result = await this.pg.execute(query, values);
     const row = result.rows[0];
-    return UserTransformer.fromDbToEntity(row);
+    return row ? UserTransformer.fromDbToEntity(row) : null;
   }
 }

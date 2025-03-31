@@ -34,6 +34,8 @@ async function bootstrap() {
           process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
         authTokenType: process.env.AUTH_TOKEN_TYPE ?? 'Bearer',
         defaultUserStatus: UserStatus.ACTIVE,
+        authGoogleClientId: process.env.GOOGLE_CLIENT_ID,
+        authGoogleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
       },
       constroller: { enable: true },
       migrations: {

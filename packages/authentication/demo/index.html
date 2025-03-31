@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div id="g_id_onload"
+       data-client_id="607206287002-675bcclqcd90f9ee1ais0q3174kqtdi4.apps.googleusercontent.com"
+       data-callback="handleCredentialResponse">
+  </div>
+  <div class="g_id_signin" data-type="standard"></div>
+
+  <script>
+    function handleCredentialResponse(response) {
+      // This is where you get the token ID
+      const tokenId = response.credential;
+      console.log("ID Token: ", tokenId);
+      
+      // Send this token to your backend for verification
+      // fetch('/api/auth/google', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ token: tokenId })
+      // });
+    }
+  </script>
+</body>
+</html>

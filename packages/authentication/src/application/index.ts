@@ -24,12 +24,14 @@ import { IsPublicRoutesHandler } from './endpoint/query/is-public-routes.handler
 import { UpdateEndpointsCommandHandler } from './endpoint/command/update-endpoints.handler';
 import { AssignActionToRoleHandler } from './role/command/assign-action-to-role.handler';
 import { AssignEndpointToRoleHandler } from './role/command/assign-endpoint-to-role.handler';
+import { GoogleLoginHandler } from './user/command/google-login.handler';
 
 export const Handlers = [
   // User
   CreateUserHandler,
   LoginHandler,
   MeHandler,
+  GoogleLoginHandler,
 
   // Role
   CreateRoleCommandHandler,

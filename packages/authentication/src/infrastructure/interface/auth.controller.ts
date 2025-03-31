@@ -22,6 +22,9 @@ import { extractTokenFromHeader } from '../../shared/utils/token.util';
 import { ICustomController } from '../../domain/controller/icustom-controller';
 import { AccessTokenGuard } from '../guard/access-token.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { GoogleLoginCommand } from '../../domain/user/command/google-login.command';
+import { GoogleLoginDTO } from '../../domain/user/dto/google-login.dto';
+import { UserType } from '../../domain/user/user-entity';
 
 @Controller('auth')
 export class AuthController implements ICustomController {
@@ -36,10 +39,21 @@ export class AuthController implements ICustomController {
     );
   }
 
+  @Post('google-login')
+  @HttpCode(200)
+  async googleLogin(@Body() dto: GoogleLoginDTO) {
+    return this.commandBus.execute(new GoogleLoginCommand(dto.token));
+  }
+
   @Post('register')
   register(@Body() dto: CreateUserDTO) {
     return this.commandBus.execute(
-      new CreateUserCommand(dto.username, dto.password, dto.metadata),
+      new CreateUserCommand(
+        dto.username,
+        dto.password,
+        UserType.PASSWORD,
+        dto.metadata,
+      ),
     );
   }
 

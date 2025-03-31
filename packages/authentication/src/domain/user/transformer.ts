@@ -15,6 +15,7 @@ export class UserTransformer {
     entity.metadata = db.metadata;
     entity.createdAt = db.created_at;
     entity.updatedAt = db.updated_at;
+    entity.type = db.type;
     return entity;
   }
 
@@ -26,6 +27,11 @@ export class UserTransformer {
     result.createdAt = userEntity.createdAt;
     result.updatedAt = userEntity.updatedAt;
     return result;
+  }
+
+  hiddenPassword(userEntity: UserEntity): UserEntity {
+    userEntity.passwordHash = '';
+    return userEntity;
   }
 
   static toCreateSucessDTO(userEntity: UserEntity): CreateUseruccessDTO {

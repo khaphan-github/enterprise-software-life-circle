@@ -27,6 +27,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     entity.initId();
     entity.metadata = command.metadata;
     entity.username = command.username;
+    entity.type = command.type;
     entity.passwordHash = await argon2.hash(
       command.password,
       this.authenticationConfig.getHashPasswordConf(),

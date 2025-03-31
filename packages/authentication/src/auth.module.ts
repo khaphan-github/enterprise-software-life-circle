@@ -29,6 +29,10 @@ export interface IRBACConf {
   authRefreshTokenExpiresIn: string;
   authTokenType: string;
   defaultUserStatus: UserStatus;
+
+  // Config google authentication
+  authGoogleClientId?: string;
+  authGoogleClientSecret?: string;
 }
 
 export interface AuthRBACConfig {
@@ -53,7 +57,12 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
       module: CQRSAuthenticationRBAC,
       imports: [
         ConfigModule.forRoot({
-          load: [() => ({ authRBACConfig: conf })],
+          load: [
+            () => ({
+              authRBACConfig: conf,
+              GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+            }),
+          ],
         }),
         CqrsModule,
         PostgresModule.forRootAsync({
