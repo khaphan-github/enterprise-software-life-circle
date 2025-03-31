@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 3.2.1
+## Version 3.2.x
 - Feature: Implement MFA
 
 ## Version 3.1.1

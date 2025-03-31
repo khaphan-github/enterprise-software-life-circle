@@ -121,8 +121,68 @@ import { CQRSAuthenticationRBAC } from 'cqrs-authentication-rbac';
 export class AppModule {}
 ```
 
-### Available Bussiness logic
+# Available Bussiness logic
 - Let's me write doc after finish verion 3.0.0
+## AccessTokenGuard
+### 1. Apply Guard Globally (Recommended for Most Applications)
+
+```typescript
+// src/main.ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  
+  // Get required services from app
+  const jwtService = app.get(JwtService);
+  const queryBus = app.get(QueryBus);
+  
+  // Register guard globally
+  app.useGlobalGuards(new AccessTokenGuard(jwtService, queryBus));
+  
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+### 2. Apply Guard to Specific Controller
+
+```typescript
+// src/users/users.controller.ts
+import { UseGuards } from '@nestjs/common';
+
+@Controller('users')
+@UseGuards(AccessTokenGuard)
+export class UsersController {
+  // All routes in this controller will be protected
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+}
+```
+
+### 3. Apply Guard to Individual Route
+
+```typescript
+// src/profile/profile.controller.ts
+import { UseGuards } from '@nestjs/common';
+
+@Controller('profile')
+export class ProfileController {
+  @Get()
+  @UseGuards(AccessTokenGuard)
+  getProfile() {
+    // This specific route is protected
+  }
+
+  @Get('public')
+  getPublicInfo() {
+    // This route remains unprotected
+  }
+}
+```
+# Multi-factor login flow:
+
+# Multi-factor register flow:
 
 #### Description
 #### Register
