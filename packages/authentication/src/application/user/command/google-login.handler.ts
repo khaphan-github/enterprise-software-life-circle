@@ -11,7 +11,7 @@ import { Inject } from '@nestjs/common';
 import { AuthConf } from '../../../configurations/auth-config';
 import { CreateUserCommand } from '../../../domain/user/command/create-user.command';
 import { InvalidGoogleClientIdError } from '../../../domain/user/errors/invalid-google-client-id.error';
-import { UserType } from '../../../domain/user/user-entity';
+import { Mfa, MfaMethod, UserType } from '../../../domain/user/user-entity';
 import { UserRepository } from '../../../infrastructure/repository/user.repository';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event';
@@ -54,10 +54,18 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
 
     let user: any = await this.repository.getUserByUsername(payload.sub);
     if (!user) {
+      // By default when user login by google they dont need verify email again
+      const _mfa: Mfa = {
+        enable: false,
+        method: MfaMethod.EMAIL,
+        receiveMfaCodeAddress: payload.email,
+        verified: false,
+      };
       user = await this.commandBus.execute(
         new CreateUserCommand(
           payload.sub,
           nanoid(16),
+          _mfa,
           UserType.GOOGLE,
           payload,
         ),

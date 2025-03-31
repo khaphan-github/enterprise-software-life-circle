@@ -18,6 +18,8 @@ import { EndpointEntityCreatedEvent } from '../../domain/endpoint/event/endpoint
 import { ActionUpdatedEvent } from '../../domain/action/events/action-updated.event';
 import { ActionDeletedEvent } from '../../domain/action/events/action-deleted.event';
 import { ActionCreatedEvent } from '../../domain/action/events/action-created.event';
+import { SendEmailCodeEvent } from '../../domain/mfa/event/send-email-mfa-code.event';
+import { SendSMSCodeEvent } from '../../domain/mfa/event/send-sms-mfa-code.event';
 
 @Injectable()
 export class AuthenticationSaga {
@@ -51,6 +53,8 @@ export class AuthenticationSaga {
         ActionUpdatedEvent,
         ActionDeletedEvent,
         ActionCreatedEvent,
+        SendEmailCodeEvent,
+        SendSMSCodeEvent,
       ),
       map((event) => {
         this.logger.log('Event dispatched:', event.constructor.name, event);

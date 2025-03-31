@@ -25,6 +25,10 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { GoogleLoginCommand } from '../../domain/user/command/google-login.command';
 import { GoogleLoginDTO } from '../../domain/user/dto/google-login.dto';
 import { UserType } from '../../domain/user/user-entity';
+import { VerifyMfaSessionCommand } from '../../domain/mfa/command/verify-mfa-session.command';
+import { VerifyLoginMfaSessionCommand } from '../../domain/mfa/command/verify-login-mfa-session.command';
+import { VerifyMfaSessionDTO } from '../../domain/mfa/dto/verify-mfa-session.dto';
+import { VerifyLoginMfaSessionDTO } from '../../domain/mfa/dto/verify-login-mfa-session.dto';
 
 @Controller('auth')
 export class AuthController implements ICustomController {
@@ -51,6 +55,7 @@ export class AuthController implements ICustomController {
       new CreateUserCommand(
         dto.username,
         dto.password,
+        dto.mfa,
         UserType.PASSWORD,
         dto.metadata,
       ),
@@ -73,5 +78,22 @@ export class AuthController implements ICustomController {
   me(@Headers('authorization') authorization: string) {
     const accessToken = extractTokenFromHeader(authorization);
     return this.queryBus.execute(new MeQuery(accessToken));
+  }
+
+  // use when register
+  @Post('verify-register-mfa-session')
+  @HttpCode(200)
+  async verifyMfaSession(@Body() dto: VerifyMfaSessionDTO) {
+    return this.commandBus.execute(
+      new VerifyMfaSessionCommand(dto.sessionId, dto.otp),
+    );
+  }
+
+  @Post('verify-login-mfa-session')
+  @HttpCode(200)
+  async verifyLoginMfaSession(@Body() dto: VerifyLoginMfaSessionDTO) {
+    return this.commandBus.execute(
+      new VerifyLoginMfaSessionCommand(dto.sessionId, dto.otp),
+    );
   }
 }

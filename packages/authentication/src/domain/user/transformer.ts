@@ -15,6 +15,7 @@ export class UserTransformer {
     entity.metadata = db.metadata;
     entity.createdAt = db.created_at;
     entity.updatedAt = db.updated_at;
+    entity.mfa = db.mfa;
     entity.type = db.type;
     return entity;
   }

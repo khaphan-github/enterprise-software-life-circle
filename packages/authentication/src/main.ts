@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { CQRSAuthenticationRBAC } from './auth.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { UserStatus } from './domain/user/user-status';
+import { MfaMethod } from './domain/user/user-entity';
 
 async function bootstrap() {
   const app = await NestFactory.create(
@@ -36,6 +37,11 @@ async function bootstrap() {
         defaultUserStatus: UserStatus.ACTIVE,
         authGoogleClientId: process.env.GOOGLE_CLIENT_ID,
         authGoogleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        mfa: {
+          enable: true,
+          method: MfaMethod.EMAIL,
+          otpLength: 6,
+        },
       },
       constroller: { enable: true },
       migrations: {

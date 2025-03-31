@@ -1,3 +1,4 @@
+import { Inject } from '@nestjs/common';
 import {
   CommandBus,
   EventBus,
@@ -15,8 +16,8 @@ import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event
 import { UserLoginFailEvent } from '../../../domain/user/events/user-login-fail.event';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { AuthConf } from '../../../configurations/auth-config';
+import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-session.command';
 import * as argon2 from 'argon2';
-import { Inject } from '@nestjs/common';
 
 @QueryHandler(LoginQuery)
 export class LoginHandler implements IQueryHandler<LoginQuery> {
@@ -50,9 +51,15 @@ export class LoginHandler implements IQueryHandler<LoginQuery> {
       this.eventBus.publish(new UserLoginFailEvent(user));
       throw new PasswordNotMatchError();
     }
+    // Check mfa here
+    if (user.mfa?.enable) {
+      const sessionId = await this.commandBus.execute(
+        new CreateMfaSessionCommand(user),
+      );
+      return { sessionId };
+    }
 
     // Create jwt token here
-
     const { accessToken, refreshToken } = await this.commandBus.execute(
       new CreateTokenCommand(user.id),
     );

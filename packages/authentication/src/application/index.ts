@@ -25,6 +25,9 @@ import { UpdateEndpointsCommandHandler } from './endpoint/command/update-endpoin
 import { AssignActionToRoleHandler } from './role/command/assign-action-to-role.handler';
 import { AssignEndpointToRoleHandler } from './role/command/assign-endpoint-to-role.handler';
 import { GoogleLoginHandler } from './user/command/google-login.handler';
+import { CreateMfaSessionHandler } from './mfa/command/create-mfa-session.handler';
+import { VerifyfaSessionHandler } from './mfa/command/verify-mfa-session.handler';
+import { VerifyLoginfaSessionHandler } from './mfa/command/verify-login-mfa-session.handler';
 
 export const Handlers = [
   // User
@@ -33,6 +36,10 @@ export const Handlers = [
   MeHandler,
   GoogleLoginHandler,
 
+  // Mfa
+  CreateMfaSessionHandler,
+  VerifyfaSessionHandler,
+  VerifyLoginfaSessionHandler,
   // Role
   CreateRoleCommandHandler,
   AssignRoleToUserHandler,

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { GoogleLoginHandler } from './google-login.handler';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { AuthConf } from '../../../configurations/auth-config';
 import { UserRepository } from '../../../infrastructure/repository/user.repository';
 import { GoogleLoginCommand } from '../../../domain/user/command/google-login.command';
@@ -10,7 +10,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { InvalidGoogleClientIdError } from '../../../domain/user/errors/invalid-google-client-id.error';
 import { CreateUserCommand } from '../../../domain/user/command/create-user.command';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
-import { UserType } from '../../../domain/user/user-entity';
+import { Mfa, MfaMethod, UserType } from '../../../domain/user/user-entity';
 import { UserStatus } from '../../../domain/user/user-status';
 
 jest.mock('google-auth-library');
@@ -42,6 +42,10 @@ describe('GoogleLoginHandler', () => {
           useValue: {
             getUserByUsername: jest.fn(),
           },
+        },
+        {
+          provide: EventBus,
+          useValue: { publish: jest.fn() },
         },
       ],
     }).compile();
@@ -76,10 +80,18 @@ describe('GoogleLoginHandler', () => {
       idToken: 'test-id-token',
       audience: 'test-client-id',
     });
+
+    const mfa: Mfa = {
+      enable: false,
+      method: MfaMethod.EMAIL,
+      receiveMfaCodeAddress: mockPayload.email,
+      verified: false,
+    };
     expect(commandBus.execute).toHaveBeenCalledWith(
       new CreateUserCommand(
         'test-sub',
         expect.any(String),
+        mfa,
         UserType.GOOGLE,
         mockPayload,
       ),

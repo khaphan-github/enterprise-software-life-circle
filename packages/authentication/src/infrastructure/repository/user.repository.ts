@@ -16,8 +16,8 @@ export class UserRepository {
 
   async createUser(userEntity: UserEntity): Promise<void> {
     const query = `
-      INSERT INTO auth_users (id, username, password_hash, status, metadata, created_at, updated_at, type)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      INSERT INTO auth_users (id, username, password_hash, status, metadata, created_at, updated_at, type, mfa)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     `;
     const values = [
       userEntity.id,
@@ -28,6 +28,7 @@ export class UserRepository {
       userEntity.createdAt,
       userEntity.updatedAt,
       userEntity.type,
+      JSON.stringify(userEntity.mfa),
     ];
     await this.pg.execute(query, values);
   }
@@ -47,8 +48,8 @@ export class UserRepository {
   async updateUser(userEntity: UserEntity): Promise<void> {
     const query = `
       UPDATE auth_users
-      SET username = $1, password_hash = $2, status = $3, metadata = $4, updated_at = $5, type = $6
-      WHERE id = $7
+      SET username = $1, password_hash = $2, status = $3, metadata = $4, updated_at = $5, type = $6, mfa = $7
+      WHERE id = $8
     `;
     const values = [
       userEntity.username,
@@ -56,8 +57,9 @@ export class UserRepository {
       userEntity.status,
       JSON.stringify(userEntity.metadata),
       userEntity.updatedAt,
-      userEntity.id,
       userEntity.type,
+      JSON.stringify(userEntity.mfa),
+      userEntity.id,
     ];
     await this.pg.execute(query, values);
   }

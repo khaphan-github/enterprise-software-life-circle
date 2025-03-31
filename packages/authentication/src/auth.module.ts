@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Handlers } from './application';
+import { CacheModule } from '@nestjs/cache-manager';
 import { CqrsModule } from '@nestjs/cqrs';
 import { Controllers, Repositories } from './infrastructure';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
@@ -19,6 +20,7 @@ import { ErrorInterceptor } from './infrastructure/interceptor/error.interceptor
 import { LoggingInterceptor } from './infrastructure/interceptor/log.interceptor';
 import { UserStatus } from './domain/user/user-status';
 import { INotifyProxy } from './domain/mfa/inotify.proxy';
+import { MfaMethod } from './domain/user/user-entity';
 
 export interface IRBACConf {
   authSecretKey: string;
@@ -36,11 +38,12 @@ export interface IRBACConf {
   authGoogleClientSecret?: string;
 
   // Multi-Factor Authentication (MFA)
-  mfa: {
-    enable: boolean;
-    template: string;
-    otpLength: number;
-    notifyProxy: INotifyProxy;
+  mfa?: {
+    enable?: boolean;
+    template?: string;
+    method?: MfaMethod;
+    otpLength?: number;
+    notifyProxy?: INotifyProxy;
   };
 }
 
@@ -65,6 +68,7 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
     return {
       module: CQRSAuthenticationRBAC,
       imports: [
+        CacheModule.register(),
         ConfigModule.forRoot({
           load: [
             () => ({
