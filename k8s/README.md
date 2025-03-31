@@ -10,10 +10,8 @@ sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
 sudo kubeadm init --config kubeadm-config.yaml --v=5
-
 sudo systemctl enable --now kubelet
 
-kubeadm init --config kubeadm-config.yaml
 
 # Commands
 - Reset kubeadm: sudo kubeadm reset & rm -rf ~/.kube
