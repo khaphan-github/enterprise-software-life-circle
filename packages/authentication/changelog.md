@@ -12,3 +12,6 @@
 ## Version 2.4.10
 - Feature: Assign role to user, Assign endpoint to role, Assign action to role.
 - Feature: Create Update Delete endoint, action,
+
+## Version 3.1.1
+- Feature: Implement login with google
