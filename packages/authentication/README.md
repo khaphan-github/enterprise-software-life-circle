@@ -199,76 +199,9 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
 }
 ```
 
-### Available Business Logic
-
 # Available Bussiness logic
 
-- Let's me write doc after finish verion 3.0.0
-
-## AccessTokenGuard
-
-### 1. Apply Guard Globally (Recommended for Most Applications)
-
-```typescript
-// src/main.ts
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // Get required services from app
-  const jwtService = app.get(JwtService);
-  const queryBus = app.get(QueryBus);
-
-  // Register guard globally
-  app.useGlobalGuards(new AccessTokenGuard(jwtService, queryBus));
-
-  await app.listen(3000);
-}
-bootstrap();
-```
-
-### 2. Apply Guard to Specific Controller
-
-```typescript
-// src/users/users.controller.ts
-import { UseGuards } from '@nestjs/common';
-
-@Controller('users')
-@UseGuards(AccessTokenGuard)
-export class UsersController {
-  // All routes in this controller will be protected
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-}
-```
-
-### 3. Apply Guard to Individual Route
-
-```typescript
-// src/profile/profile.controller.ts
-import { UseGuards } from '@nestjs/common';
-
-@Controller('profile')
-export class ProfileController {
-  @Get()
-  @UseGuards(AccessTokenGuard)
-  getProfile() {
-    // This specific route is protected
-  }
-
-  @Get('public')
-  getPublicInfo() {
-    // This route remains unprotected
-  }
-}
-```
-
-# Multi-factor login flow:
-
-# Multi-factor register flow:
-
-#### Authentication Endpoints
+- Let's me write doc after finish verion 4.0.0
 
 ```typescript
 @Controller('auth')
@@ -531,6 +464,97 @@ export class AccessTokenGuard implements CanActivate {
     return true;
   }
 }
+```
+
+## Database
+
+```typescript
+module.exports = async (client, schema) => {
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_users" (
+      id VARCHAR(255) PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      status VARCHAR(50),
+      type VARCHAR(50),
+      mfa JSONB DEFAULT '{}',
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_roles" (
+      id VARCHAR(255) PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL,
+      description TEXT,
+      status VARCHAR(50),
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_user_roles" (
+      user_id VARCHAR(255) REFERENCES ${schema}."auth_users"(id) ON DELETE CASCADE,
+      role_id VARCHAR(255) REFERENCES ${schema}."auth_roles"(id) ON DELETE CASCADE,
+      status VARCHAR(50),
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (user_id, role_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_actions" (
+      id VARCHAR(255) PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL,
+      description TEXT,
+      status VARCHAR(50),
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_endpoints" (
+      id VARCHAR(255) PRIMARY KEY,
+      path VARCHAR(255) NOT NULL,
+      method VARCHAR(10) NOT NULL,
+      metadata JSONB DEFAULT '{}',
+      status VARCHAR(50),
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      CONSTRAINT unique_path_method UNIQUE (path, method)
+    );
+
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_role_action_permissions" (
+      role_id VARCHAR(255) REFERENCES ${schema}."auth_roles"(id) ON DELETE CASCADE,
+      action_id VARCHAR(255) REFERENCES ${schema}."auth_actions"(id) ON DELETE CASCADE,
+      status VARCHAR(50),
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (role_id, action_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS ${schema}."auth_role_endpoint_permissions" (
+      role_id VARCHAR(255) REFERENCES ${schema}."auth_roles"(id) ON DELETE CASCADE,
+      endpoint_id VARCHAR(255) REFERENCES ${schema}."auth_endpoints"(id) ON DELETE CASCADE,
+      status VARCHAR(50),
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (role_id, endpoint_id)
+    );
+  `);
+
+  await client.query(`
+    ALTER TABLE ${schema}."auth_users"
+    ADD COLUMN IF NOT EXISTS mfa JSONB DEFAULT '{}';
+  `);
+
+  await client.query(`
+    ALTER TABLE ${schema}."auth_users"
+    ADD COLUMN IF NOT EXISTS reset_password JSONB DEFAULT '{}';
+  `);
+};
 ```
 
 ## License
