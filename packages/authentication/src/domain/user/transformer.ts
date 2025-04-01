@@ -17,6 +17,7 @@ export class UserTransformer {
     entity.updatedAt = db.updated_at;
     entity.mfa = db.mfa;
     entity.type = db.type;
+    entity.resetPassword = db.reset_password;
     return entity;
   }
 

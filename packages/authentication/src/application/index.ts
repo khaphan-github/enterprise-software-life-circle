@@ -28,6 +28,8 @@ import { GoogleLoginHandler } from './user/command/google-login.handler';
 import { CreateMfaSessionHandler } from './mfa/command/create-mfa-session.handler';
 import { VerifyfaSessionHandler } from './mfa/command/verify-mfa-session.handler';
 import { VerifyLoginfaSessionHandler } from './mfa/command/verify-login-mfa-session.handler';
+import { RequestPasswordResetHandler } from './user/command/request-password-reset.handler';
+import { ResetPasswordHandler } from './user/command/reset-password.handler';
 
 export const Handlers = [
   // User
@@ -35,6 +37,8 @@ export const Handlers = [
   LoginHandler,
   MeHandler,
   GoogleLoginHandler,
+  RequestPasswordResetHandler,
+  ResetPasswordHandler,
 
   // Mfa
   CreateMfaSessionHandler,

@@ -10,7 +10,11 @@ import { UserRepository } from '../../../infrastructure/repository/user.reposito
 import { UserAlreadyExistError } from '../../../domain/user/errors/user-already-exist.error';
 import { UserStatus } from '../../../domain/user/user-status';
 import * as argon2 from 'argon2';
-import { MfaMethod, UserEntity } from '../../../domain/user/user-entity';
+import {
+  MfaMethod,
+  ResetPasswordMethod,
+  UserEntity,
+} from '../../../domain/user/user-entity';
 import { AuthConf } from '../../../configurations/auth-config';
 import { Inject } from '@nestjs/common';
 import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-session.command';
@@ -48,6 +52,22 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       this.authenticationConfig.getHashPasswordConf(),
     );
     entity.status = defaultUserStatus ? defaultUserStatus : UserStatus.ACTIVE;
+
+    // Set the reset password method
+    let resetPasswordMethod = ResetPasswordMethod.NONE;
+    if (mfa?.method == MfaMethod.EMAIL) {
+      resetPasswordMethod = ResetPasswordMethod.EMAIL;
+    }
+    if (mfa?.method == MfaMethod.SMS) {
+      resetPasswordMethod = ResetPasswordMethod.SMS;
+    }
+    entity.resetPassword = {
+      method: resetPasswordMethod,
+      address: command?.mfa?.receiveMfaCodeAddress,
+      token: undefined,
+      tokenExpiresAt: undefined,
+    };
+
     entity.setCreateTime();
 
     await this.repository.createUser(entity);

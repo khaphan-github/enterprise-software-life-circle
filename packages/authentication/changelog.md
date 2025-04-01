@@ -1,4 +1,6 @@
 # Changelog
+## Version 3.3.3
+- Implement forgot password
 
 ## Version 3.2.x
 - Feature: Implement MFA
