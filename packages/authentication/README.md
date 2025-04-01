@@ -4,28 +4,30 @@ This module provides Role-Based Access Control (RBAC) authentication using CQRS 
 ## Features
 ### Authentication Features
 
-- ✅ **User Registration** – Allow users to sign up (email/password, social login, etc.).
-- ✅ **User Login** – Authenticate users with secure methods (JWT, OAuth, session-based).
-- ✅ **Token Management** – Use access & refresh tokens (JWT-based or session).
-- ✅ **Multi-Factor Authentication (MFA)** – Optional for added security.
-- ✅ **Password Reset & Recovery** – Enable users to recover their accounts.
-- ✅ **Session Management** – Handle multiple active sessions & logout.
+- ✅ **User Registration** – Allow users to sign up with email/password authentication
+- ✅ **User Login** – Authenticate users with JWT-based authentication
+- ✅ **Token Management** – Use access & refresh tokens with configurable expiration
+- ✅ **Password Reset & Recovery** – Enable users to recover their accounts
+- ✅ **Session Management** – Handle multiple active sessions & logout
+- ✅ **User Status Management** - Track and manage user account status (active, inactive, suspended)
 
 ### Role-Based Access Control (RBAC) Features
 
-- ✅ **Role Management** – Create, update, and delete roles (e.g., Admin, User, Editor).
-- ✅ **Permission Management** – Assign permissions to roles (e.g., read, write, delete).
-- ✅ **User-Role Assignment** – Map users to one or multiple roles.
-- ✅ **Fine-Grained Access Control** – Restrict access based on permissions.
-- ✅ **Middleware/Guards** – Enforce role-based access in API endpoints or UI components.
+- ✅ **Role Management** – Create, update, and delete roles (e.g., Admin, User, Editor)
+- ✅ **Permission Management** – Assign permissions to roles (e.g., read, write, delete)
+- ✅ **User-Role Assignment** – Map users to one or multiple roles
+- ✅ **Fine-Grained Access Control** – Restrict access based on permissions
+- ✅ **Middleware/Guards** – Enforce role-based access in API endpoints
+- ✅ **Endpoint-Based Authorization** - Control access to specific API endpoints
 
 ### Security & Compliance
 
-- ✅ **Secure Password Hashing** – Use bcrypt, Argon2, or PBKDF2.
-- ✅ **Rate Limiting & Brute Force Protection** – Prevent login abuse.
-- ✅ **Audit Logging** – Track authentication & authorization actions.
-- ✅ **RBAC Configuration Storage** – Store roles/permissions in DB, cache, or config.
-- ✅ **Granular Access Policies** – Allow resource-level access control.
+- ✅ **Secure Password Hashing** – Use bcrypt for password hashing
+- ✅ **Rate Limiting & Brute Force Protection** – Prevent login abuse
+- ✅ **Audit Logging** – Track authentication & authorization actions
+- ✅ **RBAC Configuration Storage** – Store roles/permissions in PostgreSQL
+- ✅ **Granular Access Policies** – Allow resource-level access control
+- ✅ **Error Handling & Logging** - Comprehensive error handling and logging system
 
 ## Installation
 
@@ -34,47 +36,13 @@ Ensure you have NestJS installed in your project. Then, install the required dep
 ```sh
 npm i cqrs-authentication-rbac
 ```
+
 ## Usage
 ### Register the Module
 
 Import and configure the module in your NestJS application:
 
 ```typescript
-/**
- * AppModule configuration for the CQRSAuthenticationRBAC module.
- *
- * This module is configured to handle authentication and RBAC (Role-Based Access Control)
- * using the `cqrs-authentication-rbac` package. Below are the details of each configuration field:
- *
- * - `dbConf`: Database configuration for connecting to the PostgreSQL database.
- *   - `host`: The database host (default: 'localhost').
- *   - `port`: The database port (default: 5432).
- *   - `user`: The database username (default: 'postgres').
- *   - `password`: The database password (default: 'postgres').
- *   - `database`: The name of the database (default: 'postgres').
- *
- * - `jwtOptions`: Configuration for JSON Web Token (JWT) handling.
- *   - `secret`: The secret key used to sign JWTs (default: 'defaultSecret').
- *   - `signOptions`: Options for signing JWTs.
- *     - `expiresIn`: The expiration time for JWTs (default: '60s').
- *
- * - `rbacConf`: Configuration for Role-Based Access Control (RBAC).
- *   - `authSecretKey`: Secret key for authentication (default: 'defaultAuthSecretKey').
- *   - `authSalt`: Salt used for authentication (default: 'defaultAuthSalt').
- *   - `authJwtSecret`: Secret key for JWT authentication (default: 'defaultAuthJwtSecret').
- *   - `authAccessTokenSecretKey`: Secret key for access tokens (default: 'defaultAccessTokenSecretKey').
- *   - `authRefreshTokenSecretKey`: Secret key for refresh tokens (default: 'defaultRefreshTokenSecretKey').
- *   - `authAccessTokenExpiresIn`: Expiration time for access tokens (default: '3600s').
- *   - `authRefreshTokenExpiresIn`: Expiration time for refresh tokens (default: '86400s').
- *   - `authTokenType`: Type of token used for authentication (default: 'Bearer').
- *
- * - `migrations`: Configuration for database migrations.
- *   - `enable`: Whether migrations are enabled (default: true).
- *   - `migrationTableName`: The name of the table used to track migrations (default: '_migration_authentication').
- *
- * - `constroller`: Configuration for enabling the controller.
- *   - `enable`: Whether the controller is enabled (default: true).
- */
 import { Module } from '@nestjs/common';
 import { CQRSAuthenticationRBAC } from 'cqrs-authentication-rbac';
 
@@ -96,17 +64,12 @@ import { CQRSAuthenticationRBAC } from 'cqrs-authentication-rbac';
         authSecretKey: process.env.AUTH_SECRET_KEY || 'defaultAuthSecretKey',
         authSalt: process.env.AUTH_SALT || 'defaultAuthSalt',
         authJwtSecret: process.env.AUTH_JWT_SECRET || 'defaultAuthJwtSecret',
-        authAccessTokenSecretKey:
-          process.env.AUTH_ACCESS_TOKEN_SECRET_KEY ||
-          'defaultAccessTokenSecretKey',
-        authRefreshTokenSecretKey:
-          process.env.AUTH_REFRESH_TOKEN_SECRET_KEY ||
-          'defaultRefreshTokenSecretKey',
-        authAccessTokenExpiresIn:
-          process.env.AUTH_ACCESS_TOKEN_EXPIRES_IN || '3600s',
-        authRefreshTokenExpiresIn:
-          process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
+        authAccessTokenSecretKey: process.env.AUTH_ACCESS_TOKEN_SECRET_KEY || 'defaultAccessTokenSecretKey',
+        authRefreshTokenSecretKey: process.env.AUTH_REFRESH_TOKEN_SECRET_KEY || 'defaultRefreshTokenSecretKey',
+        authAccessTokenExpiresIn: process.env.AUTH_ACCESS_TOKEN_EXPIRES_IN || '3600s',
+        authRefreshTokenExpiresIn: process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN || '86400s',
         authTokenType: process.env.AUTH_TOKEN_TYPE ?? 'Bearer',
+        defaultUserStatus: 'ACTIVE'
       },
       migrations: {
         enable: true,
@@ -121,6 +84,7 @@ import { CQRSAuthenticationRBAC } from 'cqrs-authentication-rbac';
 export class AppModule {}
 ```
 
+### Available Business Logic
 # Available Bussiness logic
 - Let's me write doc after finish verion 3.0.0
 ## AccessTokenGuard
@@ -184,124 +148,717 @@ export class ProfileController {
 
 # Multi-factor register flow:
 
-#### Description
-#### Register
+#### Authentication Endpoints
 
-The `Register` endpoint allows a new user to create an account by providing a username, password, and optional metadata. Upon successful registration, the server returns the user's details, including a unique ID, timestamps, and hashed password.
-
-#### HTTP Request
+##### Register User
 **POST** `/auth/register`
 
-#### Headers
-- `accept: */*`  
-- `Content-Type: application/json`
-
-#### Request Body
-The request body must be a JSON object containing the following fields:
-- `username` (string, required): The desired username for the new account.
-- `password` (string, required): The password for the new account.
-- `metadata` (object, optional): Additional user information.
-  - `age` (integer, optional): The user's age.
-  - `country` (string, optional): The user's country of residence.
-#### Event
-![alt text](./imgs/register.png)
-
-- **UserCreatedEvent**: Triggered when a new user is created. you can trigger this event to handle your custom business (Send email, Notify,...)
-
-
-### Login API Documentation
-
-#### Endpoint
-`POST /auth/login`
-
-#### Description
-This endpoint allows a user to log in by providing their username and password. Upon successful authentication, the server responds with user details, an access token, and a refresh token.
-
-#### Request
-- **URL**: `http://localhost:3000/auth/login`
-- **Method**: `POST`
-- **Headers**:
-  - `accept: */*`
-  - `Content-Type: application/json`
-- **Request Body**:
-  ```json
-  {
-    "username": "john_doe",
-    "password": "strongPassword123"
+Request Body:
+```json
+{
+  "username": "string",
+  "password": "string",
+  "metadata": {
+    "email": "string",
+    "firstName": "string",
+    "lastName": "string"
   }
-  ```
+}
+```
 
-#### Response
-- **Status Code**: `200 OK`
-- **Response Body**:
-  ```json
-  {
-    "user": {
-      "id": "4wc1tBkSOcO-OTSo",
-      "createdAt": "2025-03-30T08:38:43.662Z",
-      "updatedAt": "2025-03-30T08:38:43.662Z",
-      "username": "john_doe",
-      "metadata": {
-        "age": 30,
-        "country": "USA"
-      }
-    },
-    "accessToken": "eyJhbGciOiJIU...",
-    "refreshToken": "eyJhbGciOiJIUzI..."
+Response:
+```json
+{
+  "id": "string",
+  "username": "string",
+  "metadata": {},
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+##### Login
+**POST** `/auth/login`
+
+Request Body:
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+Response:
+```json
+{
+  "user": {
+    "id": "string",
+    "username": "string",
+    "metadata": {},
+    "createdAt": "string",
+    "updatedAt": "string"
+  },
+  "accessToken": "string",
+  "refreshToken": "string"
+}
+```
+
+##### Refresh Token
+**POST** `/auth/refresh-token`
+
+Request Body:
+```json
+{
+  "refreshToken": "string"
+}
+```
+
+Response:
+```json
+{
+  "accessToken": "string",
+  "refreshToken": "string"
+}
+```
+
+##### Get Current User
+**GET** `/auth/me`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "id": "string",
+  "username": "string",
+  "metadata": {},
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+#### Multi-Factor Authentication (MFA) Flow
+
+The module supports Time-based One-Time Password (TOTP) for MFA. Here's how to implement the MFA flow:
+
+##### 1. Enable MFA for User
+**POST** `/auth/mfa/enable`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "secret": "string", // TOTP secret key
+  "qrCode": "string"  // QR code for authenticator apps
+}
+```
+
+##### 2. Verify MFA Setup
+**POST** `/auth/mfa/verify-setup`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Request Body:
+```json
+{
+  "code": "string" // 6-digit code from authenticator app
+}
+```
+
+Response:
+```json
+{
+  "success": true
+}
+```
+
+##### 3. Login with MFA
+**POST** `/auth/login`
+
+Request Body:
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+Response (if MFA is enabled):
+```json
+{
+  "requiresMFA": true,
+  "tempToken": "string"
+}
+```
+
+##### 4. Complete MFA Login
+**POST** `/auth/mfa/verify`
+
+Request Body:
+```json
+{
+  "tempToken": "string",
+  "code": "string" // 6-digit code from authenticator app
+}
+```
+
+Response:
+```json
+{
+  "user": {
+    "id": "string",
+    "username": "string",
+    "metadata": {},
+    "createdAt": "string",
+    "updatedAt": "string"
+  },
+  "accessToken": "string",
+  "refreshToken": "string"
+}
+```
+
+##### 5. Disable MFA
+**POST** `/auth/mfa/disable`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Request Body:
+```json
+{
+  "code": "string" // 6-digit code from authenticator app
+}
+```
+
+Response:
+```json
+{
+  "success": true
+}
+```
+
+##### MFA Implementation Example
+
+```typescript
+// 1. Enable MFA for a user
+async enableMFA(userId: string) {
+  const { secret, qrCode } = await this.authService.enableMFA(userId);
+  
+  // Display QR code to user
+  // User scans with authenticator app (Google Authenticator, Authy, etc.)
+  
+  // Verify setup
+  const isValid = await this.authService.verifyMFASetup(userId, code);
+  if (isValid) {
+    // MFA is now enabled for the user
   }
-  ```
+}
 
-#### Notes
-- The `accessToken` is used for authenticated requests to protected endpoints.
-- The `refreshToken` can be used to obtain a new access token when the current one expires.
-- Ensure that sensitive information such as `passwordHash` is handled securely and not exposed unnecessarily.
+// 2. Handle login with MFA
+async login(username: string, password: string) {
+  const response = await this.authService.login(username, password);
+  
+  if (response.requiresMFA) {
+    // Show MFA input to user
+    const mfaCode = await this.getMFAInput();
+    
+    // Complete login with MFA
+    const tokens = await this.authService.verifyMFA(
+      response.tempToken,
+      mfaCode
+    );
+    
+    // Handle successful login
+  }
+}
+```
 
-### Refresh Token API
-This API endpoint is used to refresh an access token using a valid refresh token.
+##### MFA Security Considerations
 
-#### Endpoint
-`POST /auth/refresh-token`
+1. **Backup Codes**
+   - Generate backup codes when enabling MFA
+   - Store backup codes securely
+   - Allow users to regenerate backup codes
 
-#### Headers
-- `accept: */*` - Specifies that the client accepts any response format.
-- `Content-Type: application/json` - Indicates that the request body is in JSON format.
+2. **Recovery Process**
+   - Implement a secure recovery process for lost MFA access
+   - Require additional verification for MFA recovery
+   - Consider using backup email/phone for recovery
 
-#### Me
+3. **Rate Limiting**
+   - Implement stricter rate limiting for MFA attempts
+   - Lock account after multiple failed MFA attempts
+   - Require admin intervention for account unlock
 
-#### TODO:
+4. **Session Management**
+   - Consider "remember this device" option
+   - Implement device tracking for suspicious activity
+   - Allow users to view and revoke active sessions
 
-#### User Events
+#### Role Management APIs
 
-- **UserLogedinEvent**: Triggered when a user successfully logs in.
-- **UserLoginFailEvent**: Triggered when a user login attempt fails.
-- **UserUpdatedEvent**: Triggered when a user's details are updated.
-- **UserDeletedEvent**: Triggered when a user is deleted.
+##### Create Role
+**POST** `/auth/roles`
 
-#### Role Events
+Headers:
+```
+Authorization: Bearer <access_token>
+```
 
-- **UserRoleEntityCreatedEvent**: Triggered when a new user role entity is created.
-- **UserRoleUpdatedEvent**: Triggered when a user role is updated.
-- **UserRoleDeletedEvent**: Triggered when a user role is deleted.
-- **EndpointsAddedToRolesEvent**: Triggered when endpoints are added to specific roles.
-- **PermissionsUpdatedForRoleEvent**: Triggered when permissions are updated for a role.
+Request Body:
+```json
+{
+  "name": "string",
+  "description": "string",
+  "permissions": ["string"]
+}
+```
 
-#### Endpoint Events
+Response:
+```json
+{
+  "id": "string",
+  "name": "string",
+  "description": "string",
+  "permissions": ["string"],
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
 
-- **EndpointEntityCreatedEvent**: Triggered when a new endpoint entity is created.
-- **EndpointEntityUpdatedEvent**: Triggered when an endpoint entity is updated.
-- **EndpointEntityDeletedEvent**: Triggered when an endpoint entity is deleted.
-- **EndpointAccessedEvent**: Triggered when an endpoint is accessed.
-- **EndpointPermissionUpdatedEvent**: Triggered when permissions for an endpoint are updated.
+##### Assign Role to User
+**POST** `/auth/roles/assign`
 
-#### Action Events
+Headers:
+```
+Authorization: Bearer <access_token>
+```
 
-- **ActionTriggeredEvent**: Triggered when a specific action is performed by a user.
-- **ActionFailedEvent**: Triggered when an action fails to execute.
-- **ActionCompletedEvent**: Triggered when an action is successfully completed.
+Request Body:
+```json
+{
+  "userId": "string",
+  "roleId": "string"
+}
+```
+
+Response:
+```json
+{
+  "success": true
+}
+```
+
+##### Get User Roles
+**GET** `/auth/roles/user/:userId`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "roles": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "permissions": ["string"]
+    }
+  ]
+}
+```
+
+##### Get Roles by Route
+**GET** `/auth/roles/route/:routeId`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "roles": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "permissions": ["string"]
+    }
+  ]
+}
+```
+
+#### Endpoint Management APIs
+
+##### Create Endpoint
+**POST** `/auth/endpoints`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Request Body:
+```json
+{
+  "path": "string",
+  "method": "string",
+  "description": "string",
+  "isPublic": boolean
+}
+```
+
+Response:
+```json
+{
+  "id": "string",
+  "path": "string",
+  "method": "string",
+  "description": "string",
+  "isPublic": boolean,
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+##### Update Endpoint
+**PUT** `/auth/endpoints/:id`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Request Body:
+```json
+{
+  "path": "string",
+  "method": "string",
+  "description": "string",
+  "isPublic": boolean
+}
+```
+
+Response:
+```json
+{
+  "id": "string",
+  "path": "string",
+  "method": "string",
+  "description": "string",
+  "isPublic": boolean,
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+##### Delete Endpoint
+**DELETE** `/auth/endpoints/:id`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "success": true
+}
+```
+
+##### Get Endpoints
+**GET** `/auth/endpoints`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Query Parameters:
+- `cursor`: string (optional) - Pagination cursor
+- `limit`: number (optional) - Number of items per page
+
+Response:
+```json
+{
+  "items": [
+    {
+      "id": "string",
+      "path": "string",
+      "method": "string",
+      "description": "string",
+      "isPublic": boolean,
+      "createdAt": "string",
+      "updatedAt": "string"
+    }
+  ],
+  "nextCursor": "string"
+}
+```
+
+##### Check Public Route
+**GET** `/auth/endpoints/public/:path`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "isPublic": boolean
+}
+```
+
+#### Action Management APIs
+
+##### Create Action
+**POST** `/auth/actions`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Request Body:
+```json
+{
+  "name": "string",
+  "description": "string",
+  "type": "string"
+}
+```
+
+Response:
+```json
+{
+  "id": "string",
+  "name": "string",
+  "description": "string",
+  "type": "string",
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+##### Update Action
+**PUT** `/auth/actions/:id`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Request Body:
+```json
+{
+  "name": "string",
+  "description": "string",
+  "type": "string"
+}
+```
+
+Response:
+```json
+{
+  "id": "string",
+  "name": "string",
+  "description": "string",
+  "type": "string",
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+##### Delete Action
+**DELETE** `/auth/actions/:id`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "success": true
+}
+```
+
+##### Get Actions
+**GET** `/auth/actions`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Query Parameters:
+- `cursor`: string (optional) - Pagination cursor
+- `limit`: number (optional) - Number of items per page
+
+Response:
+```json
+{
+  "items": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "type": "string",
+      "createdAt": "string",
+      "updatedAt": "string"
+    }
+  ],
+  "nextCursor": "string"
+}
+```
+
+##### Get Action by ID
+**GET** `/auth/actions/:id`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "id": "string",
+  "name": "string",
+  "description": "string",
+  "type": "string",
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+#### Route Permission APIs
+
+##### Check Route Execution Permission
+**GET** `/auth/routes/:routeId/can-execute`
+
+Headers:
+```
+Authorization: Bearer <access_token>
+```
+
+Response:
+```json
+{
+  "canExecute": boolean
+}
+```
+
+#### Events
+
+The module emits various events that you can listen to for custom business logic:
+
+##### User Events
+- `UserCreatedEvent`: Triggered when a new user is created
+- `UserLogedinEvent`: Triggered when a user successfully logs in
+- `UserLoginFailEvent`: Triggered when a user login attempt fails
+- `UserUpdatedEvent`: Triggered when a user's details are updated
+- `UserDeletedEvent`: Triggered when a user is deleted
+
+##### Role Events
+- `UserRoleEntityCreatedEvent`: Triggered when a new user role is created
+- `UserRoleUpdatedEvent`: Triggered when a user role is updated
+- `UserRoleDeletedEvent`: Triggered when a user role is deleted
+- `EndpointsAddedToRolesEvent`: Triggered when endpoints are added to roles
+- `PermissionsUpdatedForRoleEvent`: Triggered when role permissions are updated
+
+##### Endpoint Events
+- `EndpointEntityCreatedEvent`: Triggered when a new endpoint is created
+- `EndpointEntityUpdatedEvent`: Triggered when an endpoint is updated
+- `EndpointEntityDeletedEvent`: Triggered when an endpoint is deleted
+- `EndpointAccessedEvent`: Triggered when an endpoint is accessed
+- `EndpointPermissionUpdatedEvent`: Triggered when endpoint permissions are updated
 
 ### Role-Based Authorization
 
-- Let's me write doc after finish verion 3.0.0
+The module provides several ways to implement role-based authorization:
+
+1. **Using Guards**
+```typescript
+@UseGuards(RoleGuard)
+@Roles('ADMIN')
+@Get('admin-only')
+async adminOnly() {
+  return 'This is admin only';
+}
+```
+
+2. **Using Decorators**
+```typescript
+@HasRole('ADMIN')
+async someAdminFunction() {
+  // Only accessible by users with ADMIN role
+}
+```
+
+3. **Using Permissions**
+```typescript
+@HasPermission('READ_USERS')
+async getUsers() {
+  // Only accessible by users with READ_USERS permission
+}
+```
+
+### Error Handling
+
+The module includes comprehensive error handling with the following features:
+- Standardized error responses
+- Detailed error logging
+- Custom error interceptors
+- Validation error handling
+
+### Database Migrations
+
+The module includes automatic database migrations that can be enabled/disabled through configuration. Migrations handle:
+- User table creation
+- Role and permission tables
+- User-role relationships
+- Endpoint permissions
+
+## Security Considerations
+
+1. **Environment Variables**
+   - Always use environment variables for sensitive configuration
+   - Never commit sensitive values to version control
+
+2. **Token Security**
+   - Access tokens have a shorter expiration time
+   - Refresh tokens have a longer expiration time
+   - Tokens are signed with secure secrets
+
+3. **Password Security**
+   - Passwords are hashed using bcrypt
+   - Password policies can be enforced through validation
+
+4. **Rate Limiting**
+   - Implement rate limiting for authentication endpoints
+   - Configure appropriate limits based on your needs
 
 ## License
 
