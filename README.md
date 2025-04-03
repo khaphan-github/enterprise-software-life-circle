@@ -106,7 +106,9 @@ This way,  your team will work more effeciently and write better code and becaus
 - Use Agile methodogies (See details)
 - Prioritize security: Enterprice software handle sensitive business critical data and information and making sure it's self is an absolute must. 
 .
-# CI/CD:
+# Deployment:
+- [] From base project structure - it can deployed to many infrastructure, only change interface, and can use many database but keep core domain logic.
+- [] How this code can run in serverless, what new need config.
 # Monitoring:
 # Bernchmark:
 # Logging:
