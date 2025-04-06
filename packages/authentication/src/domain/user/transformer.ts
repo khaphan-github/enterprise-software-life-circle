@@ -21,6 +21,21 @@ export class UserTransformer {
     return entity;
   }
 
+  static fromDocumentToEntity(db: any): UserEntity | null {
+    const entity = new UserEntity();
+    entity.id = db._id;
+    entity.username = db.username;
+    entity.passwordHash = db.password_hash;
+    entity.status = db.status;
+    entity.metadata = db.metadata;
+    entity.createdAt = db.created_at;
+    entity.updatedAt = db.updated_at;
+    entity.mfa = db.mfa;
+    entity.type = db.type;
+    entity.resetPassword = db.reset_password;
+    return entity;
+  }
+
   static toLoginDTO(userEntity: UserEntity): UserLoginSuccessDTO {
     const result = new UserLoginSuccessDTO();
     result.id = userEntity.id;

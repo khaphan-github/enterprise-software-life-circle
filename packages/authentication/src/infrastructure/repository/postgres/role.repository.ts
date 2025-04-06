@@ -3,7 +3,7 @@ import {
   PgSQLConnectionPool,
 } from 'nest-postgresql-multi-connect';
 import * as format from 'pg-format';
-import { CONNECTION_STRING_DEFAULT } from '../../../configurations/connection-string-default';
+import { CONNECTION_STRING_DEFAULT } from '../../providers/repository/connection-string-default';
 import { RoleEntity, RoleType } from '../../../domain/role/role-entity';
 import { RoleTransformer } from '../../../domain/role/transformer';
 import { UserRoleEntity } from '../../../domain/role/user-role.entity';

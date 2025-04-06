@@ -1,3 +1,4 @@
 /certs
 /jenkins_home
 /postgres-data
+/mongo-data

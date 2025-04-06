@@ -1,17 +1,18 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
+import { Inject } from '@nestjs/common';
+import { EndpointRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
 import { IsPublicRoutesQuery } from '../../../domain/endpoint/query/is-public-route.query';
-
-// Query to check if a route and method exist
 
 @QueryHandler(IsPublicRoutesQuery)
 export class IsPublicRoutesHandler
   implements IQueryHandler<IsPublicRoutesQuery>
 {
-  constructor(private readonly endpointRepository: EndpointRepository) {}
+  @Inject(EndpointRepositoryProvider)
+  private readonly repository: IEndpointRepository;
 
   async execute(query: IsPublicRoutesQuery): Promise<boolean> {
-    const result = await this.endpointRepository.isRouteAndMethodExist(
+    const result = await this.repository.isRouteAndMethodExist(
       query.path,
       query.method,
     );

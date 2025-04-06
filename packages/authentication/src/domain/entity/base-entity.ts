@@ -1,14 +1,20 @@
 import { nanoid } from 'nanoid';
+import { IdGenerator } from './id';
 
 export class BaseEntity {
-  id: string;
+  // This id can be string / objectid or other id we want.
+  id: any;
   createdAt: Date;
   updatedAt: Date;
 
   constructor() {}
 
-  initId(size: number = 16) {
-    this.id = nanoid(size);
+  initId(generator?: IdGenerator) {
+    if (!generator) {
+      this.id = nanoid(16);
+    } else {
+      this.id = generator.generateId();
+    }
   }
 
   getId() {

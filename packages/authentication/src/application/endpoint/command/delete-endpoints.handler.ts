@@ -1,5 +1,7 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
+import { Inject } from '@nestjs/common';
+import { EndpointRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
 import { DeleteEndpointsCommand } from '../../../domain/endpoint/command/delete-endpoints.command';
 import { EndpointEntityDeletedEvent } from '../../../domain/endpoint/event/endpoint-deleted.event';
 
@@ -7,10 +9,10 @@ import { EndpointEntityDeletedEvent } from '../../../domain/endpoint/event/endpo
 export class DeleteEndpointsCommandHandler
   implements ICommandHandler<DeleteEndpointsCommand>
 {
-  constructor(
-    private readonly repository: EndpointRepository,
-    private readonly eventBus: EventBus,
-  ) {}
+  @Inject(EndpointRepositoryProvider)
+  private readonly repository: IEndpointRepository;
+
+  constructor(private readonly eventBus: EventBus) {}
 
   async execute(command: DeleteEndpointsCommand): Promise<void> {
     const deletedEntities = await this.repository.deleteEndpoints(command.ids);

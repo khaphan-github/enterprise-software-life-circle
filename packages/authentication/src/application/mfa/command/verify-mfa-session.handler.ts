@@ -2,10 +2,11 @@ import { Inject } from '@nestjs/common';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { VerifyMfaSessionCommand } from '../../../domain/mfa/command/verify-mfa-session.command';
-import { AuthConf } from '../../../configurations/auth-config';
-import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { VerifyMfaCodeNotMatchError } from '../../../domain/mfa/error/verify-mfa-not-match.error';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
+import { IUserRepository } from '../../../domain/repository/user-repository.interface';
+import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
 
 @CommandHandler(VerifyMfaSessionCommand)
 export class VerifyfaSessionHandler
@@ -13,7 +14,7 @@ export class VerifyfaSessionHandler
 {
   @Inject() authenticationConfig: AuthConf;
   @Inject(CACHE_MANAGER) private cacheManager: Cache;
-  @Inject() private readonly userRepository: UserRepository;
+  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
 
   async execute(command: VerifyMfaSessionCommand): Promise<any> {
     const payload = await this.cacheManager.get<{ otp: string; uid: string }>(
@@ -23,7 +24,7 @@ export class VerifyfaSessionHandler
       throw new VerifyMfaCodeNotMatchError();
     }
 
-    const user = await this.userRepository.findUserById(payload.uid);
+    const user = await this.repository.findUserById(payload.uid);
     if (!user) {
       throw new UserNotFoundError();
     }
@@ -32,7 +33,7 @@ export class VerifyfaSessionHandler
     }
     user.setUpdateTime();
 
-    await this.userRepository.updateUser(user);
+    await this.repository.updateUser(user);
     await this.cacheManager.del(command.sessionId);
 
     return Promise.resolve(user);

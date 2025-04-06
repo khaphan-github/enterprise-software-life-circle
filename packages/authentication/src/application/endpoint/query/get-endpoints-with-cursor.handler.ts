@@ -1,14 +1,16 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
+import { Inject } from '@nestjs/common';
+import { EndpointRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 import { GetEndpointsWithCursorQuery } from '../../../domain/endpoint/query/get-endpoints-with-cursor.query';
 
-// Query handler for getting a list of endpoints with cursor pagination
 @QueryHandler(GetEndpointsWithCursorQuery)
 export class GetEndpointsWithCursorQueryHandler
   implements IQueryHandler<GetEndpointsWithCursorQuery>
 {
-  constructor(private readonly repository: EndpointRepository) {}
+  @Inject(EndpointRepositoryProvider)
+  private readonly repository: IEndpointRepository;
 
   async execute(query: GetEndpointsWithCursorQuery): Promise<EndpointEntity[]> {
     return this.repository.getEndpointsWithCursor(query.limit, query.cursor);

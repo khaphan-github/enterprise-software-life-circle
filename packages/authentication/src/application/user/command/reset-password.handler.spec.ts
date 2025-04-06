@@ -4,7 +4,7 @@ import { ResetPasswordHandler } from './reset-password.handler';
 import { EventBus } from '@nestjs/cqrs';
 import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { ResetPasswordCommand } from '../../../domain/user/command/reset-password.command';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import * as argon2 from 'argon2';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { PasswordResetCompletedEvent } from '../../../domain/user/events/password-reset-completed.event';

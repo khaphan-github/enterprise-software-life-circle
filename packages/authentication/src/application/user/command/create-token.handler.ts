@@ -2,16 +2,18 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
-import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import { TokenCreatedEvent } from '../../../domain/user/events/token-created.event';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
+import { RoleRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
 
 @CommandHandler(CreateTokenCommand)
 export class CreateTokenHandler implements ICommandHandler<CreateTokenCommand> {
   @Inject() authenticationConfig: AuthConf;
+  @Inject(RoleRepositoryProvider)
+  private readonly roleRepository: IRoleRepository;
   constructor(
     private readonly eventBus: EventBus,
-    private readonly roleRepository: RoleRepository,
     private readonly jwtService: JwtService,
   ) {}
 

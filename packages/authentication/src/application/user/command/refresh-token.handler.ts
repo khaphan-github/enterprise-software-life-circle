@@ -1,22 +1,23 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserEntity } from '../../../domain/user/user-entity';
 import { RefreshTokenCommand } from '../../../domain/user/command/refresh-token.command';
-import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { InvalidRefreshTOkenError } from '../../../domain/user/errors/invalid-refresh-token.error';
 import { Inject, Logger } from '@nestjs/common';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
+import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
 @CommandHandler(RefreshTokenCommand)
 export class RefreshTokenHandler
   implements ICommandHandler<RefreshTokenCommand>
 {
   @Inject() authenticationConfig: AuthConf;
+  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
 
   constructor(
-    private readonly repository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
   ) {}

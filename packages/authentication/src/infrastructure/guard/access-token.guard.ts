@@ -14,7 +14,7 @@ import { extractTokenFromHeader } from '../../shared/utils/token.util';
 import { QueryBus } from '@nestjs/cqrs';
 import { IsPublicRoutesQuery } from '../../domain/endpoint/query/is-public-route.query';
 import { CanExecRouteQuery } from '../../domain/role/query/can-exec-route.query';
-import { AuthConf } from '../../configurations/auth-config';
+import { AuthConf } from '../conf/auth-config';
 import { isTestMode } from '../../shared/utils/dev-mode.utils';
 
 @Injectable()

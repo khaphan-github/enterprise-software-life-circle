@@ -1,32 +1,32 @@
-import {
-  CommandBus,
-  CommandHandler,
-  EventBus,
-  ICommandHandler,
-} from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../../../domain/user/command/create-user.command';
 import { UserCreatedEvent } from '../../../domain/user/events/user-created.event';
-import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { UserAlreadyExistError } from '../../../domain/user/errors/user-already-exist.error';
 import { UserStatus } from '../../../domain/user/user-status';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
+import { Inject } from '@nestjs/common';
+import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-session.command';
+import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IUserRepository } from '../../../domain/repository/user-repository.interface';
+import { IdGenerator } from '../../..//domain/entity/id';
+import { EventHub } from '../../../domain/event-hub/event.hub';
+import { ID_GENERATOR } from '../../../infrastructure/providers/id-genrerator.provider';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 import * as argon2 from 'argon2';
 import {
   MfaMethod,
   ResetPasswordMethod,
   UserEntity,
 } from '../../../domain/user/user-entity';
-import { AuthConf } from '../../../configurations/auth-config';
-import { Inject } from '@nestjs/common';
-import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-session.command';
-
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
-  @Inject() authenticationConfig: AuthConf;
   @Inject() private readonly commandBus: CommandBus;
-  constructor(
-    private readonly eventBus: EventBus,
-    private readonly repository: UserRepository,
-  ) {}
+  @Inject() private readonly authenticationConfig: AuthConf;
+  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
+  @Inject(ID_GENERATOR) private readonly generator: IdGenerator;
+  @Inject(EVENT_HUB_PROVIDER) private readonly eventHub: EventHub;
+
+  constructor() {}
 
   async execute(
     command: CreateUserCommand,
@@ -37,7 +37,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     }
     const { defaultUserStatus, mfa } = this.authenticationConfig.getRbacConf();
     const entity = new UserEntity();
-    entity.initId();
+    entity.initId(this.generator);
     entity.metadata = command.metadata;
     entity.username = command.username;
     entity.type = command.type;
@@ -78,7 +78,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       );
       return { sessionId };
     }
-    this.eventBus.publish(new UserCreatedEvent(entity));
+    this.eventHub.publish(new UserCreatedEvent(entity));
     return Promise.resolve(entity);
   }
 }

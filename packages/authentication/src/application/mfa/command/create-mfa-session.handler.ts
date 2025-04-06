@@ -3,7 +3,7 @@ import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-
 import { EventBus } from '@nestjs/cqrs';
 import { generateRandomNumber } from '../../../shared/utils/random-numer.util';
 import { Inject } from '@nestjs/common';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { nanoid } from 'nanoid';
 import { SendEmailCodeEvent } from '../../../domain/mfa/event/send-email-mfa-code.event';

@@ -6,7 +6,7 @@ import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { MeQuery } from '../../../domain/user/query/me.query';
 import { InvalidAccessTokenError } from '../../../domain/user/errors/invalid-access-token.error';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 
 describe('MeHandler', () => {
   let handler: MeHandler;

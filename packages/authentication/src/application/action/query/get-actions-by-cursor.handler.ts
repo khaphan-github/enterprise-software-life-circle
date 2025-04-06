@@ -1,13 +1,16 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
+import { Inject } from '@nestjs/common';
+import { ActionRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IActionRepository } from '../../../domain/repository/action-repository.interface';
 import { GetActionsByCursorQuery } from '../../../domain/action/queries/get-actions-by-cursor.query';
 import { ActionEntity } from '../../../domain/action/action-entity';
-import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 
 @QueryHandler(GetActionsByCursorQuery)
 export class GetActionsByCursorHandler
   implements IQueryHandler<GetActionsByCursorQuery>
 {
-  constructor(private readonly repository: ActionRepository) {}
+  @Inject(ActionRepositoryProvider)
+  private readonly repository: IActionRepository;
 
   async execute(query: GetActionsByCursorQuery): Promise<ActionEntity[]> {
     return this.repository.getActionsByCursor(query.cursor, query.limit);

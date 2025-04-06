@@ -6,7 +6,6 @@ import {
   QueryHandler,
 } from '@nestjs/cqrs';
 import { LoginQuery } from '../../../domain/user/query/login.query';
-import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { PasswordNotMatchError } from '../../../domain/user/errors/password-not-match.error';
 import { UserStatus } from '../../../domain/user/user-status';
@@ -15,16 +14,18 @@ import { UserInactivatedError } from '../../../domain/user/errors/user-inactivat
 import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event';
 import { UserLoginFailEvent } from '../../../domain/user/events/user-login-fail.event';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-session.command';
+import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 import * as argon2 from 'argon2';
 
 @QueryHandler(LoginQuery)
 export class LoginHandler implements IQueryHandler<LoginQuery> {
   @Inject() authenticationConfig: AuthConf;
+  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
 
   constructor(
-    private readonly repository: UserRepository,
     private readonly commandBus: CommandBus,
     private readonly eventBus: EventBus,
   ) {}

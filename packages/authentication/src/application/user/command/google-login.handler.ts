@@ -8,20 +8,22 @@ import {
 import { OAuth2Client } from 'google-auth-library';
 import { GoogleLoginCommand } from '../../../domain/user/command/google-login.command';
 import { Inject } from '@nestjs/common';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { CreateUserCommand } from '../../../domain/user/command/create-user.command';
 import { InvalidGoogleClientIdError } from '../../../domain/user/errors/invalid-google-client-id.error';
 import { Mfa, MfaMethod, UserType } from '../../../domain/user/user-entity';
-import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event';
+import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 import { nanoid } from 'nanoid';
 
 @CommandHandler(GoogleLoginCommand)
 export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
   @Inject() authenticationConfig: AuthConf;
   @Inject() private readonly commandBus: CommandBus;
-  @Inject() private readonly repository: UserRepository;
+  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
+
   @Inject() private readonly eventBus: EventBus;
 
   private static googleClient: OAuth2Client;

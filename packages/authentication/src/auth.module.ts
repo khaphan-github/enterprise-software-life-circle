@@ -8,19 +8,28 @@ import { ConfigModule } from '@nestjs/config';
 import { Handlers } from './application';
 import { CacheModule } from '@nestjs/cache-manager';
 import { CqrsModule } from '@nestjs/cqrs';
-import { Controllers, Repositories } from './infrastructure';
+import { Controllers } from './infrastructure';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PostgresModule } from 'nest-postgresql-multi-connect';
 import { PgMigration } from 'postgrest-migration';
-import { CONNECTION_STRING_DEFAULT } from './configurations/connection-string-default';
+import { CONNECTION_STRING_DEFAULT } from './infrastructure/providers/repository/connection-string-default';
 import { PoolConfig } from 'pg';
-import { AuthConf } from './configurations/auth-config';
+import { AuthConf } from './infrastructure/conf/auth-config';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ErrorInterceptor } from './infrastructure/interceptor/error.interceptor';
 import { LoggingInterceptor } from './infrastructure/interceptor/log.interceptor';
 import { UserStatus } from './domain/user/user-status';
 import { INotifyProxy } from './domain/mfa/inotify.proxy';
 import { MfaMethod } from './domain/user/user-entity';
+import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
+import {
+  User,
+  UserSchema,
+} from './infrastructure/repository/mongodb/schema/user.schema';
+import { EventHubProvider } from './infrastructure/providers/event-hub.provider';
+import { IdGeneratorProvider } from './infrastructure/providers/id-genrerator.provider';
+import { MongoRepositoryProviders } from './infrastructure/providers/repository/mongo-repository.provider';
+import { PostgresRepositoryProviders } from './infrastructure/providers/repository/postgres-repository.provider';
 
 export interface IRBACConf {
   authSecretKey: string;
@@ -48,17 +57,20 @@ export interface IRBACConf {
 }
 
 export interface AuthRBACConfig {
-  dbConf: PoolConfig;
-  jwtOptions: JwtModuleOptions;
-  rbacConf: IRBACConf;
+  database: 'postgres' | 'mongodb';
+  dbConf?: PoolConfig;
   migrations?: {
     enable?: boolean;
     migrationTableName?: string;
   };
+  mongoDbConf?: MongooseModuleOptions; // Added MongoDB configuration
+  jwtOptions: JwtModuleOptions;
+  rbacConf: IRBACConf;
   constroller?: {
     enable?: boolean;
   };
 }
+
 @Module({})
 export class CQRSAuthenticationRBAC implements OnModuleInit {
   private static config: AuthRBACConfig;
@@ -68,16 +80,16 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
     return {
       module: CQRSAuthenticationRBAC,
       imports: [
+        CqrsModule,
         CacheModule.register(),
+        JwtModule.register(conf.jwtOptions),
         ConfigModule.forRoot({
           load: [
             () => ({
               authRBACConfig: conf,
-              GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
             }),
           ],
         }),
-        CqrsModule,
         PostgresModule.forRootAsync({
           useFactory: () => [
             {
@@ -87,11 +99,25 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
           ],
         }),
         PostgresModule.forFeature(CONNECTION_STRING_DEFAULT),
-        JwtModule.register(conf.jwtOptions),
+        ...(conf.mongoDbConf
+          ? [
+              MongooseModule.forRootAsync({
+                useFactory: () => conf.mongoDbConf || {},
+              }),
+              MongooseModule.forFeature([
+                { name: User.name, schema: UserSchema },
+              ]),
+            ]
+          : []), // Conditionally add MongoDB module
       ],
       providers: [
+        ...(this.config.database == 'mongodb'
+          ? MongoRepositoryProviders
+          : PostgresRepositoryProviders),
         ...Handlers,
-        ...Repositories,
+        AuthConf,
+        IdGeneratorProvider,
+        EventHubProvider,
         {
           provide: APP_INTERCEPTOR,
           useClass: ErrorInterceptor,
@@ -104,16 +130,18 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
           provide: APP_PIPE,
           useClass: ValidationPipe,
         },
-        AuthConf,
       ],
-      exports: [...Handlers, ...Repositories, AuthConf],
+      exports: [...Handlers, AuthConf],
       controllers: conf.constroller?.enable ? Controllers : [],
     };
   }
 
   async onModuleInit() {
     // TODO: How exec right migration file directory
-    if (CQRSAuthenticationRBAC.config.migrations?.enable) {
+    if (
+      CQRSAuthenticationRBAC.config.migrations?.enable &&
+      CQRSAuthenticationRBAC.config.dbConf
+    ) {
       const migrateExecution = new PgMigration(
         CQRSAuthenticationRBAC.config.dbConf,
         {

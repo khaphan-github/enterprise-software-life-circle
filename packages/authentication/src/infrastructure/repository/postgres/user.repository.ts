@@ -5,7 +5,7 @@ import {
   PgSQLConnection,
   PgSQLConnectionPool,
 } from 'nest-postgresql-multi-connect';
-import { CONNECTION_STRING_DEFAULT } from '../../../configurations/connection-string-default';
+import { CONNECTION_STRING_DEFAULT } from '../../providers/repository/connection-string-default';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
 @Injectable()

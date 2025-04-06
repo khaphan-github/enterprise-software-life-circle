@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RequestPasswordResetHandler } from './request-password-reset.handler';
 import { EventBus } from '@nestjs/cqrs';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { RequestPasswordResetCommand } from '../../../domain/user/command/request-password-reset.command';
 import { UserStatus } from '../../../domain/user/user-status';

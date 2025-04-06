@@ -3,7 +3,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GoogleLoginHandler } from './google-login.handler';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { GoogleLoginCommand } from '../../../domain/user/command/google-login.command';
 import { OAuth2Client } from 'google-auth-library';

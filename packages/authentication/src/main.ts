@@ -8,13 +8,6 @@ import { MfaMethod } from './domain/user/user-entity';
 async function bootstrap() {
   const app = await NestFactory.create(
     CQRSAuthenticationRBAC.register({
-      dbConf: {
-        host: process.env.PG_MAIN_DB_HOST || 'localhost',
-        port: parseInt(process.env.PG_MAIN_DB_PORT || '5432', 10),
-        user: process.env.PG_MAIN_DB_USER || 'postgres',
-        password: process.env.PG_MAIN_DB_PASSWORD || 'postgres',
-        database: process.env.PG_MAIN_DB_DATABASE || 'postgres',
-      },
       jwtOptions: {
         secret: process.env.JWT_SECRET || 'defaultSecret',
         signOptions: { expiresIn: '60s' },
@@ -38,7 +31,7 @@ async function bootstrap() {
         authGoogleClientId: process.env.GOOGLE_CLIENT_ID,
         authGoogleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
         mfa: {
-          enable: true,
+          enable: false,
           method: MfaMethod.EMAIL,
           otpLength: 6,
         },
@@ -46,6 +39,11 @@ async function bootstrap() {
       constroller: { enable: true },
       migrations: {
         enable: true,
+      },
+      database: 'postgres',
+      mongoDbConf: {
+        uri: 'mongodb://root:example@mongodb:27017',
+        dbName: 'local',
       },
     }),
   );

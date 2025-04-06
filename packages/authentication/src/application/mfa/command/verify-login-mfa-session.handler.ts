@@ -5,7 +5,7 @@ import {
   EventBus,
   ICommandHandler,
 } from '@nestjs/cqrs';
-import { AuthConf } from '../../../configurations/auth-config';
+import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { VerifyLoginMfaSessionCommand } from '../../../domain/mfa/command/verify-login-mfa-session.command';
 import { VerifyMfaSessionCommand } from '../../../domain/mfa/command/verify-mfa-session.command';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';

@@ -6,7 +6,6 @@ import { AccessTokenGuard } from '../infrastructure/guard/access-token.guard';
 import { AssignDefaultRoleToUserHandler } from './role/command/assign-default-role-to-user.handler';
 import { AssignRoleToUserHandler } from './role/command/assign-role-to-user.handler';
 import { CreateRoleCommandHandler } from './role/command/create-role.handler';
-import { AuthenticationSaga } from './saga/authentication.saga';
 import { CreateTokenHandler } from './user/command/create-token.handler';
 import { CreateUserHandler } from './user/command/create-user.handler';
 import { RefreshTokenHandler } from './user/command/refresh-token.handler';
@@ -76,6 +75,5 @@ export const Handlers = [
   GetActionsByCursorHandler,
 
   // Service
-  AuthenticationSaga,
   AccessTokenGuard,
 ];

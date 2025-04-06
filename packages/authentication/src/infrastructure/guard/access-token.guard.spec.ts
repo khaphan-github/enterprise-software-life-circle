@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { QueryBus } from '@nestjs/cqrs';
 import { UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { ExecutionContext } from '@nestjs/common/interfaces';
-import { AuthConf } from '../../configurations/auth-config';
+import { AuthConf } from '../conf/auth-config';
 
 describe('AccessTokenGuard', () => {
   let guard: AccessTokenGuard;
