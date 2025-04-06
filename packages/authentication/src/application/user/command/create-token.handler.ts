@@ -4,13 +4,13 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { TokenCreatedEvent } from '../../../domain/user/events/token-created.event';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
-import { RoleRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { ROLE_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
 
 @CommandHandler(CreateTokenCommand)
 export class CreateTokenHandler implements ICommandHandler<CreateTokenCommand> {
   @Inject() authenticationConfig: AuthConf;
-  @Inject(RoleRepositoryProvider)
+  @Inject(ROLE_REPOSITORY_PROVIDER)
   private readonly roleRepository: IRoleRepository;
   constructor(
     private readonly eventBus: EventBus,

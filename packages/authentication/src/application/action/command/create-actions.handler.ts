@@ -5,13 +5,13 @@ import { ActionCreatedEvent } from '../../../domain/action/events/action-created
 import { ActionEntity } from '../../../domain/action/action-entity';
 import { Inject } from '@nestjs/common';
 import { IActionRepository } from '../../../domain/repository/action-repository.interface';
-import { ActionRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { ACTION_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 
 @CommandHandler(CreateActionsCommand)
 export class CreateActionsHandler
   implements ICommandHandler<CreateActionsCommand>
 {
-  @Inject(ActionRepositoryProvider)
+  @Inject(ACTION_REPOSITORY_PROVIDER)
   private readonly repository: IActionRepository;
   constructor(private readonly eventBus: EventBus) {}
 

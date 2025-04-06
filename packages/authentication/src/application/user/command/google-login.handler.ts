@@ -14,7 +14,7 @@ import { InvalidGoogleClientIdError } from '../../../domain/user/errors/invalid-
 import { Mfa, MfaMethod, UserType } from '../../../domain/user/user-entity';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event';
-import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 import { nanoid } from 'nanoid';
 
@@ -22,7 +22,8 @@ import { nanoid } from 'nanoid';
 export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
   @Inject() authenticationConfig: AuthConf;
   @Inject() private readonly commandBus: CommandBus;
-  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
+  @Inject(USER_REPOSITORY_PROVIDER)
+  private readonly repository: IUserRepository;
 
   @Inject() private readonly eventBus: EventBus;
 

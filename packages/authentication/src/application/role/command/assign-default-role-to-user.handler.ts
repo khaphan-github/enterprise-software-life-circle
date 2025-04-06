@@ -1,6 +1,6 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { RoleRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { ROLE_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
 import {
   UserRoleEntity,
@@ -14,7 +14,8 @@ import { RoleType } from '../../../domain/role/role-entity';
 export class AssignDefaultRoleToUserHandler
   implements ICommandHandler<AssignDefaultRoleToUserCommand>
 {
-  @Inject(RoleRepositoryProvider) private readonly repository: IRoleRepository;
+  @Inject(ROLE_REPOSITORY_PROVIDER)
+  private readonly repository: IRoleRepository;
 
   constructor(private readonly eventBus: EventBus) {}
 

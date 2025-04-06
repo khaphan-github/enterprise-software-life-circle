@@ -1,6 +1,6 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { EndpointRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { ENDPOINT_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
 import { DeleteEndpointsCommand } from '../../../domain/endpoint/command/delete-endpoints.command';
 import { EndpointEntityDeletedEvent } from '../../../domain/endpoint/event/endpoint-deleted.event';
@@ -9,7 +9,7 @@ import { EndpointEntityDeletedEvent } from '../../../domain/endpoint/event/endpo
 export class DeleteEndpointsCommandHandler
   implements ICommandHandler<DeleteEndpointsCommand>
 {
-  @Inject(EndpointRepositoryProvider)
+  @Inject(ENDPOINT_REPOSITORY_PROVIDER)
   private readonly repository: IEndpointRepository;
 
   constructor(private readonly eventBus: EventBus) {}

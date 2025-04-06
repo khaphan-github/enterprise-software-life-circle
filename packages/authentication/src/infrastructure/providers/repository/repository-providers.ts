@@ -1,4 +1,4 @@
-export const UserRepositoryProvider = 'UserRepositoryProvider';
-export const RoleRepositoryProvider = 'RoleRepositoryProvider';
-export const EndpointRepositoryProvider = 'EndpointRepositoryProvider';
-export const ActionRepositoryProvider = 'ActionRepositoryProvider';
+export const USER_REPOSITORY_PROVIDER = 'USER_REPOSITORY_PROVIDER';
+export const ROLE_REPOSITORY_PROVIDER = 'ROLE_REPOSITORY_PROVIDER';
+export const ENDPOINT_REPOSITORY_PROVIDER = 'ENDPOINT_REPOSITORY_PROVIDER';
+export const ACTION_REPOSITORY_PROVIDER = 'ACTION_REPOSITORY_PROVIDER';

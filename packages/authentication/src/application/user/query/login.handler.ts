@@ -16,14 +16,15 @@ import { UserLoginFailEvent } from '../../../domain/user/events/user-login-fail.
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-session.command';
-import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 import * as argon2 from 'argon2';
 
 @QueryHandler(LoginQuery)
 export class LoginHandler implements IQueryHandler<LoginQuery> {
   @Inject() authenticationConfig: AuthConf;
-  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
+  @Inject(USER_REPOSITORY_PROVIDER)
+  private readonly repository: IUserRepository;
 
   constructor(
     private readonly commandBus: CommandBus,

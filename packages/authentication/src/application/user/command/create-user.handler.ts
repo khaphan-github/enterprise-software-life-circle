@@ -6,7 +6,7 @@ import { UserStatus } from '../../../domain/user/user-status';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { Inject } from '@nestjs/common';
 import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-session.command';
-import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 import { IdGenerator } from '../../..//domain/entity/id';
 import { EventHub } from '../../../domain/event-hub/event.hub';
@@ -22,7 +22,8 @@ import {
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   @Inject() private readonly commandBus: CommandBus;
   @Inject() private readonly authenticationConfig: AuthConf;
-  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
+  @Inject(USER_REPOSITORY_PROVIDER)
+  private readonly repository: IUserRepository;
   @Inject(ID_GENERATOR) private readonly generator: IdGenerator;
   @Inject(EVENT_HUB_PROVIDER) private readonly eventHub: EventHub;
 

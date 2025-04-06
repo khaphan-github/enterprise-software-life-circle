@@ -7,7 +7,7 @@ import { Inject, Logger } from '@nestjs/common';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
-import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
 @CommandHandler(RefreshTokenCommand)
@@ -15,7 +15,8 @@ export class RefreshTokenHandler
   implements ICommandHandler<RefreshTokenCommand>
 {
   @Inject() authenticationConfig: AuthConf;
-  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
+  @Inject(USER_REPOSITORY_PROVIDER)
+  private readonly repository: IUserRepository;
 
   constructor(
     private readonly jwtService: JwtService,

@@ -6,7 +6,7 @@ import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { VerifyMfaCodeNotMatchError } from '../../../domain/mfa/error/verify-mfa-not-match.error';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
-import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 
 @CommandHandler(VerifyMfaSessionCommand)
 export class VerifyfaSessionHandler
@@ -14,7 +14,8 @@ export class VerifyfaSessionHandler
 {
   @Inject() authenticationConfig: AuthConf;
   @Inject(CACHE_MANAGER) private cacheManager: Cache;
-  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
+  @Inject(USER_REPOSITORY_PROVIDER)
+  private readonly repository: IUserRepository;
 
   async execute(command: VerifyMfaSessionCommand): Promise<any> {
     const payload = await this.cacheManager.get<{ otp: string; uid: string }>(

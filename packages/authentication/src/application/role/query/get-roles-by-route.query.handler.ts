@@ -1,6 +1,6 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { RoleRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { ROLE_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
 import { GetRolesByRouteQuery } from '../../../domain/role/query/get-roles-by-route.query';
 
@@ -8,7 +8,8 @@ import { GetRolesByRouteQuery } from '../../../domain/role/query/get-roles-by-ro
 export class GetRolesByRouteQueryHandler
   implements IQueryHandler<GetRolesByRouteQuery>
 {
-  @Inject(RoleRepositoryProvider) private readonly repository: IRoleRepository;
+  @Inject(ROLE_REPOSITORY_PROVIDER)
+  private readonly repository: IRoleRepository;
 
   async execute(query: GetRolesByRouteQuery) {
     return this.repository.getRolesByRoute(query.route, query.method);

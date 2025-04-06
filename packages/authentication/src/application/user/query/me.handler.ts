@@ -6,14 +6,14 @@ import { MeQuery } from '../../../domain/user/query/me.query';
 import { JwtService } from '@nestjs/jwt';
 import { Inject, Logger } from '@nestjs/common';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
-import { UserRepositoryProvider } from 'src/infrastructure/providers/repository/repository-providers';
+import { USER_REPOSITORY_PROVIDER } from 'src/infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
 @QueryHandler(MeQuery)
 export class MeHandler implements IQueryHandler<MeQuery> {
   @Inject() authenticationConfig: AuthConf;
   constructor(
-    @Inject(UserRepositoryProvider)
+    @Inject(USER_REPOSITORY_PROVIDER)
     private readonly repository: IUserRepository,
     private readonly jwtService: JwtService,
   ) {}

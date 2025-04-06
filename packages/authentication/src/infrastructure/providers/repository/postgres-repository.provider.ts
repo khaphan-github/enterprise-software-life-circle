@@ -1,8 +1,8 @@
 import {
-  ActionRepositoryProvider,
-  UserRepositoryProvider,
-  RoleRepositoryProvider,
-  EndpointRepositoryProvider,
+  ACTION_REPOSITORY_PROVIDER,
+  USER_REPOSITORY_PROVIDER,
+  ROLE_REPOSITORY_PROVIDER,
+  ENDPOINT_REPOSITORY_PROVIDER,
 } from './repository-providers';
 import { Provider } from '@nestjs/common';
 import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
@@ -12,19 +12,19 @@ import { EndpointRepository } from '../../../infrastructure/repository/postgres/
 
 export const PostgresRepositoryProviders: Provider[] = [
   {
-    provide: UserRepositoryProvider,
+    provide: USER_REPOSITORY_PROVIDER,
     useClass: UserRepository,
   },
   {
-    provide: ActionRepositoryProvider,
+    provide: ACTION_REPOSITORY_PROVIDER,
     useClass: ActionRepository,
   },
   {
-    provide: RoleRepositoryProvider,
+    provide: ROLE_REPOSITORY_PROVIDER,
     useClass: RoleRepository,
   },
   {
-    provide: EndpointRepositoryProvider,
+    provide: ENDPOINT_REPOSITORY_PROVIDER,
     useClass: EndpointRepository,
   },
 ];

@@ -5,14 +5,15 @@ import { PasswordResetRequestedEvent } from '../../../domain/user/events/passwor
 import { randomBytes } from 'crypto';
 import { Inject } from '@nestjs/common';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
-import { UserRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
 @CommandHandler(RequestPasswordResetCommand)
 export class RequestPasswordResetHandler
   implements ICommandHandler<RequestPasswordResetCommand>
 {
-  @Inject(UserRepositoryProvider) private readonly repository: IUserRepository;
+  @Inject(USER_REPOSITORY_PROVIDER)
+  private readonly repository: IUserRepository;
 
   constructor(private readonly eventBus: EventBus) {}
 

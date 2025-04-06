@@ -4,13 +4,14 @@ import { RoleEntityCreatedEvent } from '../../../domain/role/event/role-created.
 import { RoleEntity } from '../../../domain/role/role-entity';
 import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
 import { Inject } from '@nestjs/common';
-import { RoleRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { ROLE_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 
 @CommandHandler(CreateRoleCommand)
 export class CreateRoleCommandHandler
   implements ICommandHandler<CreateRoleCommand>
 {
-  @Inject(RoleRepositoryProvider) private readonly repository: IRoleRepository;
+  @Inject(ROLE_REPOSITORY_PROVIDER)
+  private readonly repository: IRoleRepository;
   constructor(private readonly eventBus: EventBus) {}
 
   async execute(command: CreateRoleCommand): Promise<RoleEntity> {

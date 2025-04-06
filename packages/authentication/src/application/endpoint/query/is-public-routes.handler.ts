@@ -1,6 +1,6 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { EndpointRepositoryProvider } from '../../../infrastructure/providers/repository/repository-providers';
+import { ENDPOINT_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
 import { IsPublicRoutesQuery } from '../../../domain/endpoint/query/is-public-route.query';
 
@@ -8,7 +8,7 @@ import { IsPublicRoutesQuery } from '../../../domain/endpoint/query/is-public-ro
 export class IsPublicRoutesHandler
   implements IQueryHandler<IsPublicRoutesQuery>
 {
-  @Inject(EndpointRepositoryProvider)
+  @Inject(ENDPOINT_REPOSITORY_PROVIDER)
   private readonly repository: IEndpointRepository;
 
   async execute(query: IsPublicRoutesQuery): Promise<boolean> {
