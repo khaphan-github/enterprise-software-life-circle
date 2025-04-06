@@ -8,6 +8,8 @@ import {
   UserRoleStatus,
 } from '../../../domain/role/user-role.entity';
 import { UserRoleEntityCreatedEvent } from '../../../domain/role/event/user-entity-created.event';
+import { ID_GENERATOR } from '../../../infrastructure/providers/id-genrerator.provider';
+import { IdGenerator } from '../../../domain/entity/id';
 
 @CommandHandler(AssignRoleToUserCommand)
 export class AssignRoleToUserHandler
@@ -15,6 +17,9 @@ export class AssignRoleToUserHandler
 {
   @Inject(ROLE_REPOSITORY_PROVIDER)
   private readonly repository: IRoleRepository;
+
+  @Inject(ID_GENERATOR)
+  private readonly generator: IdGenerator;
 
   constructor(private readonly eventBus: EventBus) {}
 
@@ -25,6 +30,7 @@ export class AssignRoleToUserHandler
       (roleId) =>
         command.userIds.map((userId) => {
           const entity = new UserRoleEntity();
+          entity.initId(this.generator);
           entity.roleId = roleId;
           entity.userId = userId;
           entity.status = UserRoleStatus.ACTIVE;

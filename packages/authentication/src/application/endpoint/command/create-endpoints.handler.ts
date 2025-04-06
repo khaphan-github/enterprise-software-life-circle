@@ -5,6 +5,8 @@ import { IEndpointRepository } from '../../../domain/repository/endpoint-reposit
 import { EndpointEntityCreatedEvent } from '../../../domain/endpoint/event/endpoint-created.event';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 import { CreateEndpointsCommand } from '../../../domain/endpoint/command/create-endpoints.command';
+import { ID_GENERATOR } from '../../../infrastructure/providers/id-genrerator.provider';
+import { IdGenerator } from '../../../domain/entity/id';
 
 @CommandHandler(CreateEndpointsCommand)
 export class CreateEndpointCommandHandler
@@ -13,6 +15,9 @@ export class CreateEndpointCommandHandler
   @Inject(ENDPOINT_REPOSITORY_PROVIDER)
   private readonly repository: IEndpointRepository;
 
+  @Inject(ID_GENERATOR)
+  private readonly generator: IdGenerator;
+
   constructor(private readonly eventBus: EventBus) {}
 
   async execute(commands: CreateEndpointsCommand): Promise<EndpointEntity[]> {
@@ -20,7 +25,7 @@ export class CreateEndpointCommandHandler
 
     for (const command of commands.endpoints) {
       const entity = new EndpointEntity();
-      entity.initId();
+      entity.initId(this.generator);
       entity.path = command.path;
       entity.method = command.method;
       entity.metadata = command.metadata;

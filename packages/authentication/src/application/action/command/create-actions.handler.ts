@@ -6,6 +6,8 @@ import { ActionEntity } from '../../../domain/action/action-entity';
 import { Inject } from '@nestjs/common';
 import { IActionRepository } from '../../../domain/repository/action-repository.interface';
 import { ACTION_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
+import { ID_GENERATOR } from '../../../infrastructure/providers/id-genrerator.provider';
+import { IdGenerator } from '../../../domain/entity/id';
 
 @CommandHandler(CreateActionsCommand)
 export class CreateActionsHandler
@@ -13,12 +15,16 @@ export class CreateActionsHandler
 {
   @Inject(ACTION_REPOSITORY_PROVIDER)
   private readonly repository: IActionRepository;
+
+  @Inject(ID_GENERATOR)
+  private readonly generator: IdGenerator;
+
   constructor(private readonly eventBus: EventBus) {}
 
   async execute(command: CreateActionsCommand) {
     const actions = command.actions.map((action) => {
       const newAction = new ActionEntity();
-      newAction.initId();
+      newAction.initId(this.generator);
       newAction.name = action.name;
       newAction.description = action.description;
       newAction.status = action.status;
