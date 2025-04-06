@@ -1,14 +1,15 @@
-import { RoleEntity, RoleType } from '../role/role-entity';
+import { RoleEntity } from '../role/role-entity';
 import { UserRoleEntity } from '../role/user-role.entity';
 
 export interface IRoleRepository {
   createRole(role: RoleEntity): Promise<RoleEntity | null>;
-  updateRole(role: RoleEntity): Promise<RoleEntity | null>;
+  getRolesByUserId(userId: string): Promise<any>;
+  updateRole(role: RoleEntity): any;
   deleteRole(roleId: string): Promise<void>;
-  getRolesByUserId(userId: string): Promise<RoleEntity[]>;
-  assignRoleToUser(userRoles: UserRoleEntity[]): Promise<UserRoleEntity[]>;
-  getRoleById(roleId: string): Promise<RoleEntity | null>;
-  getRoleByType(type: RoleType): Promise<RoleEntity[]>;
-  getRolesByRoute(path: string, method: string): Promise<RoleEntity[]>;
-  getUserRoles(userId: string): Promise<RoleEntity[]>;
+  findRoleById(id: string): Promise<RoleEntity | null>;
+  isExistRoleById(id: string): Promise<boolean>;
+  getRoleByType(type: string): Promise<RoleEntity[] | null>;
+  assignRoleToUser(userRoleEntites: UserRoleEntity[]): Promise<any>;
+  getRolesByRoute(route: string, method: string): Promise<RoleEntity[] | null>;
+  getUserRoles(userId: string): Promise<RoleEntity[] | null>;
 }

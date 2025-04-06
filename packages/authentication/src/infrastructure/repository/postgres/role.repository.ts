@@ -17,6 +17,13 @@ export class RoleRepository implements IRoleRepository {
     private readonly pg: PgSQLConnectionPool,
   ) {}
 
+  findRoleById(id: string): Promise<RoleEntity | null> {
+    throw new Error('Method not implemented.');
+  }
+  isExistRoleById(id: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
   async getRolesByUserId(userId: string) {
     const query = `
       SELECT * FROM auth_roles

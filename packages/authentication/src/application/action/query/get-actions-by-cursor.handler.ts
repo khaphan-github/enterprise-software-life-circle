@@ -13,6 +13,6 @@ export class GetActionsByCursorHandler
   private readonly repository: IActionRepository;
 
   async execute(query: GetActionsByCursorQuery): Promise<ActionEntity[]> {
-    return this.repository.getActionsByCursor(query.cursor, query.limit);
+    return this.repository.getActionsByCursor(query.limit, query.cursor);
   }
 }

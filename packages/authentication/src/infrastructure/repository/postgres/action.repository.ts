@@ -82,7 +82,7 @@ export class ActionRepository implements IActionRepository {
       : null;
   }
 
-  async getActionsByCursor(cursor: string, limit: number) {
+  async getActionsByCursor(limit: number, cursor: string) {
     const query = `
       SELECT * FROM auth_actions
       WHERE ($1::text IS NULL OR id > $1)

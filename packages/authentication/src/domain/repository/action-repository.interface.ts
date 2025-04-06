@@ -1,10 +1,10 @@
 import { ActionEntity } from '../action/action-entity';
 
 export interface IActionRepository {
-  createActions(actions: ActionEntity[]): Promise<ActionEntity[]>;
-  updateActions(actions: ActionEntity[]): Promise<ActionEntity[]>;
-  deleteActions(actionIds: string[]): Promise<void>;
-  findActionById(id: string): Promise<ActionEntity | null>;
-  getActionsByCursor(cursor: string, limit: number): Promise<ActionEntity[]>;
-  assignActionsToRoles(actionIds: string[], roleIds: string[]): Promise<void>;
+  createActions(action: ActionEntity[]): Promise<any>;
+  updateActions(action: ActionEntity[]): Promise<any>;
+  deleteActions(actionId: string[]): Promise<any>;
+  findActionById(id: string): Promise<any>;
+  assignActionsToRoles(actionIds: string[], roleIds: string[]): Promise<any>;
+  getActionsByCursor(limit: number, cursor: string): Promise<ActionEntity[]>;
 }

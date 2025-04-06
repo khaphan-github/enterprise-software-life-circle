@@ -30,6 +30,16 @@ import { EventHubProvider } from './infrastructure/providers/event-hub.provider'
 import { IdGeneratorProvider } from './infrastructure/providers/id-genrerator.provider';
 import { MongoRepositoryProviders } from './infrastructure/providers/repository/mongo-repository.provider';
 import { PostgresRepositoryProviders } from './infrastructure/providers/repository/postgres-repository.provider';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import { ActionSchema } from './infrastructure/repository/mongodb/schema/action.schema';
+import {
+  Endpoint,
+  EndpointSchema,
+} from './infrastructure/repository/mongodb/schema/endpoint.schema';
+import {
+  Role,
+  RoleSchema,
+} from './infrastructure/repository/mongodb/schema/role.schema';
 
 export interface IRBACConf {
   authSecretKey: string;
@@ -106,6 +116,9 @@ export class CQRSAuthenticationRBAC implements OnModuleInit {
               }),
               MongooseModule.forFeature([
                 { name: User.name, schema: UserSchema },
+                { name: Action.name, schema: ActionSchema },
+                { name: Endpoint.name, schema: EndpointSchema },
+                { name: Role.name, schema: RoleSchema },
               ]),
             ]
           : []), // Conditionally add MongoDB module
