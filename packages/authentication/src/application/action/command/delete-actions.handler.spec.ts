@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
 import { DeleteActionsHandler } from './delete-actions.handler';
 import { DeleteActionsCommand } from '../../../domain/action/commands/delete-actions.command';
-import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 import { ActionDeletedEvent } from '../../../domain/action/events/action-deleted.event';
 
 describe('DeleteActionsHandler', () => {

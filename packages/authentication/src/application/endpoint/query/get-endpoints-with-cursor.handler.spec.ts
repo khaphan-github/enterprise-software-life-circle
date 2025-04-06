@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
+import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
 import { GetEndpointsWithCursorQuery } from '../../../domain/endpoint/query/get-endpoints-with-cursor.query';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 import { GetEndpointsWithCursorQueryHandler } from './get-endpoints-with-cursor.handler';

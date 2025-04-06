@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { InvalidAccessTokenError } from '../../../domain/user/errors/invalid-access-token.error';
 import { MeQuery } from '../../../domain/user/query/me.query';

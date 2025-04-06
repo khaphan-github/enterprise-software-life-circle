@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
 import { AssignEndpointToRoleHandler } from './assign-endpoint-to-role.handler';
 import { AssignEndpointToRoleCommand } from '../../../domain/role/command/assign-endpoint-to-role.command';
-import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
+import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
 import { EndpointsAssignedToRolesEvent } from '../../../domain/role/event/endpoints-assigned-to-roles.event';
 
 describe('AssignEndpointToRoleHandler', () => {

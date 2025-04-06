@@ -3,7 +3,7 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { VerifyMfaSessionCommand } from '../../../domain/mfa/command/verify-mfa-session.command';
 import { AuthConf } from '../../../configurations/auth-config';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { VerifyMfaCodeNotMatchError } from '../../../domain/mfa/error/verify-mfa-not-match.error';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 

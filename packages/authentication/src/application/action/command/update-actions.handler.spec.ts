@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
 import { UpdateActionsHandler } from './update-actions.handler';
 import { UpdateActionsCommand } from '../../../domain/action/commands/update-actions.command';
-import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 import {
   ActionEntity,
   ActionStatus,

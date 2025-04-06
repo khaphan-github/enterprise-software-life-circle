@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MeHandler } from './me.handler';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { MeQuery } from '../../../domain/user/query/me.query';

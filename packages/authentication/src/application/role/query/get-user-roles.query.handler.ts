@@ -1,5 +1,5 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { RoleRepository } from '../../../infrastructure/repository/role.repository';
+import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import { GetUserRolesQuery } from '../../../domain/role/query/get-user-roles.query';
 
 @QueryHandler(GetUserRolesQuery)

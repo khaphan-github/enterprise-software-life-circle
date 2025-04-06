@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ResetPasswordHandler } from './reset-password.handler';
 import { EventBus } from '@nestjs/cqrs';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { ResetPasswordCommand } from '../../../domain/user/command/reset-password.command';
 import { AuthConf } from '../../../configurations/auth-config';
 import * as argon2 from 'argon2';

@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
 import { AssignActionToRoleHandler } from './assign-action-to-role.handler';
 import { AssignActionToRoleCommand } from '../../../domain/role/command/assign-action-to-role.command';
-import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 import { ActionsAssignedToRolesEvent } from '../../../domain/role/event/actions-assigned-to-roles.event';
 
 describe('AssignActionToRoleHandler', () => {

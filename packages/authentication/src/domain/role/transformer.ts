@@ -2,9 +2,6 @@ import { RoleEntity } from './role-entity';
 
 export class RoleTransformer {
   static fromDbToEntity(db: any) {
-    if (!db) {
-      return undefined;
-    }
     const entity = new RoleEntity();
     entity.id = db.id;
     entity.name = db.name;

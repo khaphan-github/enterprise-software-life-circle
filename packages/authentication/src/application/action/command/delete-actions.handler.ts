@@ -1,7 +1,7 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteActionsCommand } from '../../../domain/action/commands/delete-actions.command';
 import { ActionDeletedEvent } from '../../../domain/action/events/action-deleted.event';
-import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 
 @CommandHandler(DeleteActionsCommand)
 export class DeleteActionsHandler

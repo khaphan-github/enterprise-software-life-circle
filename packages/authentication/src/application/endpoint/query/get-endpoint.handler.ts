@@ -1,5 +1,5 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
+import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 import { GetEndpointQuery } from '../../../domain/endpoint/query/get-endpoint.query';
 

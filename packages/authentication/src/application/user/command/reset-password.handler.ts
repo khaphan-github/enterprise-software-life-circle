@@ -1,6 +1,6 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { ResetPasswordCommand } from '../../../domain/user/command/reset-password.command';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { PasswordResetCompletedEvent } from '../../../domain/user/events/password-reset-completed.event';
 import * as argon2 from 'argon2';
 import { Inject } from '@nestjs/common';

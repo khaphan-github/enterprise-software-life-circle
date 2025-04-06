@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { UserTransformer } from '../../domain/user/transformer';
-import { UserEntity } from '../../domain/user/user-entity';
+import { UserTransformer } from '../../../domain/user/transformer';
+import { UserEntity } from '../../../domain/user/user-entity';
 import {
   PgSQLConnection,
   PgSQLConnectionPool,
 } from 'nest-postgresql-multi-connect';
-import { CONNECTION_STRING_DEFAULT } from '../../configurations/connection-string-default';
+import { CONNECTION_STRING_DEFAULT } from '../../../configurations/connection-string-default';
+import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
 @Injectable()
-export class UserRepository {
+export class UserRepository implements IUserRepository {
   constructor(
     @PgSQLConnection(CONNECTION_STRING_DEFAULT)
     private readonly pg: PgSQLConnectionPool,
   ) {}
-
-  async createUser(userEntity: UserEntity): Promise<void> {
+  async createUser(userEntity: UserEntity): Promise<UserEntity | null> {
     const query = `
       INSERT INTO auth_users (id, username, password_hash, status, metadata, created_at, updated_at, type, mfa, reset_password)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
@@ -31,7 +31,8 @@ export class UserRepository {
       JSON.stringify(userEntity.mfa),
       JSON.stringify(userEntity.resetPassword),
     ];
-    await this.pg.execute(query, values);
+    const result = await this.pg.execute(query, values);
+    return UserTransformer.fromDbToEntity(result.rows[0]);
   }
 
   async getUsersByCursor(cursor: string, limit: number) {

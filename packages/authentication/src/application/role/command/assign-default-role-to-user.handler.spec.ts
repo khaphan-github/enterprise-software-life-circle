@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
-import { RoleRepository } from '../../..//infrastructure/repository/role.repository';
+import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import { AssignDefaultRoleToUserHandler } from './assign-default-role-to-user.handler';
 import { AssignDefaultRoleToUserCommand } from '../../../domain/role/command/assign-default-role-to-user.command';
 import { RoleType } from '../../../domain/role/role-entity';

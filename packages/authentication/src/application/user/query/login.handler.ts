@@ -6,7 +6,7 @@ import {
   QueryHandler,
 } from '@nestjs/cqrs';
 import { LoginQuery } from '../../../domain/user/query/login.query';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { PasswordNotMatchError } from '../../../domain/user/errors/password-not-match.error';
 import { UserStatus } from '../../../domain/user/user-status';

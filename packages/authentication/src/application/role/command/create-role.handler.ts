@@ -1,5 +1,5 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { RoleRepository } from '../../../infrastructure/repository/role.repository';
+import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import { CreateRoleCommand } from '../../../domain/role/command/create-role.command';
 import { RoleEntityCreatedEvent } from '../../../domain/role/event/role-created.event';
 import { RoleEntity } from '../../../domain/role/role-entity';

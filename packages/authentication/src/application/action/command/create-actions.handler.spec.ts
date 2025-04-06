@@ -6,7 +6,7 @@ import {
   CreateActionsCommand,
   ICreateActionsCommand,
 } from '../../../domain/action/commands/create-actions.command';
-import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 import { ActionStatus } from '../../../domain/action/action-entity';
 
 describe('CreateActionsHandler', () => {

@@ -12,7 +12,7 @@ import { AuthConf } from '../../../configurations/auth-config';
 import { CreateUserCommand } from '../../../domain/user/command/create-user.command';
 import { InvalidGoogleClientIdError } from '../../../domain/user/errors/invalid-google-client-id.error';
 import { Mfa, MfaMethod, UserType } from '../../../domain/user/user-entity';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event';
 import { nanoid } from 'nanoid';

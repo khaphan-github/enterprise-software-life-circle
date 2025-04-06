@@ -1,7 +1,7 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserEntity } from '../../../domain/user/user-entity';
 import { RefreshTokenCommand } from '../../../domain/user/command/refresh-token.command';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { InvalidRefreshTOkenError } from '../../../domain/user/errors/invalid-refresh-token.error';
 import { Inject, Logger } from '@nestjs/common';

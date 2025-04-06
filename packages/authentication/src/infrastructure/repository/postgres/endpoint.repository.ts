@@ -2,12 +2,13 @@ import {
   PgSQLConnection,
   PgSQLConnectionPool,
 } from 'nest-postgresql-multi-connect';
-import { CONNECTION_STRING_DEFAULT } from '../../configurations/connection-string-default';
-import { EndpointEntity } from '../../domain/endpoint/endpoint-entity';
-import { EndpointTransformer } from '../../domain/endpoint/transformer';
+import { CONNECTION_STRING_DEFAULT } from '../../../configurations/connection-string-default';
+import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
+import { EndpointTransformer } from '../../../domain/endpoint/transformer';
 import * as format from 'pg-format';
+import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
 
-export class EndpointRepository {
+export class EndpointRepository implements IEndpointRepository {
   constructor(
     @PgSQLConnection(CONNECTION_STRING_DEFAULT)
     private readonly pg: PgSQLConnectionPool,

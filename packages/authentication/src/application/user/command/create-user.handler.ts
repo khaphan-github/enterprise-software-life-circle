@@ -6,7 +6,7 @@ import {
 } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../../../domain/user/command/create-user.command';
 import { UserCreatedEvent } from '../../../domain/user/events/user-created.event';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { UserAlreadyExistError } from '../../../domain/user/errors/user-already-exist.error';
 import { UserStatus } from '../../../domain/user/user-status';
 import * as argon2 from 'argon2';

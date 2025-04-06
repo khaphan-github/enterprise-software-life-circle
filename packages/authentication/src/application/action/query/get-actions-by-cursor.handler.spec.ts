@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetActionsByCursorHandler } from './get-actions-by-cursor.handler';
 import { GetActionsByCursorQuery } from '../../../domain/action/queries/get-actions-by-cursor.query';
-import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 import { ActionEntity } from '../../../domain/action/action-entity';
 
 describe('GetActionsByCursorHandler', () => {

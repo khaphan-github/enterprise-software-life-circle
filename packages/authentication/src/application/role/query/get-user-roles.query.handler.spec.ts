@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetUserRolesQueryHandler } from './get-user-roles.query.handler';
-import { RoleRepository } from '../../../infrastructure/repository/role.repository';
+import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import { GetUserRolesQuery } from '../../../domain/role/query/get-user-roles.query';
 
 describe('GetUserRolesQueryHandler', () => {

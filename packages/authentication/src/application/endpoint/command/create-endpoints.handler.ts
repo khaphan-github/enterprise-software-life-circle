@@ -1,5 +1,5 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
+import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
 import { EndpointEntityCreatedEvent } from '../../../domain/endpoint/event/endpoint-created.event';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 import { CreateEndpointsCommand } from '../../../domain/endpoint/command/create-endpoints.command';

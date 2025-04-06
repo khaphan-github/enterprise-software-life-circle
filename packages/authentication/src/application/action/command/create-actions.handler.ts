@@ -2,7 +2,7 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CreateActionsCommand } from '../../../domain/action/commands/create-actions.command';
 import { ActionCreatedEvent } from '../../../domain/action/events/action-created.event';
-import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 import { ActionEntity } from '../../../domain/action/action-entity';
 
 @CommandHandler(CreateActionsCommand)

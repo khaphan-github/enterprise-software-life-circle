@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
 import { UpdateEndpointsCommandHandler } from './update-endpoints.handler';
-import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
+import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
 import { UpdateEndpointsCommand } from '../../../domain/endpoint/command/update-endpoints.command';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 import { EndpointEntityUpdatedEvent } from '../../../domain/endpoint/event/endpoint-updated.event';

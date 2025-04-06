@@ -1,5 +1,5 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
+import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
 import { DeleteEndpointsCommand } from '../../../domain/endpoint/command/delete-endpoints.command';
 import { EndpointEntityDeletedEvent } from '../../../domain/endpoint/event/endpoint-deleted.event';
 

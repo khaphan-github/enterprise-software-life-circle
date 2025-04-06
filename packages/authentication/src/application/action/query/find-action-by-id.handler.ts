@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { FindActionByIdQuery } from '../../../domain/action/queries/find-action-by-id.query';
 import { ActionEntity } from '../../../domain/action/action-entity';
-import { ActionRepository } from '../../../infrastructure/repository/action.repository';
+import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
 
 @QueryHandler(FindActionByIdQuery)
 export class FindActionByIdHandler

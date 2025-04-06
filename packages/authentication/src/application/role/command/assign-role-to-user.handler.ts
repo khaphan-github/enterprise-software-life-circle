@@ -1,6 +1,6 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { AssignRoleToUserCommand } from '../../../domain/role/command/assign-role-to-user.command';
-import { RoleRepository } from '../../../infrastructure/repository/role.repository';
+import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import {
   UserRoleEntity,
   UserRoleStatus,

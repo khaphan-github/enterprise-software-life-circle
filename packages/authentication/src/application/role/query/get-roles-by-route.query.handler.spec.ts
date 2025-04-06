@@ -3,7 +3,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetRolesByRouteQueryHandler } from './get-roles-by-route.query.handler';
-import { RoleRepository } from '../../../infrastructure/repository/role.repository';
+import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import { GetRolesByRouteQuery } from '../../../domain/role/query/get-roles-by-route.query';
 
 describe('GetRolesByRouteQueryHandler', () => {

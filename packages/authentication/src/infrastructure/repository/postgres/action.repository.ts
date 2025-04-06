@@ -3,13 +3,14 @@ import {
   PgSQLConnection,
   PgSQLConnectionPool,
 } from 'nest-postgresql-multi-connect';
-import { CONNECTION_STRING_DEFAULT } from '../../configurations/connection-string-default';
-import { ActionEntity } from '../../domain/action/action-entity';
-import { ActionTransformer } from '../../domain/action/transformer';
+import { CONNECTION_STRING_DEFAULT } from '../../../configurations/connection-string-default';
+import { ActionEntity } from '../../../domain/action/action-entity';
+import { ActionTransformer } from '../../../domain/action/transformer';
 import * as format from 'pg-format';
+import { IActionRepository } from '../../../domain/repository/action-repository.interface';
 
 @Injectable()
-export class ActionRepository {
+export class ActionRepository implements IActionRepository {
   constructor(
     @PgSQLConnection(CONNECTION_STRING_DEFAULT)
     private readonly pg: PgSQLConnectionPool,

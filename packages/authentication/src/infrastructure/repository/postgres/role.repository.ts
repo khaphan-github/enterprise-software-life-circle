@@ -3,12 +3,15 @@ import {
   PgSQLConnectionPool,
 } from 'nest-postgresql-multi-connect';
 import * as format from 'pg-format';
-import { CONNECTION_STRING_DEFAULT } from '../../configurations/connection-string-default';
-import { RoleEntity, RoleType } from '../../domain/role/role-entity';
-import { RoleTransformer } from '../../domain/role/transformer';
-import { UserRoleEntity } from '../../domain/role/user-role.entity';
+import { CONNECTION_STRING_DEFAULT } from '../../../configurations/connection-string-default';
+import { RoleEntity, RoleType } from '../../../domain/role/role-entity';
+import { RoleTransformer } from '../../../domain/role/transformer';
+import { UserRoleEntity } from '../../../domain/role/user-role.entity';
+import { Injectable } from '@nestjs/common';
+import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
 
-export class RoleRepository {
+@Injectable()
+export class RoleRepository implements IRoleRepository {
   constructor(
     @PgSQLConnection(CONNECTION_STRING_DEFAULT)
     private readonly pg: PgSQLConnectionPool,
@@ -86,8 +89,7 @@ export class RoleRepository {
       RETURNING *
     `;
     const values = [roleId];
-    const res = await this.pg.execute(query, values);
-    return res.rows.length ? RoleTransformer.fromDbToEntity(res.rows[0]) : null;
+    await this.pg.execute(query, values);
   }
 
   async assignRoleToUser(userRoles: UserRoleEntity[]) {

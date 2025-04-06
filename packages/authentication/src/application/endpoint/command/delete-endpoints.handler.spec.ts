@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventBus } from '@nestjs/cqrs';
 import { DeleteEndpointsCommandHandler } from './delete-endpoints.handler';
-import { EndpointRepository } from '../../../infrastructure/repository/endpoint.repository';
+import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
 import { DeleteEndpointsCommand } from '../../../domain/endpoint/command/delete-endpoints.command';
 import { EndpointEntityDeletedEvent } from '../../../domain/endpoint/event/endpoint-deleted.event';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';

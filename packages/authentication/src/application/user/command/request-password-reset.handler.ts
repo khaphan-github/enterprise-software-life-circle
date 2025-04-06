@@ -1,6 +1,6 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { RequestPasswordResetCommand } from '../../../domain/user/command/request-password-reset.command';
-import { UserRepository } from '../../../infrastructure/repository/user.repository';
+import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
 import { ResetPassword } from '../../../domain/user/user-entity';
 import { PasswordResetRequestedEvent } from '../../../domain/user/events/password-reset-requested.event';
 import { randomBytes } from 'crypto';

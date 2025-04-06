@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
-import { RoleRepository } from '../../../infrastructure/repository/role.repository';
+import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import { TokenCreatedEvent } from '../../../domain/user/events/token-created.event';
 import { AuthConf } from '../../../configurations/auth-config';
 
