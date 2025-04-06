@@ -1,4 +1,4 @@
-import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ROLE_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
@@ -11,6 +11,8 @@ import { UserRoleEntityCreatedEvent } from '../../../domain/role/event/user-enti
 import { ID_GENERATOR } from '../../../infrastructure/providers/id-genrerator.provider';
 import { IdGenerator } from '../../../domain/entity/id';
 
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
+import { EventHub } from '../../../domain/event-hub/event.hub';
 @CommandHandler(AssignRoleToUserCommand)
 export class AssignRoleToUserHandler
   implements ICommandHandler<AssignRoleToUserCommand>
@@ -21,7 +23,8 @@ export class AssignRoleToUserHandler
   @Inject(ID_GENERATOR)
   private readonly generator: IdGenerator;
 
-  constructor(private readonly eventBus: EventBus) {}
+  @Inject(EVENT_HUB_PROVIDER)
+  private readonly eventHub: EventHub;
 
   async execute(
     command: AssignRoleToUserCommand,
@@ -40,7 +43,7 @@ export class AssignRoleToUserHandler
     );
 
     await this.repository.assignRoleToUser(userRoleEntities);
-    this.eventBus.publish(new UserRoleEntityCreatedEvent(userRoleEntities));
+    this.eventHub.publish(new UserRoleEntityCreatedEvent(userRoleEntities));
     return userRoleEntities;
   }
 }

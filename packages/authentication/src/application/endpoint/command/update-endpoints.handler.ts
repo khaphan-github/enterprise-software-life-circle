@@ -1,4 +1,4 @@
-import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ENDPOINT_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
@@ -6,6 +6,8 @@ import { EndpointEntityUpdatedEvent } from '../../../domain/endpoint/event/endpo
 import { UpdateEndpointsCommand } from '../../../domain/endpoint/command/update-endpoints.command';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
+import { EventHub } from '../../../domain/event-hub/event.hub';
 @CommandHandler(UpdateEndpointsCommand)
 export class UpdateEndpointsCommandHandler
   implements ICommandHandler<UpdateEndpointsCommand>
@@ -13,7 +15,8 @@ export class UpdateEndpointsCommandHandler
   @Inject(ENDPOINT_REPOSITORY_PROVIDER)
   private readonly repository: IEndpointRepository;
 
-  constructor(private readonly eventBus: EventBus) {}
+  @Inject(EVENT_HUB_PROVIDER)
+  private readonly eventHub: EventHub;
 
   async execute(commands: UpdateEndpointsCommand): Promise<EndpointEntity[]> {
     const updatedEntities: EndpointEntity[] = [];
@@ -31,7 +34,7 @@ export class UpdateEndpointsCommandHandler
 
     await this.repository.updateEndpoints(updatedEntities);
 
-    this.eventBus.publish(new EndpointEntityUpdatedEvent(updatedEntities));
+    this.eventHub.publish(new EndpointEntityUpdatedEvent(updatedEntities));
 
     return updatedEntities;
   }

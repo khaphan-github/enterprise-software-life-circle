@@ -1,10 +1,5 @@
 import { Inject } from '@nestjs/common';
-import {
-  CommandBus,
-  EventBus,
-  IQueryHandler,
-  QueryHandler,
-} from '@nestjs/cqrs';
+import { CommandBus, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { LoginQuery } from '../../../domain/user/query/login.query';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { PasswordNotMatchError } from '../../../domain/user/errors/password-not-match.error';
@@ -19,17 +14,17 @@ import { CreateMfaSessionCommand } from '../../../domain/mfa/command/create-mfa-
 import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 import * as argon2 from 'argon2';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
+import { EventHub } from '../../../domain/event-hub/event.hub';
 
 @QueryHandler(LoginQuery)
 export class LoginHandler implements IQueryHandler<LoginQuery> {
   @Inject() authenticationConfig: AuthConf;
   @Inject(USER_REPOSITORY_PROVIDER)
   private readonly repository: IUserRepository;
-
-  constructor(
-    private readonly commandBus: CommandBus,
-    private readonly eventBus: EventBus,
-  ) {}
+  @Inject(EVENT_HUB_PROVIDER)
+  private readonly eventHub: EventHub;
+  constructor(private readonly commandBus: CommandBus) {}
 
   async execute(query: LoginQuery): Promise<any> {
     const user = await this.repository.findUserByUsername(query.username);
@@ -50,7 +45,7 @@ export class LoginHandler implements IQueryHandler<LoginQuery> {
     );
 
     if (!isMatchPassword) {
-      this.eventBus.publish(new UserLoginFailEvent(user));
+      this.eventHub.publish(new UserLoginFailEvent(user));
       throw new PasswordNotMatchError();
     }
     // Check mfa here
@@ -65,7 +60,7 @@ export class LoginHandler implements IQueryHandler<LoginQuery> {
     const { accessToken, refreshToken } = await this.commandBus.execute(
       new CreateTokenCommand(user.id),
     );
-    this.eventBus.publish(new UserLogedinEvent(user));
+    this.eventHub.publish(new UserLogedinEvent(user));
     return {
       user,
       accessToken,

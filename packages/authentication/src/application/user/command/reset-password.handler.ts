@@ -1,4 +1,4 @@
-import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ResetPasswordCommand } from '../../../domain/user/command/reset-password.command';
 import { PasswordResetCompletedEvent } from '../../../domain/user/events/password-reset-completed.event';
 import * as argon2 from 'argon2';
@@ -9,6 +9,8 @@ import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-er
 import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
+import { EventHub } from '../../../domain/event-hub/event.hub';
 @CommandHandler(ResetPasswordCommand)
 export class ResetPasswordHandler
   implements ICommandHandler<ResetPasswordCommand>
@@ -17,7 +19,8 @@ export class ResetPasswordHandler
   private readonly repository: IUserRepository;
   @Inject() private readonly authConfig: AuthConf;
 
-  constructor(private readonly eventBus: EventBus) {}
+  @Inject(EVENT_HUB_PROVIDER)
+  private readonly eventHub: EventHub;
 
   async execute(command: ResetPasswordCommand): Promise<void> {
     const user = await this.repository.findUserByResetToken(command.token);
@@ -45,6 +48,6 @@ export class ResetPasswordHandler
     user.resetPassword = {} as ResetPassword;
     await this.repository.updateUser(user);
 
-    await this.eventBus.publish(new PasswordResetCompletedEvent(user.id));
+    await this.eventHub.publish(new PasswordResetCompletedEvent(user.id));
   }
 }

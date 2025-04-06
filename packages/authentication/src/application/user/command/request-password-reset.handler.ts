@@ -1,4 +1,4 @@
-import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RequestPasswordResetCommand } from '../../../domain/user/command/request-password-reset.command';
 import { ResetPassword } from '../../../domain/user/user-entity';
 import { PasswordResetRequestedEvent } from '../../../domain/user/events/password-reset-requested.event';
@@ -8,6 +8,8 @@ import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-er
 import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
+import { EventHub } from '../../../domain/event-hub/event.hub';
 @CommandHandler(RequestPasswordResetCommand)
 export class RequestPasswordResetHandler
   implements ICommandHandler<RequestPasswordResetCommand>
@@ -15,7 +17,8 @@ export class RequestPasswordResetHandler
   @Inject(USER_REPOSITORY_PROVIDER)
   private readonly repository: IUserRepository;
 
-  constructor(private readonly eventBus: EventBus) {}
+  @Inject(EVENT_HUB_PROVIDER)
+  private readonly eventHub: EventHub;
 
   async execute(command: RequestPasswordResetCommand): Promise<void> {
     const user = await this.repository.findUserByResetPasswordAddress(
@@ -35,7 +38,7 @@ export class RequestPasswordResetHandler
 
     await this.repository.updateUser(user);
 
-    await this.eventBus.publish(
+    await this.eventHub.publish(
       new PasswordResetRequestedEvent(
         user.id,
         user.username,

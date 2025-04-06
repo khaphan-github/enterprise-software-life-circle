@@ -1,10 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import {
-  CommandBus,
-  CommandHandler,
-  EventBus,
-  ICommandHandler,
-} from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { OAuth2Client } from 'google-auth-library';
 import { GoogleLoginCommand } from '../../../domain/user/command/google-login.command';
 import { Inject } from '@nestjs/common';
@@ -17,6 +12,8 @@ import { UserLogedinEvent } from '../../../domain/user/events/user-logedin.event
 import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 import { nanoid } from 'nanoid';
+import { EventHub } from '../../../domain/event-hub/event.hub';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 
 @CommandHandler(GoogleLoginCommand)
 export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
@@ -25,8 +22,8 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
   @Inject(USER_REPOSITORY_PROVIDER)
   private readonly repository: IUserRepository;
 
-  @Inject() private readonly eventBus: EventBus;
-
+  @Inject(EVENT_HUB_PROVIDER)
+  private readonly eventHub: EventHub;
   private static googleClient: OAuth2Client;
 
   private getGoogleClient(): OAuth2Client {
@@ -78,7 +75,7 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
       new CreateTokenCommand(user.id),
     );
 
-    this.eventBus.publish(new UserLogedinEvent(user));
+    this.eventHub.publish(new UserLogedinEvent(user));
 
     return {
       accessToken,

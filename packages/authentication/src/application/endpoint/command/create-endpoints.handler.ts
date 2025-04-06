@@ -1,4 +1,4 @@
-import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ENDPOINT_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
@@ -7,6 +7,8 @@ import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 import { CreateEndpointsCommand } from '../../../domain/endpoint/command/create-endpoints.command';
 import { ID_GENERATOR } from '../../../infrastructure/providers/id-genrerator.provider';
 import { IdGenerator } from '../../../domain/entity/id';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
+import { EventHub } from '../../../domain/event-hub/event.hub';
 
 @CommandHandler(CreateEndpointsCommand)
 export class CreateEndpointCommandHandler
@@ -18,7 +20,8 @@ export class CreateEndpointCommandHandler
   @Inject(ID_GENERATOR)
   private readonly generator: IdGenerator;
 
-  constructor(private readonly eventBus: EventBus) {}
+  @Inject(EVENT_HUB_PROVIDER)
+  private readonly eventHub: EventHub;
 
   async execute(commands: CreateEndpointsCommand): Promise<EndpointEntity[]> {
     const createdEntities: EndpointEntity[] = [];
@@ -36,7 +39,7 @@ export class CreateEndpointCommandHandler
     const createdEntity =
       await this.repository.createEndpoints(createdEntities);
 
-    this.eventBus.publish(new EndpointEntityCreatedEvent(createdEntity));
+    this.eventHub.publish(new EndpointEntityCreatedEvent(createdEntity));
 
     return createdEntities;
   }

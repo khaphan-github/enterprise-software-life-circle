@@ -1,21 +1,22 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
 import { TokenCreatedEvent } from '../../../domain/user/events/token-created.event';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
 import { ROLE_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
+import { EventHub } from '../../../domain/event-hub/event.hub';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 
 @CommandHandler(CreateTokenCommand)
 export class CreateTokenHandler implements ICommandHandler<CreateTokenCommand> {
   @Inject() authenticationConfig: AuthConf;
   @Inject(ROLE_REPOSITORY_PROVIDER)
   private readonly roleRepository: IRoleRepository;
-  constructor(
-    private readonly eventBus: EventBus,
-    private readonly jwtService: JwtService,
-  ) {}
+  @Inject(EVENT_HUB_PROVIDER)
+  private readonly eventHub: EventHub;
+  constructor(private readonly jwtService: JwtService) {}
 
   async execute(command: CreateTokenCommand) {
     const userRoles = await this.roleRepository.getRolesByUserId(
@@ -51,7 +52,7 @@ export class CreateTokenHandler implements ICommandHandler<CreateTokenCommand> {
       },
     );
 
-    this.eventBus.publish(new TokenCreatedEvent(refreshToken, accessToken));
+    this.eventHub.publish(new TokenCreatedEvent(refreshToken, accessToken));
     return Promise.resolve({
       accessToken,
       refreshToken,
