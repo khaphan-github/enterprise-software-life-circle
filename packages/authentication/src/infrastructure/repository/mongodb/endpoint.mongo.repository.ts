@@ -11,26 +11,59 @@ export class EndpointMongoRepository implements IEndpointRepository {
     @InjectModel(Endpoint.name)
     private readonly endpointModel: Model<EndpointDocument>,
   ) {}
-  getEndpoint(path: string, method: string): Promise<EndpointEntity | null> {
-    throw new Error('Method not implemented.');
+
+  async getEndpoint(
+    path: string,
+    method: string,
+  ): Promise<EndpointEntity | null> {
+    const endpoint = await this.endpointModel.findOne({ path, method }).exec();
+    return endpoint ? (endpoint.toObject() as unknown as EndpointEntity) : null;
   }
-  isRouteAndMethodExist(path: string, method: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+
+  async isRouteAndMethodExist(path: string, method: string): Promise<boolean> {
+    const count = await this.endpointModel
+      .countDocuments({ path, method })
+      .exec();
+    return count > 0;
   }
-  getEndpointsWithCursor(limit: number, cursor: string): Promise<EndpointEntity[]> {
-    throw new Error('Method not implemented.');
+
+  async getEndpointsWithCursor(
+    limit: number,
+    cursor: string,
+  ): Promise<EndpointEntity[]> {
+    const query = cursor ? { _id: { $gt: cursor } } : {};
+    const endpoints = await this.endpointModel
+      .find(query)
+      .limit(limit)
+      .sort({ _id: 1 })
+      .exec();
+    return endpoints.map((doc) => doc.toObject() as unknown as EndpointEntity);
   }
-  deleteEndpoints(endpointIds: string[]): Promise<any> {
-    throw new Error('Method not implemented.');
+
+  async deleteEndpoints(endpointIds: string[]): Promise<void> {
+    await this.endpointModel.deleteMany({ _id: { $in: endpointIds } }).exec();
   }
-  updateEndpoints(endpoint: EndpointEntity[]): Promise<any> {
-    throw new Error('Method not implemented.');
+
+  async updateEndpoints(endpoints: EndpointEntity[]): Promise<void> {
+    const bulkOps = endpoints.map((endpoint) => ({
+      updateOne: {
+        filter: { _id: endpoint.id },
+        update: { $set: endpoint },
+      },
+    }));
+    await this.endpointModel.bulkWrite(bulkOps);
   }
-  assignEndpointsToRoles(
+
+  async assignEndpointsToRoles(
     endpointIds: string[],
     roleIds: string[],
   ): Promise<void> {
-    throw new Error('Method not implemented.');
+    await this.endpointModel
+      .updateMany(
+        { _id: { $in: endpointIds } },
+        { $addToSet: { roles: { $each: roleIds } } },
+      )
+      .exec();
   }
 
   async createEndpoints(
@@ -42,7 +75,9 @@ export class EndpointMongoRepository implements IEndpointRepository {
         _id: endpoint.id, // Use the provided endpoint.id as the document ID
       })),
     );
-    return createdEndpoints.map((doc) => doc.toObject() as any);
+    return createdEndpoints.map(
+      (doc) => doc.toObject() as unknown as EndpointEntity,
+    );
   }
 
   async updateEndpoint(endpoint: EndpointEntity): Promise<void> {

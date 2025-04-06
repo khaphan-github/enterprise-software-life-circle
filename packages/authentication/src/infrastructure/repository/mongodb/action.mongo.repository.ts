@@ -11,22 +11,51 @@ export class ActionMongoRepository implements IActionRepository {
     @InjectModel(Action.name)
     private readonly actionModel: Model<ActionDocument>,
   ) {}
-  getActionsByCursor(limit: number, cursor: string): Promise<ActionEntity[]> {
-    throw new Error('Method not implemented.');
+
+  async getActionsByCursor(
+    limit: number,
+    cursor: string,
+  ): Promise<ActionEntity[]> {
+    const query = cursor ? { _id: { $gt: cursor } } : {};
+    const actions = await this.actionModel.find(query).limit(limit).exec();
+    return actions.map((action) => action.toObject() as any);
   }
-  createActions(action: ActionEntity[]): Promise<any> {
-    throw new Error('Method not implemented.');
+
+  async createActions(actions: ActionEntity[]): Promise<any> {
+    const createdActions = await this.actionModel.insertMany(actions);
+    return createdActions.map((action) => action.toObject());
   }
-  updateActions(action: ActionEntity[]): Promise<any> {
-    throw new Error('Method not implemented.');
+
+  async updateActions(actions: ActionEntity[]): Promise<any> {
+    const updatePromises = actions.map((action) =>
+      this.actionModel.updateOne({ _id: action.id }, action).exec(),
+    );
+    await Promise.all(updatePromises);
+    return { success: true };
   }
-  deleteActions(actionId: string[]): Promise<any> {
-    throw new Error('Method not implemented.');
+
+  async deleteActions(actionIds: string[]): Promise<any> {
+    const result = await this.actionModel
+      .deleteMany({ _id: { $in: actionIds } })
+      .exec();
+    return { deletedCount: result.deletedCount };
   }
-  findActionById(id: string): Promise<any> {
-    throw new Error('Method not implemented.');
+
+  async findActionById(id: string): Promise<ActionEntity | null> {
+    const action = await this.actionModel.findById(id).exec();
+    return action ? (action.toObject() as any) : null;
   }
-  assignActionsToRoles(actionIds: string[], roleIds: string[]): Promise<any> {
-    throw new Error('Method not implemented.');
+
+  async assignActionsToRoles(
+    actionIds: string[],
+    roleIds: string[],
+  ): Promise<any> {
+    const result = await this.actionModel
+      .updateMany(
+        { _id: { $in: actionIds } },
+        { $addToSet: { roles: { $each: roleIds } } },
+      )
+      .exec();
+    return { modifiedCount: result.modifiedCount };
   }
 }
