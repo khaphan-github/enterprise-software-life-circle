@@ -72,6 +72,7 @@ export class RoleMongoRepository implements IRoleRepository {
   async deleteRole(roleId: string): Promise<void> {
     await this.roleModel.deleteOne({ _id: roleId }).exec();
   }
+
   async findRoleById(id: string): Promise<RoleEntity | null> {
     const role = await this.roleModel.findById(id).exec();
     return role ? (role.toObject() as unknown as any) : null;
@@ -80,5 +81,59 @@ export class RoleMongoRepository implements IRoleRepository {
   async isExistRoleById(id: string): Promise<boolean> {
     const count = await this.roleModel.countDocuments({ _id: id }).exec();
     return count > 0;
+  }
+
+  async getRoleById(roleId: string): Promise<RoleEntity | null> {
+    const role = await this.roleModel.findById(roleId).exec();
+    return role ? (role.toObject() as unknown as any) : null;
+  }
+
+  async getRolesWithCursor(
+    limit: number,
+    cursor: string,
+  ): Promise<RoleEntity[]> {
+    const query = cursor ? { _id: { $gt: cursor } } : {};
+    const roles = await this.roleModel
+      .find(query)
+      .limit(limit)
+      .sort({ _id: 1 })
+      .exec();
+    return roles.map((role) => role.toObject() as unknown as any);
+  }
+
+  async assignActionsToRoles(
+    actionIds: string[],
+    roleIds: string[],
+  ): Promise<void> {
+    const bulkOps = roleIds.map((roleId) => ({
+      updateOne: {
+        filter: { _id: roleId },
+        update: { $addToSet: { actions: { $each: actionIds } } },
+      },
+    }));
+    await this.roleModel.bulkWrite(bulkOps);
+  }
+
+  async removeActionsFromRoles(
+    actionIds: string[],
+    roleIds: string[],
+  ): Promise<void> {
+    const bulkOps = roleIds.map((roleId) => ({
+      updateOne: {
+        filter: { _id: roleId },
+        update: { $pull: { actions: { $in: actionIds } } },
+      },
+    }));
+    await this.roleModel.bulkWrite(bulkOps);
+  }
+
+  async removeRolesFromUser(userId: string, roleIds: string[]): Promise<void> {
+    const bulkOps = roleIds.map((roleId) => ({
+      updateOne: {
+        filter: { _id: roleId },
+        update: { $pull: { users: { userId } } },
+      },
+    }));
+    await this.roleModel.bulkWrite(bulkOps);
   }
 }

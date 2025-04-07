@@ -1,7 +1,7 @@
 import { BaseError } from '../../../domain/entity/base-error';
 
-export class InvalidRefreshTOkenError extends BaseError {
-  constructor() {
-    super('Invalid refresh token');
+export class InvalidRefreshTokenError extends BaseError {
+  constructor(message: string = 'Invalid refresh token') {
+    super(message);
   }
 }

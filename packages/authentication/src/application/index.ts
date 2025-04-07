@@ -29,6 +29,7 @@ import { VerifyfaSessionHandler } from './mfa/command/verify-mfa-session.handler
 import { VerifyLoginfaSessionHandler } from './mfa/command/verify-login-mfa-session.handler';
 import { RequestPasswordResetHandler } from './user/command/request-password-reset.handler';
 import { ResetPasswordHandler } from './user/command/reset-password.handler';
+import { GetUserRolesHandler } from './user-role/query/get-user-roles.handler';
 
 export const Handlers = [
   // User
@@ -43,6 +44,7 @@ export const Handlers = [
   CreateMfaSessionHandler,
   VerifyfaSessionHandler,
   VerifyLoginfaSessionHandler,
+
   // Role
   CreateRoleCommandHandler,
   AssignRoleToUserHandler,
@@ -52,6 +54,7 @@ export const Handlers = [
   CanExecRouteQueryHandler,
   GetUserRolesQueryHandler,
   GetRolesByRouteQueryHandler,
+  GetUserRolesHandler,
 
   // Token
   CreateTokenHandler,

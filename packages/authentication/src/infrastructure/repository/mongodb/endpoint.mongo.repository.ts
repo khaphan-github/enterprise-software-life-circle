@@ -122,15 +122,17 @@ export class EndpointMongoRepository implements IEndpointRepository {
   }
 
   async updateEndpoint(endpoint: EndpointEntity): Promise<void> {
-    await this.endpointModel.updateOne(
-      { _id: endpoint.id },
-      {
-        path: endpoint.path,
-        method: endpoint.method,
-        status: endpoint.status,
-        metadata: endpoint.metadata,
-      },
-    ).exec();
+    await this.endpointModel
+      .updateOne(
+        { _id: endpoint.id },
+        {
+          path: endpoint.path,
+          method: endpoint.method,
+          status: endpoint.status,
+          metadata: endpoint.metadata,
+        },
+      )
+      .exec();
   }
 
   async deleteEndpoint(endpointId: string): Promise<void> {

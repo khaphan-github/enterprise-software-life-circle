@@ -17,11 +17,26 @@ export class RoleRepository implements IRoleRepository {
     private readonly pg: PgSQLConnectionPool,
   ) {}
 
-  findRoleById(id: string): Promise<RoleEntity | null> {
-    throw new Error('Method not implemented.');
+  async findRoleById(id: string): Promise<RoleEntity | null> {
+    const query = `
+      SELECT * FROM auth_roles
+      WHERE id = $1
+    `;
+    const values = [id];
+    const res = await this.pg.execute(query, values);
+    return res.rows.length ? RoleTransformer.fromDbToEntity(res.rows[0]) : null;
   }
-  isExistRoleById(id: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+
+  async isExistRoleById(id: string): Promise<boolean> {
+    const query = `
+      SELECT EXISTS(
+        SELECT 1 FROM auth_roles
+        WHERE id = $1
+      )
+    `;
+    const values = [id];
+    const res = await this.pg.execute(query, values);
+    return res.rows[0].exists;
   }
 
   async getRolesByUserId(userId: string) {
@@ -66,7 +81,7 @@ export class RoleRepository implements IRoleRepository {
     return res.rows.length ? RoleTransformer.fromDbToEntity(res.rows[0]) : null;
   }
 
-  async updateRole(role: RoleEntity) {
+  async updateRole(role: RoleEntity): Promise<void> {
     const query = `
       UPDATE auth_roles
       SET name = COALESCE($2, name),
@@ -75,7 +90,6 @@ export class RoleRepository implements IRoleRepository {
           metadata = COALESCE($5, metadata),
           updated_at = $6
       WHERE id = $1
-      RETURNING *
     `;
     const values = [
       role.id,
@@ -85,8 +99,7 @@ export class RoleRepository implements IRoleRepository {
       role.metadata,
       role.updatedAt,
     ];
-    const res = await this.pg.execute(query, values);
-    return res.rows.length ? RoleTransformer.fromDbToEntity(res.rows[0]) : null;
+    await this.pg.execute(query, values);
   }
 
   async deleteRole(roleId: string) {
@@ -99,7 +112,7 @@ export class RoleRepository implements IRoleRepository {
     await this.pg.execute(query, values);
   }
 
-  async assignRoleToUser(userRoles: UserRoleEntity[]) {
+  async assignRoleToUser(userRoles: UserRoleEntity[]): Promise<void> {
     const values = userRoles.map((userRole) => [
       userRole.userId,
       userRole.roleId,
@@ -118,13 +131,11 @@ export class RoleRepository implements IRoleRepository {
         status = EXCLUDED.status,
         metadata = EXCLUDED.metadata,
         updated_at = EXCLUDED.updated_at
-      RETURNING *
     `,
       values,
     );
 
-    const res = await this.pg.execute(query);
-    return res.rows;
+    await this.pg.execute(query);
   }
 
   async getRoleByType(type: RoleType) {
@@ -173,5 +184,67 @@ export class RoleRepository implements IRoleRepository {
     const values = [userId];
     const res = await this.pg.execute(query, values);
     return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
+  }
+
+  async removeRolesFromUser(userId: string, roleIds: string[]): Promise<void> {
+    const query = format(
+      `
+      DELETE FROM auth_user_roles
+      WHERE user_id = %L AND role_id = ANY(%L)
+    `,
+      userId,
+      roleIds,
+    );
+    await this.pg.execute(query);
+  }
+
+  async getRolesWithCursor(
+    limit: number,
+    cursor: string,
+  ): Promise<RoleEntity[]> {
+    const query = `
+      SELECT * FROM auth_roles
+      WHERE id > $1
+      ORDER BY id ASC
+      LIMIT $2
+    `;
+    const values = [cursor, limit];
+    const res = await this.pg.execute(query, values);
+    return res.rows.map((row) => RoleTransformer.fromDbToEntity(row));
+  }
+
+  async assignActionsToRoles(
+    actionIds: string[],
+    roleIds: string[],
+  ): Promise<void> {
+    const values = roleIds.flatMap((roleId) =>
+      actionIds.map((actionId) => [roleId, actionId]),
+    );
+
+    const query = format(
+      `
+      INSERT INTO auth_role_action_permissions (role_id, action_id)
+      VALUES %L
+      ON CONFLICT (role_id, action_id) DO NOTHING
+    `,
+      values,
+    );
+
+    await this.pg.execute(query);
+  }
+
+  async removeActionsFromRoles(
+    actionIds: string[],
+    roleIds: string[],
+  ): Promise<void> {
+    const query = format(
+      `
+      DELETE FROM auth_role_action_permissions
+      WHERE role_id = ANY(%L) AND action_id = ANY(%L)
+    `,
+      roleIds,
+      actionIds,
+    );
+    await this.pg.execute(query);
   }
 }

@@ -12,9 +12,18 @@ import {
   ROLE_REPOSITORY_PROVIDER,
 } from './repository-providers';
 import { Provider } from '@nestjs/common';
-import { Action, ActionDocument } from '../../repository/mongodb/schema/action.schema';
-import { Endpoint, EndpointDocument } from '../../repository/mongodb/schema/endpoint.schema';
-import { Role, RoleDocument } from '../../repository/mongodb/schema/role.schema';
+import {
+  Action,
+  ActionDocument,
+} from '../../repository/mongodb/schema/action.schema';
+import {
+  Endpoint,
+  EndpointDocument,
+} from '../../repository/mongodb/schema/endpoint.schema';
+import {
+  Role,
+  RoleDocument,
+} from '../../repository/mongodb/schema/role.schema';
 import { ActionMongoRepository } from '../../repository/mongodb/action.mongo.repository';
 import { EndpointMongoRepository } from '../../repository/mongodb/endpoint.mongo.repository';
 import { RoleMongoRepository } from '../../repository/mongodb/role.mongo.repository';

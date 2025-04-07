@@ -2,7 +2,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserEntity } from '../../../domain/user/user-entity';
 import { RefreshTokenCommand } from '../../../domain/user/command/refresh-token.command';
 import { JwtService } from '@nestjs/jwt';
-import { InvalidRefreshTOkenError } from '../../../domain/user/errors/invalid-refresh-token.error';
+import { InvalidRefreshTokenError } from '../../../domain/user/errors/invalid-refresh-token.error';
 import { Inject, Logger } from '@nestjs/common';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
@@ -27,7 +27,7 @@ export class RefreshTokenHandler
   async execute(command: RefreshTokenCommand): Promise<UserEntity> {
     const { refreshToken } = command;
 
-    // Check refresth toekn
+    // Verify refresh token
     let userId: string = '';
     try {
       const { uid } = await this.jwtService.verifyAsync(refreshToken, {
@@ -36,12 +36,13 @@ export class RefreshTokenHandler
       });
       userId = uid;
     } catch (error) {
-      this.logger.error('Error verifying refresh token', error);
-      throw new InvalidRefreshTOkenError();
+      this.logger.error(`Failed to verify refresh token: ${error.message}`);
+      throw new InvalidRefreshTokenError('Invalid or expired refresh token');
     }
 
     const isExist = await this.repository.isExistUserById(userId);
     if (!isExist) {
+      this.logger.warn(`User not found for refresh token: ${userId}`);
       throw new UserNotFoundError();
     }
 

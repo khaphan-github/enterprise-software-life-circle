@@ -16,6 +16,9 @@ export class Role {
 
   @Prop({ type: Object, required: false })
   metadata?: object;
+
+  @Prop({ type: [String], default: [] })
+  actions: string[];
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

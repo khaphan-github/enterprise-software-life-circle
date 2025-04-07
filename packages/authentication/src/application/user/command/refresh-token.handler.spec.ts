@@ -3,7 +3,7 @@ import { RefreshTokenHandler } from './refresh-token.handler';
 import { RefreshTokenCommand } from '../../../domain/user/command/refresh-token.command';
 import { JwtService } from '@nestjs/jwt';
 import { CommandBus } from '@nestjs/cqrs';
-import { InvalidRefreshTOkenError } from '../../../domain/user/errors/invalid-refresh-token.error';
+import { InvalidRefreshTokenError } from '../../../domain/user/errors/invalid-refresh-token.error';
 import { UserNotFoundError } from '../../../domain/user/errors/user-not-found-error';
 import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
@@ -91,17 +91,18 @@ describe('RefreshTokenHandler', () => {
       );
     });
 
-    it('should throw InvalidRefreshTOkenError when token is invalid', async () => {
+    it('should throw InvalidRefreshTokenError when token is invalid', async () => {
       // Arrange
       const refreshToken = 'invalid-refresh-token';
       const command = new RefreshTokenCommand(refreshToken);
 
       // Act & Assert
       await expect(handler.execute(command)).rejects.toThrow(
-        InvalidRefreshTOkenError,
+        InvalidRefreshTokenError,
       );
-      expect(repository.isExistUserById).not.toHaveBeenCalled();
-      expect(commandBus.execute).not.toHaveBeenCalled();
+      expect(jwtService.verifyAsync).toHaveBeenCalledWith(refreshToken, {
+        secret: 'test-secret-key',
+      });
     });
 
     it('should throw UserNotFoundError when user does not exist', async () => {
@@ -115,7 +116,10 @@ describe('RefreshTokenHandler', () => {
 
       // Act & Assert
       await expect(handler.execute(command)).rejects.toThrow(UserNotFoundError);
-      expect(commandBus.execute).not.toHaveBeenCalled();
+      expect(jwtService.verifyAsync).toHaveBeenCalledWith(refreshToken, {
+        secret: 'test-secret-key',
+      });
+      expect(repository.isExistUserById).toHaveBeenCalledWith(userId);
     });
 
     it('should handle command bus error during token creation', async () => {
