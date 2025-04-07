@@ -6,7 +6,7 @@ import { MeQuery } from '../../../domain/user/query/me.query';
 import { JwtService } from '@nestjs/jwt';
 import { Inject, Logger } from '@nestjs/common';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
-import { USER_REPOSITORY_PROVIDER } from 'src/infrastructure/providers/repository/repository-providers';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { IUserRepository } from '../../../domain/repository/user-repository.interface';
 
 @QueryHandler(MeQuery)

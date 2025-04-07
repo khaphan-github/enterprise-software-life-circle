@@ -1,32 +1,36 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventBus } from '@nestjs/cqrs';
-import { DeleteEndpointsCommandHandler } from './delete-endpoints.handler';
-import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
+import { ENDPOINT_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 import { DeleteEndpointsCommand } from '../../../domain/endpoint/command/delete-endpoints.command';
+import { DeleteEndpointsCommandHandler } from './delete-endpoints.handler';
 import { EndpointEntityDeletedEvent } from '../../../domain/endpoint/event/endpoint-deleted.event';
-import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 
-describe('DeleteEndpointsCommandHandler', () => {
+describe('DeleteEndpointsHandler', () => {
   let handler: DeleteEndpointsCommandHandler;
-  let repository: EndpointRepository;
-  let eventBus: EventBus;
+  let repositoryMock: any;
+  let eventHubMock: any;
 
   beforeEach(async () => {
+    // Create mocks for dependencies
+    repositoryMock = {
+      deleteEndpoints: jest.fn().mockResolvedValue(undefined),
+    };
+
+    eventHubMock = {
+      publish: jest.fn(),
+    };
+
+    // Create a test module with our handler and mocked dependencies
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DeleteEndpointsCommandHandler,
         {
-          provide: EndpointRepository,
-          useValue: {
-            deleteEndpoints: jest.fn(),
-          },
+          provide: ENDPOINT_REPOSITORY_PROVIDER,
+          useValue: repositoryMock,
         },
         {
-          provide: EventBus,
-          useValue: {
-            publish: jest.fn(),
-          },
+          provide: EVENT_HUB_PROVIDER,
+          useValue: eventHubMock,
         },
       ],
     }).compile();
@@ -34,24 +38,94 @@ describe('DeleteEndpointsCommandHandler', () => {
     handler = module.get<DeleteEndpointsCommandHandler>(
       DeleteEndpointsCommandHandler,
     );
-    repository = module.get<EndpointRepository>(EndpointRepository);
-    eventBus = module.get<EventBus>(EventBus);
   });
 
-  it('should delete endpoints and publish an event', async () => {
-    const command = new DeleteEndpointsCommand(['test-id']);
-    const deletedEntities = [new EndpointEntity()];
-    deletedEntities[0].id = 'test-id';
+  it('should be defined', () => {
+    expect(handler).toBeDefined();
+  });
 
-    jest
-      .spyOn(repository, 'deleteEndpoints')
-      .mockResolvedValue(deletedEntities);
+  describe('execute', () => {
+    it('should delete endpoints by IDs and publish event', async () => {
+      // Arrange
+      const endpointIds = ['endpoint-1', 'endpoint-2', 'endpoint-3'];
+      const command = new DeleteEndpointsCommand(endpointIds);
 
-    await handler.execute(command);
+      // Act
+      await handler.execute(command);
 
-    expect(repository.deleteEndpoints).toHaveBeenCalledWith(['test-id']);
-    expect(eventBus.publish).toHaveBeenCalledWith(
-      new EndpointEntityDeletedEvent(deletedEntities),
-    );
+      // Assert
+      expect(repositoryMock.deleteEndpoints).toHaveBeenCalledWith(endpointIds);
+      expect(eventHubMock.publish).toHaveBeenCalledTimes(1);
+
+      // Verify the event was published with the correct endpoint IDs
+      const publishedEvent = eventHubMock.publish.mock.calls[0][0];
+      expect(publishedEvent).toBeInstanceOf(EndpointEntityDeletedEvent);
+      expect(publishedEvent.endpointIds).toEqual(endpointIds);
+    });
+
+    it('should handle deleting a single endpoint', async () => {
+      // Arrange
+      const endpointIds = ['single-endpoint-id'];
+      const command = new DeleteEndpointsCommand(endpointIds);
+
+      // Act
+      await handler.execute(command);
+
+      // Assert
+      expect(repositoryMock.deleteEndpoints).toHaveBeenCalledWith(endpointIds);
+      expect(eventHubMock.publish).toHaveBeenCalledWith(
+        expect.any(EndpointEntityDeletedEvent),
+      );
+      const publishedEvent = eventHubMock.publish.mock.calls[0][0];
+      expect(publishedEvent.endpointIds).toEqual(endpointIds);
+    });
+
+    it('should handle empty array of endpoint IDs', async () => {
+      // Arrange
+      const endpointIds: string[] = [];
+      const command = new DeleteEndpointsCommand(endpointIds);
+
+      // Act
+      await handler.execute(command);
+
+      // Assert
+      expect(repositoryMock.deleteEndpoints).toHaveBeenCalledWith([]);
+      expect(eventHubMock.publish).toHaveBeenCalledWith(
+        expect.any(EndpointEntityDeletedEvent),
+      );
+      const publishedEvent = eventHubMock.publish.mock.calls[0][0];
+      expect(publishedEvent.endpointIds).toEqual([]);
+    });
+
+    it('should throw error when repository deletion fails', async () => {
+      // Arrange
+      repositoryMock.deleteEndpoints.mockRejectedValueOnce(
+        new Error('Database error during deletion'),
+      );
+      const endpointIds = ['endpoint-1', 'endpoint-2'];
+      const command = new DeleteEndpointsCommand(endpointIds);
+
+      // Act & Assert
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Database error during deletion',
+      );
+      expect(repositoryMock.deleteEndpoints).toHaveBeenCalledWith(endpointIds);
+      expect(eventHubMock.publish).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when event hub publish fails', async () => {
+      // Arrange
+      eventHubMock.publish.mockImplementationOnce(() => {
+        throw new Error('Event publishing failed');
+      });
+      const endpointIds = ['endpoint-1', 'endpoint-2'];
+      const command = new DeleteEndpointsCommand(endpointIds);
+
+      // Act & Assert
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Event publishing failed',
+      );
+      expect(repositoryMock.deleteEndpoints).toHaveBeenCalledWith(endpointIds);
+    });
   });
 });

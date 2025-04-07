@@ -1,33 +1,45 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
+import { Test, TestingModule } from '@nestjs/testing';
+import { ENDPOINT_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
+import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
 import { GetEndpointsWithCursorQuery } from '../../../domain/endpoint/query/get-endpoints-with-cursor.query';
 import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
 import { GetEndpointsWithCursorQueryHandler } from './get-endpoints-with-cursor.handler';
 
 describe('GetEndpointsWithCursorQueryHandler', () => {
   let handler: GetEndpointsWithCursorQueryHandler;
-  let repository: jest.Mocked<EndpointRepository>;
+  let repository: jest.Mocked<IEndpointRepository>;
 
-  beforeEach(() => {
-    repository = {
-      getEndpointsWithCursor: jest.fn(),
-      // ...other mocked methods if necessary...
-    } as unknown as jest.Mocked<EndpointRepository>;
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        GetEndpointsWithCursorQueryHandler,
+        {
+          provide: ENDPOINT_REPOSITORY_PROVIDER,
+          useValue: {
+            getEndpointsWithCursor: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
 
-    handler = new GetEndpointsWithCursorQueryHandler(repository);
+    handler = module.get<GetEndpointsWithCursorQueryHandler>(
+      GetEndpointsWithCursorQueryHandler,
+    );
+    repository = module.get(ENDPOINT_REPOSITORY_PROVIDER);
   });
 
   it('should return a list of endpoints', async () => {
-    const query = new GetEndpointsWithCursorQuery(10, 'cursor123');
-    const endpoints = [new EndpointEntity(), new EndpointEntity()]; // Mocked entities
+    const query = new GetEndpointsWithCursorQuery(10, 'cursor');
+    const endpoints = [new EndpointEntity(), new EndpointEntity()];
     repository.getEndpointsWithCursor.mockResolvedValue(endpoints);
 
     const result = await handler.execute(query);
 
-    expect(result).toBe(endpoints);
+    expect(result).toEqual(endpoints);
     expect(repository.getEndpointsWithCursor).toHaveBeenCalledWith(
       10,
-      'cursor123',
+      'cursor',
     );
   });
 

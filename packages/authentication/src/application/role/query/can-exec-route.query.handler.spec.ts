@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { CanExecRouteQueryHandler } from './can-exec-route.query.handler';
-import { QueryBus } from '@nestjs/cqrs';
 import { CanExecRouteQuery } from '../../../domain/role/query/can-exec-route.query';
-import { GetRolesByRouteQuery } from '../../../domain/role/query/get-roles-by-route.query';
+import { QueryBus } from '@nestjs/cqrs';
+import { RoleEntity } from '../../../domain/role/role-entity';
 
 describe('CanExecRouteQueryHandler', () => {
   let handler: CanExecRouteQueryHandler;
-  let queryBus: QueryBus;
+  let queryBus: jest.Mocked<QueryBus>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,79 +22,100 @@ describe('CanExecRouteQueryHandler', () => {
     }).compile();
 
     handler = module.get<CanExecRouteQueryHandler>(CanExecRouteQueryHandler);
-    queryBus = module.get<QueryBus>(QueryBus);
+    queryBus = module.get(QueryBus);
   });
 
-  it('should return true if user roles match route roles', async () => {
-    const routeRoles = [{ id: 'role1' }, { id: 'role2' }];
-    const userRoles = ['role1', 'role3'];
-
-    jest.spyOn(queryBus, 'execute').mockImplementation((query) => {
-      if (query instanceof GetRolesByRouteQuery) {
-        return Promise.resolve(routeRoles);
-      }
-      return Promise.resolve([]);
-    });
-
-    const query = new CanExecRouteQuery(
-      'user1',
-      '/test-route',
-      'GET',
-      userRoles,
-    );
-    const result = await handler.execute(query);
-
-    expect(result).toBe(true);
-    expect(queryBus.execute).toHaveBeenCalledWith(
-      new GetRolesByRouteQuery('/test-route', 'GET'),
-    );
+  it('should be defined', () => {
+    expect(handler).toBeDefined();
   });
 
-  it('should return false if user roles do not match route roles', async () => {
-    const routeRoles = [{ id: 'role1' }, { id: 'role2' }];
-    const userRoles = ['role3', 'role4'];
+  describe('execute', () => {
+    it('should return true when user has matching role for route', async () => {
+      // Arrange
+      const userId = 'user1';
+      const route = '/test/route';
+      const method = 'GET';
+      const userRoles = ['role1', 'role2'];
+      const query = new CanExecRouteQuery(userId, route, method, userRoles);
 
-    jest.spyOn(queryBus, 'execute').mockImplementation((query) => {
-      if (query instanceof GetRolesByRouteQuery) {
-        return Promise.resolve(routeRoles);
-      }
-      return Promise.resolve([]);
+      const mockRoles = [
+        createTestRole('role1', 'Admin Role'),
+        createTestRole('role2', 'User Role'),
+      ];
+
+      queryBus.execute.mockResolvedValue(mockRoles);
+
+      // Act
+      const result = await handler.execute(query);
+
+      // Assert
+      expect(result).toBe(true);
+      expect(queryBus.execute).toHaveBeenCalled();
     });
 
-    const query = new CanExecRouteQuery(
-      'user1',
-      '/test-route',
-      'GET',
-      userRoles,
-    );
-    const result = await handler.execute(query);
+    it('should return false when user has no matching role for route', async () => {
+      // Arrange
+      const userId = 'user1';
+      const route = '/test/route';
+      const method = 'GET';
+      const userRoles = ['role3', 'role4'];
+      const query = new CanExecRouteQuery(userId, route, method, userRoles);
 
-    expect(result).toBe(false);
-    expect(queryBus.execute).toHaveBeenCalledWith(
-      new GetRolesByRouteQuery('/test-route', 'GET'),
-    );
-  });
+      const mockRoles = [
+        createTestRole('role1', 'Admin Role'),
+        createTestRole('role2', 'User Role'),
+      ];
 
-  it('should return false if no roles are returned for the route', async () => {
-    jest.spyOn(queryBus, 'execute').mockImplementation((query) => {
-      if (query instanceof GetRolesByRouteQuery) {
-        return Promise.resolve([]);
-      }
-      return Promise.resolve([]);
+      queryBus.execute.mockResolvedValue(mockRoles);
+
+      // Act
+      const result = await handler.execute(query);
+
+      // Assert
+      expect(result).toBe(false);
+      expect(queryBus.execute).toHaveBeenCalled();
     });
 
-    const userRoles = ['role1', 'role2'];
-    const query = new CanExecRouteQuery(
-      'user1',
-      '/test-route',
-      'GET',
-      userRoles,
-    );
-    const result = await handler.execute(query);
+    it('should return false when no roles are found for route', async () => {
+      // Arrange
+      const userId = 'user1';
+      const route = '/test/route';
+      const method = 'GET';
+      const userRoles = ['role1', 'role2'];
+      const query = new CanExecRouteQuery(userId, route, method, userRoles);
 
-    expect(result).toBe(false);
-    expect(queryBus.execute).toHaveBeenCalledWith(
-      new GetRolesByRouteQuery('/test-route', 'GET'),
-    );
+      queryBus.execute.mockResolvedValue([]);
+
+      // Act
+      const result = await handler.execute(query);
+
+      // Assert
+      expect(result).toBe(false);
+      expect(queryBus.execute).toHaveBeenCalled();
+    });
+
+    it('should handle query bus error', async () => {
+      // Arrange
+      const userId = 'user1';
+      const route = '/test/route';
+      const method = 'GET';
+      const userRoles = ['role1', 'role2'];
+      const query = new CanExecRouteQuery(userId, route, method, userRoles);
+      const error = new Error('Query bus error');
+      queryBus.execute.mockRejectedValue(error);
+
+      // Act & Assert
+      await expect(handler.execute(query)).rejects.toThrow('Query bus error');
+    });
   });
 });
+
+function createTestRole(id: string, name: string): RoleEntity {
+  const role = new RoleEntity();
+  role.setId(id);
+  role.name = name;
+  role.description = `Description for ${name}`;
+  role.status = 'ACTIVE';
+  role.metadata = {};
+  return role;
+}

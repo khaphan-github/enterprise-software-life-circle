@@ -1,25 +1,27 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
-import { EventBus } from '@nestjs/cqrs';
 import { CreateTokenHandler } from './create-token.handler';
 import { CreateTokenCommand } from '../../../domain/user/command/create-token.command';
-import { RoleRepository } from '../../../infrastructure/repository/postgres/role.repository';
 import { TokenCreatedEvent } from '../../../domain/user/events/token-created.event';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
+import { ROLE_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
+import { IRoleRepository } from '../../../domain/repository/role-repository.interface';
+import { EventHub } from '../../../domain/event-hub/event.hub';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 
 describe('CreateTokenHandler', () => {
   let handler: CreateTokenHandler;
-  let roleRepository: jest.Mocked<RoleRepository>;
+  let roleRepository: jest.Mocked<IRoleRepository>;
   let jwtService: jest.Mocked<JwtService>;
-  let eventBus: jest.Mocked<EventBus>;
+  let eventHub: jest.Mocked<EventHub>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateTokenHandler,
         {
-          provide: RoleRepository,
+          provide: ROLE_REPOSITORY_PROVIDER,
           useValue: {
             getRolesByUserId: jest.fn(),
           },
@@ -31,7 +33,7 @@ describe('CreateTokenHandler', () => {
           },
         },
         {
-          provide: EventBus,
+          provide: EVENT_HUB_PROVIDER,
           useValue: {
             publish: jest.fn(),
           },
@@ -51,9 +53,9 @@ describe('CreateTokenHandler', () => {
     }).compile();
 
     handler = module.get<CreateTokenHandler>(CreateTokenHandler);
-    roleRepository = module.get(RoleRepository);
+    roleRepository = module.get(ROLE_REPOSITORY_PROVIDER);
     jwtService = module.get(JwtService);
-    eventBus = module.get(EventBus);
+    eventHub = module.get(EVENT_HUB_PROVIDER);
   });
 
   it('should generate access and refresh tokens and publish TokenCreatedEvent', async () => {
@@ -84,7 +86,7 @@ describe('CreateTokenHandler', () => {
         expiresIn: '7d',
       },
     );
-    expect(eventBus.publish).toHaveBeenCalledWith(
+    expect(eventHub.publish).toHaveBeenCalledWith(
       new TokenCreatedEvent(refreshToken, accessToken),
     );
     expect(result).toEqual({ accessToken, refreshToken });

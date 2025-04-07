@@ -4,7 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GoogleLoginHandler } from './google-login.handler';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { AuthConf } from '../../../infrastructure/conf/auth-config';
-import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 import { GoogleLoginCommand } from '../../../domain/user/command/google-login.command';
 import { OAuth2Client } from 'google-auth-library';
 import { InvalidGoogleClientIdError } from '../../../domain/user/errors/invalid-google-client-id.error';
@@ -18,7 +19,7 @@ jest.mock('google-auth-library');
 describe('GoogleLoginHandler', () => {
   let handler: GoogleLoginHandler;
   let commandBus: CommandBus;
-  let userRepository: UserRepository;
+  let userRepository: any;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,10 +39,14 @@ describe('GoogleLoginHandler', () => {
           },
         },
         {
-          provide: UserRepository,
+          provide: USER_REPOSITORY_PROVIDER,
           useValue: {
             getUserByUsername: jest.fn(),
           },
+        },
+        {
+          provide: EVENT_HUB_PROVIDER,
+          useValue: { publish: jest.fn() },
         },
         {
           provide: EventBus,
@@ -52,7 +57,7 @@ describe('GoogleLoginHandler', () => {
 
     handler = module.get<GoogleLoginHandler>(GoogleLoginHandler);
     commandBus = module.get<CommandBus>(CommandBus);
-    userRepository = module.get<UserRepository>(UserRepository);
+    userRepository = module.get(USER_REPOSITORY_PROVIDER);
   });
 
   it('should create a new user and return tokens if user does not exist', async () => {

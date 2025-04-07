@@ -3,10 +3,10 @@ import { AssignEndpointToRoleCommand } from '../../../domain/role/command/assign
 import { EndpointsAssignedToRolesEvent } from '../../../domain/role/event/endpoints-assigned-to-roles.event';
 import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
 import { Inject } from '@nestjs/common';
-import { ENDPOINT_REPOSITORY_PROVIDER } from 'src/infrastructure/providers/repository/repository-providers';
-
+import { ENDPOINT_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 import { EventHub } from '../../../domain/event-hub/event.hub';
+
 @CommandHandler(AssignEndpointToRoleCommand)
 export class AssignEndpointToRoleHandler
   implements ICommandHandler<AssignEndpointToRoleCommand>

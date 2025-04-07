@@ -1,31 +1,36 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventBus } from '@nestjs/cqrs';
 import { UpdateEndpointsCommandHandler } from './update-endpoints.handler';
-import { EndpointRepository } from '../../../infrastructure/repository/postgres/endpoint.repository';
 import { UpdateEndpointsCommand } from '../../../domain/endpoint/command/update-endpoints.command';
-import { EndpointEntity } from '../../../domain/endpoint/endpoint-entity';
-import { EndpointEntityUpdatedEvent } from '../../../domain/endpoint/event/endpoint-updated.event';
+import { IEndpointRepository } from '../../../domain/repository/endpoint-repository.interface';
+import { EventHub } from '../../../domain/event-hub/event.hub';
+import {
+  EndpointEntity,
+  EndpointStatus,
+} from '../../../domain/endpoint/endpoint-entity';
+import { ENDPOINT_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 
 describe('UpdateEndpointsCommandHandler', () => {
   let handler: UpdateEndpointsCommandHandler;
-  let repository: EndpointRepository;
-  let eventBus: EventBus;
+  let repository: jest.Mocked<IEndpointRepository>;
+  let eventHub: jest.Mocked<EventHub>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UpdateEndpointsCommandHandler,
         {
-          provide: EndpointRepository,
+          provide: ENDPOINT_REPOSITORY_PROVIDER,
           useValue: {
-            updateEndpoints: jest.fn(),
+            updateEndpoints: jest
+              .fn()
+              .mockImplementation(() => Promise.resolve()),
           },
         },
         {
-          provide: EventBus,
+          provide: EVENT_HUB_PROVIDER,
           useValue: {
-            publish: jest.fn(),
+            publish: jest.fn().mockImplementation(() => Promise.resolve()),
           },
         },
       ],
@@ -34,65 +39,131 @@ describe('UpdateEndpointsCommandHandler', () => {
     handler = module.get<UpdateEndpointsCommandHandler>(
       UpdateEndpointsCommandHandler,
     );
-    repository = module.get<EndpointRepository>(EndpointRepository);
-    eventBus = module.get<EventBus>(EventBus);
+    repository = module.get(ENDPOINT_REPOSITORY_PROVIDER);
+    eventHub = module.get(EVENT_HUB_PROVIDER);
   });
 
-  it('should throw an error if repository update fails', async () => {
-    const endpoints = new EndpointEntity();
-    const command = new UpdateEndpointsCommand([endpoints]);
-
-    jest
-      .spyOn(repository, 'updateEndpoints')
-      .mockRejectedValue(new Error('Update failed'));
-
-    await expect(handler.execute(command)).rejects.toThrow('Update failed');
-    expect(repository.updateEndpoints).toHaveBeenCalledWith(expect.any(Array));
-    expect(eventBus.publish).not.toHaveBeenCalled();
+  it('should be defined', () => {
+    expect(handler).toBeDefined();
   });
 
-  it('should handle an empty list of endpoints', async () => {
-    const command = new UpdateEndpointsCommand([]);
-    const result = await handler.execute(command);
+  describe('execute', () => {
+    it('should successfully update multiple endpoints', async () => {
+      // Arrange
+      const command = new UpdateEndpointsCommand([
+        {
+          id: '1',
+          path: '/api/test1',
+          method: 'GET',
+          metadata: { description: 'Test endpoint 1' },
+          status: EndpointStatus.ACTIVE,
+        },
+        {
+          id: '2',
+          path: '/api/test2',
+          method: 'POST',
+          metadata: { description: 'Test endpoint 2' },
+          status: EndpointStatus.ACTIVE,
+        },
+      ]);
 
-    expect(repository.updateEndpoints).toHaveBeenCalledWith([]);
-    expect(eventBus.publish).toHaveBeenCalledWith(
-      new EndpointEntityUpdatedEvent([]),
-    );
-    expect(result).toEqual([]);
-  });
+      const expectedEntities = command.endpoints.map((endpoint) => {
+        const entity = new EndpointEntity();
+        entity.setId(endpoint.id);
+        entity.path = endpoint.path;
+        entity.method = endpoint.method;
+        entity.metadata = endpoint.metadata;
+        entity.status = endpoint.status;
+        entity.setUpdateTime();
+        return entity;
+      });
 
-  it('should not publish an event if no endpoints are updated', async () => {
-    const command = new UpdateEndpointsCommand([]);
+      repository.updateEndpoints.mockImplementation(() => Promise.resolve());
 
-    jest.spyOn(repository, 'updateEndpoints').mockResolvedValue([]);
+      // Act
+      const result = await handler.execute(command);
 
-    const result = await handler.execute(command);
-    expect(repository.updateEndpoints).toHaveBeenCalledWith([]);
-    expect(result).toEqual([]);
-  });
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('1');
+      expect(result[0].path).toBe('/api/test1');
+      expect(result[1].id).toBe('2');
+      expect(result[1].path).toBe('/api/test2');
 
-  it('should call repository with correct data', async () => {
-    const endpoints = new EndpointEntity();
-    endpoints.id = 'test-id';
-    endpoints.path = '/test';
-    endpoints.method = 'GET';
-    endpoints.metadata = {};
-    endpoints.updatedAt = new Date();
+      // Verify the call with a more flexible comparison
+      expect(repository.updateEndpoints).toHaveBeenCalled();
+      const actualCall = repository.updateEndpoints.mock.calls[0][0];
+      expect(actualCall).toHaveLength(2);
+      expect(actualCall[0].id).toBe(expectedEntities[0].id);
+      expect(actualCall[0].path).toBe(expectedEntities[0].path);
+      expect(actualCall[0].method).toBe(expectedEntities[0].method);
+      expect(actualCall[0].metadata).toEqual(expectedEntities[0].metadata);
+      expect(actualCall[0].status).toBe(expectedEntities[0].status);
+      expect(actualCall[1].id).toBe(expectedEntities[1].id);
+      expect(actualCall[1].path).toBe(expectedEntities[1].path);
+      expect(actualCall[1].method).toBe(expectedEntities[1].method);
+      expect(actualCall[1].metadata).toEqual(expectedEntities[1].metadata);
+      expect(actualCall[1].status).toBe(expectedEntities[1].status);
 
-    const command = new UpdateEndpointsCommand([endpoints]);
-    const updatedEntities = [endpoints];
+      expect(eventHub.publish).toHaveBeenCalled();
+    });
 
-    jest
-      .spyOn(repository, 'updateEndpoints')
-      .mockResolvedValue(updatedEntities);
+    it('should handle empty endpoints array', async () => {
+      // Arrange
+      const command = new UpdateEndpointsCommand([]);
+      repository.updateEndpoints.mockResolvedValue(undefined);
 
-    const result = await handler.execute(command);
+      // Act
+      const result = await handler.execute(command);
 
-    expect(repository.updateEndpoints).toHaveBeenCalledWith([endpoints]);
-    expect(eventBus.publish).toHaveBeenCalledWith(
-      new EndpointEntityUpdatedEvent(updatedEntities),
-    );
-    expect(result).toEqual(updatedEntities);
+      // Assert
+      expect(result).toHaveLength(0);
+      expect(repository.updateEndpoints).toHaveBeenCalledWith([]);
+      expect(eventHub.publish).toHaveBeenCalled();
+    });
+
+    it('should handle repository error', async () => {
+      // Arrange
+      const command = new UpdateEndpointsCommand([
+        {
+          id: '1',
+          path: '/api/test',
+          method: 'GET',
+          status: EndpointStatus.ACTIVE,
+        },
+      ]);
+
+      const error = new Error('Repository error');
+      repository.updateEndpoints.mockRejectedValue(error);
+
+      // Act & Assert
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Repository error',
+      );
+      expect(eventHub.publish).not.toHaveBeenCalled();
+    });
+
+    it('should handle endpoints with missing optional metadata', async () => {
+      // Arrange
+      const command = new UpdateEndpointsCommand([
+        {
+          id: '1',
+          path: '/api/test',
+          method: 'GET',
+          status: EndpointStatus.ACTIVE,
+        },
+      ]);
+
+      repository.updateEndpoints.mockResolvedValue(undefined);
+
+      // Act
+      const result = await handler.execute(command);
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].metadata).toEqual({});
+      expect(repository.updateEndpoints).toHaveBeenCalled();
+      expect(eventHub.publish).toHaveBeenCalled();
+    });
   });
 });

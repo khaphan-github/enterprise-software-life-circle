@@ -39,5 +39,4 @@ export class CreateActionsHandler
     this.eventHub.publish(new ActionCreatedEvent(actions));
     return actions;
   }
-  z;
 }

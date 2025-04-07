@@ -1,4 +1,7 @@
 # Changelog
+## Version 3.4.3
+- Implement connection to mongo db when enable
+
 ## Version 3.3.3
 - Implement forgot password
 

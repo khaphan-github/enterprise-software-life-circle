@@ -18,7 +18,7 @@ export class DeleteEndpointsCommandHandler
   private readonly eventHub: EventHub;
 
   async execute(command: DeleteEndpointsCommand): Promise<void> {
-    const deletedEntities = await this.repository.deleteEndpoints(command.ids);
-    this.eventHub.publish(new EndpointEntityDeletedEvent(deletedEntities));
+    await this.repository.deleteEndpoints(command.ids);
+    this.eventHub.publish(new EndpointEntityDeletedEvent(command.ids));
   }
 }

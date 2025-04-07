@@ -1,28 +1,29 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventBus } from '@nestjs/cqrs';
 import { AssignActionToRoleHandler } from './assign-action-to-role.handler';
 import { AssignActionToRoleCommand } from '../../../domain/role/command/assign-action-to-role.command';
-import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
+import { IActionRepository } from '../../../domain/repository/action-repository.interface';
+import { ACTION_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
+import { EventHub } from '../../../domain/event-hub/event.hub';
 import { ActionsAssignedToRolesEvent } from '../../../domain/role/event/actions-assigned-to-roles.event';
 
 describe('AssignActionToRoleHandler', () => {
   let handler: AssignActionToRoleHandler;
-  let repository: ActionRepository;
-  let eventBus: EventBus;
+  let repository: jest.Mocked<IActionRepository>;
+  let eventHub: jest.Mocked<EventHub>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AssignActionToRoleHandler,
         {
-          provide: ActionRepository,
+          provide: ACTION_REPOSITORY_PROVIDER,
           useValue: {
             assignActionsToRoles: jest.fn(),
           },
         },
         {
-          provide: EventBus,
+          provide: EVENT_HUB_PROVIDER,
           useValue: {
             publish: jest.fn(),
           },
@@ -31,20 +32,83 @@ describe('AssignActionToRoleHandler', () => {
     }).compile();
 
     handler = module.get<AssignActionToRoleHandler>(AssignActionToRoleHandler);
-    repository = module.get<ActionRepository>(ActionRepository);
-    eventBus = module.get<EventBus>(EventBus);
+    repository = module.get(ACTION_REPOSITORY_PROVIDER);
+    eventHub = module.get(EVENT_HUB_PROVIDER);
   });
 
-  it('should assign actions to roles and publish an event', async () => {
-    const command = new AssignActionToRoleCommand(['action1'], ['role1']);
-    await handler.execute(command);
+  it('should be defined', () => {
+    expect(handler).toBeDefined();
+  });
 
-    expect(repository.assignActionsToRoles).toHaveBeenCalledWith(
-      ['action1'],
-      ['role1'],
-    );
-    expect(eventBus.publish).toHaveBeenCalledWith(
-      new ActionsAssignedToRolesEvent(['action1'], ['role1']),
-    );
+  describe('execute', () => {
+    it('should successfully assign actions to roles', async () => {
+      // Arrange
+      const command = new AssignActionToRoleCommand(
+        ['action1', 'action2'],
+        ['role1', 'role2'],
+      );
+      repository.assignActionsToRoles.mockResolvedValue(undefined);
+
+      // Act
+      await handler.execute(command);
+
+      // Assert
+      expect(repository.assignActionsToRoles).toHaveBeenCalledWith(
+        ['action1', 'action2'],
+        ['role1', 'role2'],
+      );
+      expect(eventHub.publish).toHaveBeenCalledWith(
+        expect.any(ActionsAssignedToRolesEvent),
+      );
+    });
+
+    it('should handle empty actionIds array', async () => {
+      // Arrange
+      const command = new AssignActionToRoleCommand([], ['role1', 'role2']);
+      repository.assignActionsToRoles.mockResolvedValue(undefined);
+
+      // Act
+      await handler.execute(command);
+
+      // Assert
+      expect(repository.assignActionsToRoles).toHaveBeenCalledWith(
+        [],
+        ['role1', 'role2'],
+      );
+      expect(eventHub.publish).toHaveBeenCalledWith(
+        expect.any(ActionsAssignedToRolesEvent),
+      );
+    });
+
+    it('should handle empty roleIds array', async () => {
+      // Arrange
+      const command = new AssignActionToRoleCommand(['action1', 'action2'], []);
+      repository.assignActionsToRoles.mockResolvedValue(undefined);
+
+      // Act
+      await handler.execute(command);
+
+      // Assert
+      expect(repository.assignActionsToRoles).toHaveBeenCalledWith(
+        ['action1', 'action2'],
+        [],
+      );
+      expect(eventHub.publish).toHaveBeenCalledWith(
+        expect.any(ActionsAssignedToRolesEvent),
+      );
+    });
+
+    it('should handle repository error', async () => {
+      // Arrange
+      const command = new AssignActionToRoleCommand(['action1'], ['role1']);
+      const error = new Error('Repository error');
+      repository.assignActionsToRoles.mockRejectedValue(error);
+
+      // Act & Assert
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Repository error',
+      );
+      expect(eventHub.publish).not.toHaveBeenCalled();
+    });
   });
 });

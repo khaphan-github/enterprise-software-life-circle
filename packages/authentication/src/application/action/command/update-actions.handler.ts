@@ -5,7 +5,7 @@ import { ACTION_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/re
 import { IActionRepository } from '../../../domain/repository/action-repository.interface';
 import { UpdateActionsCommand } from '../../../domain/action/commands/update-actions.command';
 import { ActionEntity } from '../../../domain/action/action-entity';
-import { ActionUpdatedEvent } from 'src/domain/action/events/action-updated.event';
+import { ActionUpdatedEvent } from '../../../domain/action/events/action-updated.event';
 import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
 import { EventHub } from '../../../domain/event-hub/event.hub';
 

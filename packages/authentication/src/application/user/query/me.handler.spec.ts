@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MeHandler } from './me.handler';
-import { UserRepository } from '../../../infrastructure/repository/postgres/user.repository';
+import { USER_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
 import { JwtService } from '@nestjs/jwt';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { MeQuery } from '../../../domain/user/query/me.query';
@@ -10,7 +10,7 @@ import { AuthConf } from '../../../infrastructure/conf/auth-config';
 
 describe('MeHandler', () => {
   let handler: MeHandler;
-  let userRepository: UserRepository;
+  let userRepository: any;
   let jwtService: JwtService;
 
   beforeEach(async () => {
@@ -18,7 +18,7 @@ describe('MeHandler', () => {
       providers: [
         MeHandler,
         {
-          provide: UserRepository,
+          provide: USER_REPOSITORY_PROVIDER,
           useValue: {
             findUserById: jest.fn(),
           },
@@ -53,7 +53,7 @@ describe('MeHandler', () => {
     }).compile();
 
     handler = module.get<MeHandler>(MeHandler);
-    userRepository = module.get<UserRepository>(UserRepository);
+    userRepository = module.get(USER_REPOSITORY_PROVIDER);
     jwtService = module.get<JwtService>(JwtService);
   });
 

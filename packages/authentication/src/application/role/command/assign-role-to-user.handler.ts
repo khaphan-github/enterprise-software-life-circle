@@ -29,6 +29,10 @@ export class AssignRoleToUserHandler
   async execute(
     command: AssignRoleToUserCommand,
   ): Promise<Array<UserRoleEntity>> {
+    if (command.roleIds.length === 0 || command.userIds.length === 0) {
+      return [];
+    }
+
     const userRoleEntities: UserRoleEntity[] = command.roleIds.flatMap(
       (roleId) =>
         command.userIds.map((userId) => {

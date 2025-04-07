@@ -1,65 +1,189 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventBus } from '@nestjs/cqrs';
 import { CreateActionsHandler } from './create-actions.handler';
-import {
-  CreateActionsCommand,
-  ICreateActionsCommand,
-} from '../../../domain/action/commands/create-actions.command';
-import { ActionRepository } from '../../../infrastructure/repository/postgres/action.repository';
-import { ActionStatus } from '../../../domain/action/action-entity';
+import { ACTION_REPOSITORY_PROVIDER } from '../../../infrastructure/providers/repository/repository-providers';
+import { ID_GENERATOR } from '../../../infrastructure/providers/id-genrerator.provider';
+import { EVENT_HUB_PROVIDER } from '../../../infrastructure/providers/event-hub.provider';
+import { CreateActionsCommand } from '../../../domain/action/commands/create-actions.command';
+import { ActionCreatedEvent } from '../../../domain/action/events/action-created.event';
 
 describe('CreateActionsHandler', () => {
   let handler: CreateActionsHandler;
-  let repository: ActionRepository;
+  let repositoryMock: any;
+  let idGeneratorMock: any;
+  let eventHubMock: any;
 
   beforeEach(async () => {
+    // Create mocks for dependencies
+    repositoryMock = {
+      createActions: jest.fn().mockResolvedValue(undefined),
+    };
+
+    idGeneratorMock = {
+      generateId: jest.fn().mockReturnValue('mock-id'),
+    };
+
+    eventHubMock = {
+      publish: jest.fn(),
+    };
+
+    // Create a test module with our handler and mocked dependencies
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateActionsHandler,
         {
-          provide: ActionRepository,
-          useValue: {
-            createActions: jest.fn(),
-          },
+          provide: ACTION_REPOSITORY_PROVIDER,
+          useValue: repositoryMock,
         },
         {
-          provide: EventBus,
-          useValue: {
-            publish: jest.fn(),
-          },
+          provide: ID_GENERATOR,
+          useValue: idGeneratorMock,
+        },
+        {
+          provide: EVENT_HUB_PROVIDER,
+          useValue: eventHubMock,
         },
       ],
     }).compile();
 
     handler = module.get<CreateActionsHandler>(CreateActionsHandler);
-    repository = module.get<ActionRepository>(ActionRepository);
   });
 
-  it('should create actions and publish an event', async () => {
-    const actionEntity: ICreateActionsCommand = {
-      description: 'Test Description',
-      metadata: { key: 'value' },
-      name: 'Test Action',
-      status: ActionStatus.ACTIVE,
-    };
+  it('should be defined', () => {
+    expect(handler).toBeDefined();
+  });
 
-    const actions = [actionEntity];
-    jest.spyOn(repository, 'createActions').mockResolvedValue(actions);
+  describe('execute', () => {
+    it('should create actions from command, save them, publish event and return created actions', async () => {
+      // Arrange
+      const actionData: any = [
+        {
+          name: 'Action 1',
+          description: 'Description 1',
+          status: 'active',
+          metadata: { key: 'value1' },
+        },
+        {
+          name: 'Action 2',
+          description: 'Description 2',
+          status: 'inactive',
+          metadata: { key: 'value2' },
+        },
+      ];
+      const command = new CreateActionsCommand(actionData);
 
-    const command = new CreateActionsCommand(actions);
-    const result = await handler.execute(command);
+      // Act
+      const result = await handler.execute(command);
 
-    result.forEach((action) => {
-      expect(action).toHaveProperty('id');
-      expect(action.id).toBeDefined();
-      expect(action.createdAt).toBeInstanceOf(Date);
-      expect(action.updatedAt).toBeInstanceOf(Date);
+      // Assert
+      expect(result).toHaveLength(2);
 
-      expect(action.description).toEqual(actionEntity.description);
-      expect(action.metadata).toEqual(actionEntity.metadata);
-      expect(action.name).toEqual(actionEntity.name);
-      expect(action.status).toEqual(actionEntity.status);
+      // Check each action has the correct properties
+      expect(result[0].name).toBe('Action 1');
+      expect(result[0].description).toBe('Description 1');
+      expect(result[0].status).toBe('active');
+      expect(result[0].metadata).toEqual({ key: 'value1' });
+
+      expect(result[1].name).toBe('Action 2');
+      expect(result[1].description).toBe('Description 2');
+      expect(result[1].status).toBe('inactive');
+      expect(result[1].metadata).toEqual({ key: 'value2' });
+
+      // Verify repository was called with the actions
+      expect(repositoryMock.createActions).toHaveBeenCalledWith(result);
+
+      // Verify event was published with the actions
+      expect(eventHubMock.publish).toHaveBeenCalledTimes(1);
+      const publishedEvent = eventHubMock.publish.mock.calls[0][0];
+      expect(publishedEvent).toBeInstanceOf(ActionCreatedEvent);
+      expect(publishedEvent.actions).toEqual(result);
+    });
+
+    it('should handle creating a single action', async () => {
+      // Arrange
+      const actionData: any = [
+        {
+          name: 'Single Action',
+          description: 'Test single action creation',
+          status: 'pending',
+          metadata: { priority: 'high' },
+        },
+      ];
+      const command = new CreateActionsCommand(actionData);
+
+      // Act
+      const result = await handler.execute(command);
+
+      // Assert
+      expect(result).toHaveLength(1);
+      expect(result[0].name).toBe('Single Action');
+      expect(result[0].description).toBe('Test single action creation');
+      expect(result[0].status).toBe('pending');
+      expect(result[0].metadata).toEqual({ priority: 'high' });
+      expect(repositoryMock.createActions).toHaveBeenCalledWith(result);
+      expect(eventHubMock.publish).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle empty actions array', async () => {
+      // Arrange
+      const actionData: any[] = [];
+      const command = new CreateActionsCommand(actionData);
+
+      // Act
+      const result = await handler.execute(command);
+
+      // Assert
+      expect(result).toHaveLength(0);
+      expect(repositoryMock.createActions).toHaveBeenCalledWith([]);
+      expect(eventHubMock.publish).toHaveBeenCalledWith(
+        expect.any(ActionCreatedEvent),
+      );
+    });
+
+    it('should throw error when repository fails', async () => {
+      // Arrange
+      repositoryMock.createActions.mockRejectedValueOnce(
+        new Error('Database connection error'),
+      );
+
+      const actionData: any = [
+        {
+          name: 'Action 1',
+          description: 'Description 1',
+          status: 'active',
+          metadata: { key: 'value1' },
+        },
+      ];
+      const command = new CreateActionsCommand(actionData);
+
+      // Act & Assert
+      await expect(handler.execute(command)).rejects.toThrow(
+        'Database connection error',
+      );
+      expect(eventHubMock.publish).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when ID generator fails', async () => {
+      // Arrange
+      idGeneratorMock.generateId.mockImplementationOnce(() => {
+        throw new Error('ID generation failed');
+      });
+
+      const actionData: any = [
+        {
+          name: 'Action 1',
+          description: 'Description 1',
+          status: 'active',
+          metadata: { key: 'value1' },
+        },
+      ];
+      const command = new CreateActionsCommand(actionData);
+
+      // Act & Assert
+      await expect(handler.execute(command)).rejects.toThrow(
+        'ID generation failed',
+      );
+      expect(repositoryMock.createActions).not.toHaveBeenCalled();
+      expect(eventHubMock.publish).not.toHaveBeenCalled();
     });
   });
 });
