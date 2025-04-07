@@ -10,14 +10,14 @@ export class UserTransformer {
     const entity = new UserEntity();
     entity.id = db.id;
     entity.username = db.username;
-    entity.passwordHash = db.password_hash;
+    entity.passwordHash = db.passwordHash;
     entity.status = db.status;
     entity.metadata = db.metadata;
-    entity.createdAt = db.created_at;
-    entity.updatedAt = db.updated_at;
+    entity.createdAt = db.createdAt;
+    entity.updatedAt = db.updatedAt;
     entity.mfa = db.mfa;
     entity.type = db.type;
-    entity.resetPassword = db.reset_password;
+    entity.resetPassword = db.resetPassword;
     return entity;
   }
 
@@ -25,14 +25,14 @@ export class UserTransformer {
     const entity = new UserEntity();
     entity.id = db._id;
     entity.username = db.username;
-    entity.passwordHash = db.password_hash;
+    entity.passwordHash = db.passwordHash;
     entity.status = db.status;
     entity.metadata = db.metadata;
-    entity.createdAt = db.created_at;
-    entity.updatedAt = db.updated_at;
+    entity.createdAt = db.createdAt;
+    entity.updatedAt = db.updatedAt;
     entity.mfa = db.mfa;
     entity.type = db.type;
-    entity.resetPassword = db.reset_password;
+    entity.resetPassword = db.resetPassword;
     return entity;
   }
 

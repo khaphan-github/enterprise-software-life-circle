@@ -20,8 +20,8 @@ export class Mfa {
   @Prop({ required: true, enum: Object.values(MfaMethod) })
   method: MfaMethod;
 
-  @Prop({ required: true })
-  receiveMfaCodeAddress: string;
+  @Prop({ required: false })
+  receiveMfaCodeAddress?: string;
 }
 
 export const MfaSchema = SchemaFactory.createForClass(Mfa);
@@ -37,8 +37,8 @@ export class ResetPassword {
   @Prop({ required: true, enum: Object.values(ResetPasswordMethod) })
   method: ResetPasswordMethod;
 
-  @Prop({ required: true })
-  address: string;
+  @Prop({ required: false })
+  address?: string;
 }
 
 export const ResetPasswordSchema = SchemaFactory.createForClass(ResetPassword);
@@ -57,14 +57,25 @@ export class User {
   @Prop({ required: true, enum: Object.values(UserType) })
   type: UserType;
 
-  @Prop({ type: MfaSchema, required: false })
+  @Prop({
+    type: MfaSchema,
+    required: false,
+    default: () => ({
+      enable: false,
+      verified: false,
+      method: MfaMethod.EMAIL,
+    }),
+  })
   mfa?: Mfa;
 
-  @Prop({ type: Object, required: false })
+  @Prop({ type: Object, required: false, default: {} })
   metadata?: object;
 
   @Prop({ type: ResetPasswordSchema, required: false })
   resetPassword?: ResetPassword;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

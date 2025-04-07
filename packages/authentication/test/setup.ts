@@ -11,12 +11,11 @@ export default async function globalSetup() {
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [
       CQRSAuthenticationRBAC.register({
-        dbConf: {
-          host: process.env.PG_MAIN_DB_HOST || 'localhost',
-          port: parseInt(process.env.PG_MAIN_DB_PORT || '5432', 10),
-          user: process.env.PG_MAIN_DB_USER || 'postgres',
-          password: process.env.PG_MAIN_DB_PASSWORD || 'postgres',
-          database: process.env.PG_MAIN_DB_DATABASE || 'postgres',
+        database: 'mongodb',
+        mongoDbConf: {
+          uri:
+            process.env.MONGO_URI ||
+            'mongodb://root:example@mongodb:27017/test?authSource=admin',
         },
         jwtOptions: {
           secret: process.env.JWT_SECRET || 'defaultSecret',
@@ -40,8 +39,7 @@ export default async function globalSetup() {
           defaultUserStatus: UserStatus.ACTIVE,
         },
         migrations: {
-          enable: true,
-          migrationTableName: '_migration_authentication',
+          enable: false,
         },
         constroller: {
           enable: true,

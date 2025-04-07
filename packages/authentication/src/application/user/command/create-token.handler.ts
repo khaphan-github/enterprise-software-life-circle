@@ -22,7 +22,7 @@ export class CreateTokenHandler implements ICommandHandler<CreateTokenCommand> {
     const userRoles = await this.roleRepository.getRolesByUserId(
       command.userId,
     );
-    const userRoleIds = userRoles.map((role) => role?.id);
+    const userRoleIds = userRoles?.map((role) => role?.id) || [];
 
     // Build jwt token here
     const metadata = {};

@@ -24,6 +24,7 @@ export class UpdateActionsHandler
       entity.setId(action.id);
       entity.name = action.name;
       entity.description = action.description;
+      entity.status = action.status;
       entity.metadata = action.metadata;
       entity.setUpdateTime();
       return entity;

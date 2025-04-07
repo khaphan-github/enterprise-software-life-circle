@@ -9,6 +9,7 @@ export class ActionEntity extends BaseEntity {
   description: string;
   metadata: Record<string, any>;
   status: ActionStatus;
+  roles: string[] = [];
   constructor() {
     super();
   }
